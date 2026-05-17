@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Critically Yours — DPS Megacity Humanities Fest</title>
+  <meta name="description" content="Critically Yours — The Annual Intraschool Humanities Festival of Delhi Public School Megacity, Kolkata." />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase CDN (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+</head>
+<body class="bg-main bg-noise" data-page="index">
+
+<!-- ── NAVBAR ──────────────────────────────────────────── -->
+<nav class="navbar" role="navigation" aria-label="Main Navigation">
+  <a href="index.html" class="nav-logo">
+    <img src="cys_logo.png" alt="Critically Yours Logo" onerror="this.style.display='none'">
+    <span class="nav-logo-text">Critically <span>Yours</span></span>
+  </a>
+
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#about"  class="active">About</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#schedule">Schedule</a></li>
+    <li><a href="dashboard.html" id="nav-auth-btn" class="nav-cta">Portal Login</a></li>
+  </ul>
+
+  <div class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu" role="button" tabindex="0">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────── -->
+<section class="hero" id="about">
+  <!-- Ambient orbs -->
+  <div class="hero-bg-orb orb1"></div>
+  <div class="hero-bg-orb orb2"></div>
+
+  <div style="position:relative;z-index:1;max-width:800px;margin:0 auto;">
+    <img src="cys_logo.png" alt="CYS Logo" class="hero-logo"
+         onerror="this.style.display='none'">
+
+    <div class="hero-eyebrow reveal">
+      Delhi Public School Megacity, Kolkata
+    </div>
+
+    <h1 class="hero-title reveal reveal-delay-1">
+      Critically
+      <em>Yours</em>
+    </h1>
+
+    <p class="hero-subtitle-tag reveal reveal-delay-2">
+      The Annual Intraschool Humanities Festival
+    </p>
+
+    <p style="font-family:var(--font-body);font-size:1.15rem;color:var(--muted);max-width:560px;margin:0 auto;line-height:1.75;" class="reveal reveal-delay-3">
+      A celebration of critical thinking, literary discourse, and intellectual exploration. 
+      Where ideas are debated, narratives are crafted, and the humanities come alive.
+    </p>
+
+    <!-- Countdown -->
+    <div class="countdown-wrap reveal reveal-delay-3" id="fest-date" data-date="2025-09-15T09:00:00">
+      <div class="countdown-unit">
+        <span class="countdown-number" id="countdown-days">00</span>
+        <span class="countdown-label">Days</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <span class="countdown-number" id="countdown-hours">00</span>
+        <span class="countdown-label">Hours</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <span class="countdown-number" id="countdown-mins">00</span>
+        <span class="countdown-label">Minutes</span>
+      </div>
+      <span class="countdown-sep">:</span>
+      <div class="countdown-unit">
+        <span class="countdown-number" id="countdown-secs">00</span>
+        <span class="countdown-label">Seconds</span>
+      </div>
+    </div>
+
+    <div class="hero-actions reveal reveal-delay-4">
+      <a href="#events" class="btn btn-primary btn-lg">Explore Events</a>
+      <a href="dashboard.html" class="btn btn-outline btn-lg" id="btn-portal">
+        <span>Portal Login</span>
+        <span>→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── MARQUEE STRIP ─────────────────────────────────────── -->
+<div style="overflow:hidden;border-top:1px solid rgba(201,168,76,0.1);border-bottom:1px solid rgba(201,168,76,0.1);background:rgba(201,168,76,0.04);padding:.75rem 0;">
+  <div style="display:flex;gap:4rem;animation:marquee 25s linear infinite;white-space:nowrap;width:max-content;">
+    <span style="font-family:var(--font-body);font-size:1rem;color:var(--gold);font-style:italic;opacity:.7;">Model United Nations</span>
+    <span style="color:var(--gold-dim);">◆</span>
+    <span style="font-family:var(--font-body);font-size:1rem;color:var(--gold);font-style:italic;opacity:.7;">Parliamentary Debate</span>
+    <span style="color:var(--gold-dim);">◆</span>
+    <span style="font-family:var(--font-body);font-size:1rem;color:var(--gold);font-style:italic;opacity:.7;">Literary Quiz</span>
+    <span style="color:var(--gold-dim);">◆</span>
+    <span style="font-family:var(--font-body);font-size:1rem;color:var(--gold);font-style:italic;opacity:.7;">Essay Competition</span>
+    <span style="color:var(--gold-dim);">◆</span>
+    <span style="font-family:var(--font-body);font-size:1rem;color:var(--gold);font-style:italic;opacity:.7;">Moot Court</span>
+    <span style="color:var(--gold-dim);">◆</span>
+    <span style="font-family:var(--font-body);font-size:1rem;color:var(--gold);font-style:italic;opacity:.7;">Poetry Slam</span>
+    <span style="color:var(--gold-dim);">◆</span>
+    <span style="font-family:var(--font-body);font-size:1rem;color:var(--gold);font-style:italic;opacity:.7;">Documentary Screening</span>
+    <span style="color:var(--gold-dim);">◆</span>
+    <!-- duplicated for seamless loop -->
+    <span style="font-family:var(--font-body);font-size:1rem;color:var(--gold);font-style:italic;opacity:.7;">Model United Nations</span>
+    <span style="color:var(--gold-dim);">◆</span>
+    <span style="font-family:var(--font-body);font-size:1rem;color:var(--gold);font-style:italic;opacity:.7;">Parliamentary Debate</span>
+    <span style="color:var(--gold-dim);">◆</span>
+    <span style="font-family:var(--font-body);font-size:1rem;color:var(--gold);font-style:italic;opacity:.7;">Literary Quiz</span>
+    <span style="color:var(--gold-dim);">◆</span>
+    <span style="font-family:var(--font-body);font-size:1rem;color:var(--gold);font-style:italic;opacity:.7;">Essay Competition</span>
+    <span style="color:var(--gold-dim);">◆</span>
+  </div>
+</div>
+<style>
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+</style>
+
+<!-- ── ABOUT STRIP ────────────────────────────────────────── -->
+<section class="section" style="padding:4rem 2rem;">
+  <div class="section-inner">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;">
+
+      <div class="glass-card" style="padding:2rem;text-align:center;" class="reveal">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">🏛️</div>
+        <h3 style="font-family:var(--font-display);font-size:1.2rem;color:var(--ivory);margin-bottom:.5rem;">Intellectual Rigour</h3>
+        <p style="font-size:.95rem;">Events designed to challenge your analytical and critical thinking capabilities.</p>
+      </div>
+
+      <div class="glass-card" style="padding:2rem;text-align:center;" class="reveal reveal-delay-1">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">✒️</div>
+        <h3 style="font-family:var(--font-display);font-size:1.2rem;color:var(--ivory);margin-bottom:.5rem;">Literary Excellence</h3>
+        <p style="font-size:.95rem;">From essay writing to poetry — a platform to celebrate the written and spoken word.</p>
+      </div>
+
+      <div class="glass-card" style="padding:2rem;text-align:center;" class="reveal reveal-delay-2">
+        <div style="font-size:2.5rem;margin-bottom:1rem;">🌐</div>
+        <h3 style="font-family:var(--font-display);font-size:1.2rem;color:var(--ivory);margin-bottom:.5rem;">Global Perspective</h3>
+        <p style="font-size:.95rem;">Engage with contemporary issues through Model UN, Moot Court, and more.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── EVENTS SECTION ─────────────────────────────────────── -->
+<section class="section" id="events">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Participate</span>
+      <h2 class="section-title">This Year's <em>Events</em></h2>
+      <p class="section-desc">Each event is crafted to bring out the best in humanities scholarship. Browse, explore, and sign up for the ones that ignite your passion.</p>
+      <div class="section-divider"></div>
+    </div>
+
+    <!-- Events grid — populated by app.js -->
+    <div id="events-grid" class="events-grid">
+      <!-- Loading skeleton -->
+      <div class="glass-card" style="padding:2rem;animation:pulse 1.5s ease infinite;">
+        <div style="width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,0.04);margin-bottom:1.25rem;"></div>
+        <div style="height:12px;width:40%;background:rgba(255,255,255,0.04);border-radius:6px;margin-bottom:.75rem;"></div>
+        <div style="height:20px;width:70%;background:rgba(255,255,255,0.05);border-radius:6px;margin-bottom:.75rem;"></div>
+        <div style="height:12px;width:90%;background:rgba(255,255,255,0.03);border-radius:6px;margin-bottom:.5rem;"></div>
+        <div style="height:12px;width:60%;background:rgba(255,255,255,0.03);border-radius:6px;"></div>
+      </div>
+      <div class="glass-card" style="padding:2rem;animation:pulse 1.5s ease infinite 0.2s;">
+        <div style="width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,0.04);margin-bottom:1.25rem;"></div>
+        <div style="height:12px;width:35%;background:rgba(255,255,255,0.04);border-radius:6px;margin-bottom:.75rem;"></div>
+        <div style="height:20px;width:65%;background:rgba(255,255,255,0.05);border-radius:6px;margin-bottom:.75rem;"></div>
+        <div style="height:12px;width:85%;background:rgba(255,255,255,0.03);border-radius:6px;margin-bottom:.5rem;"></div>
+        <div style="height:12px;width:55%;background:rgba(255,255,255,0.03);border-radius:6px;"></div>
+      </div>
+      <div class="glass-card" style="padding:2rem;animation:pulse 1.5s ease infinite 0.4s;">
+        <div style="width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,0.04);margin-bottom:1.25rem;"></div>
+        <div style="height:12px;width:45%;background:rgba(255,255,255,0.04);border-radius:6px;margin-bottom:.75rem;"></div>
+        <div style="height:20px;width:75%;background:rgba(255,255,255,0.05);border-radius:6px;margin-bottom:.75rem;"></div>
+        <div style="height:12px;width:80%;background:rgba(255,255,255,0.03);border-radius:6px;margin-bottom:.5rem;"></div>
+        <div style="height:12px;width:50%;background:rgba(255,255,255,0.03);border-radius:6px;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.5; } }
+</style>
+
+<!-- ── SCHEDULE SECTION ───────────────────────────────────── -->
+<section class="section" id="schedule" style="padding-top:0;">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">Programme</span>
+      <h2 class="section-title">Fest <em>Schedule</em></h2>
+      <p class="section-desc">A full day of intense intellectual activity. Mark your calendars.</p>
+      <div class="section-divider"></div>
+    </div>
+
+    <div style="max-width:700px;margin:0 auto;">
+      <div class="glass-card" style="padding:0;overflow:hidden;">
+        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid rgba(201,168,76,0.1);background:rgba(201,168,76,0.04);">
+          <span style="font-family:var(--font-display);color:var(--gold);font-size:1.1rem;font-weight:600;">
+            Day 1 — Inauguration & Preliminary Rounds
+          </span>
+        </div>
+        <div style="padding:0 1.5rem;">
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>09:00 AM</strong> — Inaugural Ceremony & Keynote Address</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>10:30 AM</strong> — Preliminary Rounds: Essay & Literary Quiz</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>12:00 PM</strong> — MUN Committee Sessions Begin</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>02:00 PM</strong> — Poetry Slam & Debate Heats</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>04:30 PM</strong> — Day 1 Wrap & Cultural Performance</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card" style="padding:0;overflow:hidden;margin-top:1rem;">
+        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid rgba(201,168,76,0.1);background:rgba(201,168,76,0.04);">
+          <span style="font-family:var(--font-display);color:var(--gold);font-size:1.1rem;font-weight:600;">
+            Day 2 — Finals & Prize Ceremony
+          </span>
+        </div>
+        <div style="padding:0 1.5rem;">
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>09:30 AM</strong> — Grand Final Debates & Moot Court</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>11:30 AM</strong> — MUN Closing Ceremony & Resolution Voting</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>01:30 PM</strong> — Documentary Screening & Open Critique</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>03:00 PM</strong> — Results Announcement & Valedictory Ceremony</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot"></div>
+            <div class="activity-text"><strong>04:00 PM</strong> — Prize Distribution & Closing Address</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="nav-logo" style="margin-bottom:.75rem;">
+          <img src="cys_logo.png" alt="CYS" style="height:36px;" onerror="this.style.display='none'">
+          <span class="nav-logo-text">Critically <span>Yours</span></span>
+        </div>
+        <p>The Annual Intraschool Humanities Festival of Delhi Public School Megacity, Kolkata.</p>
+      </div>
+      <div>
+        <div style="font-family:var(--font-ui);font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;opacity:.8;">Quick Links</div>
+        <div style="display:flex;flex-direction:column;gap:.35rem;">
+          <a href="#about"   style="color:var(--muted);font-family:var(--font-ui);font-size:.85rem;text-decoration:none;">About</a>
+          <a href="#events"  style="color:var(--muted);font-family:var(--font-ui);font-size:.85rem;text-decoration:none;">Events</a>
+          <a href="#schedule"style="color:var(--muted);font-family:var(--font-ui);font-size:.85rem;text-decoration:none;">Schedule</a>
+          <a href="dashboard.html" style="color:var(--muted);font-family:var(--font-ui);font-size:.85rem;text-decoration:none;">Portal</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--font-ui);font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;opacity:.8;">Contact</div>
+        <p style="font-size:.85rem;">Delhi Public School Megacity<br>Kolkata, West Bengal</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Critically Yours — DPS Megacity, Kolkata. All rights reserved.</span>
+      <span>Built with ❤️ by the CYS Tech Team</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── EVENT DETAIL MODAL ─────────────────────────────────── -->
+<div class="modal-overlay" id="event-modal" role="dialog" aria-modal="true" aria-labelledby="modal-event-title">
+  <div class="glass-card modal-box" style="position:relative;">
+    <button class="modal-close" onclick="closeEventModal()" aria-label="Close">✕</button>
+    <div style="margin-bottom:1rem;">
+      <span class="event-card-tag" id="modal-event-category"></span>
+    </div>
+    <h2 id="modal-event-title" style="font-family:var(--font-display);font-size:1.8rem;color:var(--ivory);margin-bottom:.75rem;"></h2>
+    <p id="modal-event-desc" style="font-family:var(--font-body);font-size:1.05rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.7;"></p>
+
+    <div style="display:flex;gap:2rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+      <div>
+        <div style="font-family:var(--font-ui);font-size:.68rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.25rem;opacity:.8;">Venue</div>
+        <div style="font-family:var(--font-ui);font-size:.9rem;color:var(--ivory);" id="modal-event-venue"></div>
+      </div>
+      <div>
+        <div style="font-family:var(--font-ui);font-size:.68rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.25rem;opacity:.8;">Time</div>
+        <div style="font-family:var(--font-ui);font-size:.9rem;color:var(--ivory);" id="modal-event-time"></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:1.75rem;">
+      <div style="font-family:var(--font-ui);font-size:.68rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;opacity:.8;">Rules &amp; Guidelines</div>
+      <ul id="modal-event-rules" style="padding-left:1.25rem;display:flex;flex-direction:column;gap:.5rem;">
+      </ul>
+    </div>
+
+    <button class="btn btn-primary" id="modal-register-btn" data-event-id="">Register for this Event</button>
+  </div>
+</div>
+
+<!-- ── REGISTRATION FORM MODAL ───────────────────────────── -->
+<div class="modal-overlay" id="reg-modal" role="dialog" aria-modal="true">
+  <div class="glass-card modal-box" style="position:relative;">
+    <button class="modal-close" id="reg-modal-close" aria-label="Close">✕</button>
+    <h2 style="font-family:var(--font-display);font-size:1.6rem;color:var(--ivory);margin-bottom:.4rem;">Register</h2>
+    <p style="font-family:var(--font-body);font-style:italic;color:var(--muted);margin-bottom:1.75rem;">Fill in your details to secure your spot.</p>
+
+    <form id="registration-form" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="reg-name">Full Name *</label>
+        <input class="form-input" id="reg-name" type="text" placeholder="As per school records" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reg-class">Class &amp; Section *</label>
+        <input class="form-input" id="reg-class" type="text" placeholder="e.g. XI-A" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reg-phone">Phone Number</label>
+        <input class="form-input" id="reg-phone" type="tel" placeholder="10-digit mobile number">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reg-email">Email</label>
+        <input class="form-input" id="reg-email" type="email" readonly style="opacity:.6;cursor:not-allowed;">
+        <p style="font-size:.72rem;color:var(--slate);margin-top:.3rem;font-family:var(--font-ui);">Auto-filled from your Google account.</p>
+      </div>
+      <button class="btn btn-primary" type="submit" id="reg-submit-btn" style="width:100%;justify-content:center;">
+        Confirm Registration
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ── TOAST CONTAINER ───────────────────────────────────── -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Scripts -->
+<script src="firebase-backend.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
