@@ -226,19 +226,28 @@ function getAllPermissions(){
   };
 }
 function getDefaultPermissions(role){
-  const base = {
-    viewEvents:true, viewRegistrations:false, viewParticipants:false,
-    selectParticipants:false, viewNotices:true, manageNotices:false,
-    viewTasks:true, manageTasks:false, viewMessages:false, sendMessages:false,
-    viewAnalytics:false, manageUsers:false, manageRoles:false, manageSubRoles:false,
-    viewActivityLog:false, systemSettings:false, assignRoles:false, viewAllEvents:false,
-    manageEvents:false, manageRegistrations:false
+  return {
+    viewEvents: true,
+    manageEvents: (role === "admin"),
+    viewAllEvents: (role === "admin" || role === "teacher" || role === "core_team"),
+    viewRegistrations: (role === "admin" || role === "teacher" || role === "core_team" || role === "event_head"),
+    manageRegistrations: (role === "admin" || role === "teacher"),
+    selectParticipants: (role === "admin" || role === "teacher"),
+    viewParticipants: (role === "admin" || role === "teacher" || role === "event_head"),
+    viewNotices: true,
+    manageNotices: (role === "admin" || role === "teacher" || role === "event_head"),
+    viewTasks: true,
+    manageTasks: (role === "admin" || role === "teacher" || role === "event_head"),
+    viewMessages: (role !== "student"),
+    sendMessages: (role !== "student"),
+    viewAnalytics: (role === "admin" || role === "teacher" || role === "core_team"),
+    viewActivityLog: (role === "admin" || role === "teacher"),
+    manageUsers: (role === "admin"),
+    manageRoles: (role === "admin"),
+    manageSubRoles: (role === "admin"),
+    assignRoles: (role === "admin" || role === "teacher"),
+    systemSettings: (role === "admin")
   };
-  if(role==="student") return {...base, viewEvents:true};
-  if(role==="event_head") return {...base, viewRegistrations:true, viewParticipants:true, manageNotices:true, manageTasks:true, sendMessages:true, viewMessages:true};
-  if(role==="core_team") return {...base, viewRegistrations:true, viewAnalytics:true, viewAllEvents:true, viewMessages:true};
-  if(role==="teacher") return {...base, viewRegistrations:true, viewParticipants:true, selectParticipants:true, manageNotices:true, viewAnalytics:true, viewAllEvents:true, manageRegistrations:true, viewMessages:true, sendMessages:true, viewActivityLog:true, assignRoles:true};
-  return base;
 }
 
 window.signInGoogle = async ()=>{
