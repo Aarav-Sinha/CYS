@@ -1,443 +1,323 @@
 // ============================================================
-//  firebase-backend.js — Critically Yours Portal
-//  All Firebase Auth, Firestore, and Storage interactions
-//  Replace the firebaseConfig object with your project values.
+//  firebase-backend.js — Critically Yours
+//
+//  AUTH: Everyone signs in with Google.
+//
+//  How accounts work:
+//  ┌──────────────────────────────────────────────────────────┐
+//  │  Admin pre-registers staff by Gmail + role via the       │
+//  │  admin portal. When that person first signs in with      │
+//  │  Google, their role is applied from `pre_registered`     │
+//  │  and the record is consumed. Anyone NOT pre-registered   │
+//  │  gets role = "student" automatically on first sign-in.   │
+//  │                                                          │
+//  │  The hardcoded admin email (aaravhfs@gmail.com) is       │
+//  │  always guaranteed admin role on first sign-in.          │
+//  └──────────────────────────────────────────────────────────┘
+//
+//  !! Replace firebaseConfig values before deploying !!
 // ============================================================
 
-// ── IMPORTANT: Replace with YOUR Firebase project credentials ──
 const firebaseConfig = {
-  apiKey: "AIzaSyCw-1ZShAXu8c5ZqnFXvS5S-YRqHReMydk",
-  authDomain: "critically-yours.firebaseapp.com",
-  projectId: "critically-yours",
-  storageBucket: "critically-yours.firebasestorage.app",
-  messagingSenderId: "861621080895",
-  appId: "1:861621080895:web:14f06cbf7d98402dc8398a",
-  measurementId: "G-RWFZRJ0673"
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_PROJECT.firebaseapp.com",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId:             "YOUR_APP_ID"
 };
 
-// ── SDK Imports (via CDN compat shim — see index.html script tags) ──
-// These are accessed via the global firebase object loaded from the CDN.
+// Superadmin email — always gets admin role on first sign-in
+const SUPERADMIN_EMAIL = "aaravhfs@gmail.com";
 
 let db, auth, storage;
 
-/**
- * initFirebase()
- * Initialises Firebase app + services. Call once on page load.
- */
+// ── Init ──────────────────────────────────────────────────
 function initFirebase() {
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   db      = firebase.firestore();
   auth    = firebase.auth();
   storage = firebase.storage();
 
-  // Enable offline persistence for Firestore
-  db.enablePersistence({ synchronizeTabs: true })
-    .catch(err => {
-      if (err.code === 'failed-precondition') {
-        console.warn('Firestore persistence: multiple tabs open.');
-      } else if (err.code === 'unimplemented') {
-        console.warn('Firestore persistence: browser unsupported.');
-      }
-    });
-
-  console.log('%cFirebase initialised ✓', 'color:#c9a84c;font-weight:bold;');
+  db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+    if (err.code !== 'failed-precondition' && err.code !== 'unimplemented')
+      console.error('Persistence error:', err);
+  });
+  console.log('%c✦ CYS Firebase ready', 'color:#c8a45a;font-weight:700;');
 }
 
-// ============================================================
-//  AUTH — Google Sign-In (for students)
-// ============================================================
-
-/**
- * signInWithGoogle()
- * Opens Google OAuth popup. Returns the signed-in user or null.
- */
+// ── Google Sign-In ─────────────────────────────────────────
 async function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
-  try {
-    const result = await auth.signInWithPopup(provider);
-    const user   = result.user;
-    // Ensure a user doc exists in Firestore
-    await ensureUserDoc(user, 'student');
-    return user;
-  } catch (err) {
-    console.error('Google Sign-In error:', err);
-    throw err;
+  const result = await auth.signInWithPopup(provider);
+  const user   = result.user;
+  const email  = user.email.toLowerCase();
+
+  const userRef  = db.collection('users').doc(user.uid);
+  const userSnap = await userRef.get();
+
+  // Returning user — nothing to change
+  if (userSnap.exists) return user;
+
+  // First-time sign-in: determine role
+  let role          = 'student';
+  let assignedEvent = null;
+
+  if (email === SUPERADMIN_EMAIL) {
+    // Hardcoded superadmin
+    role = 'admin';
+  } else {
+    // Check pre-registration queue
+    const preSnap = await db.collection('pre_registered')
+      .where('email', '==', email)
+      .limit(1)
+      .get();
+
+    if (!preSnap.empty) {
+      const pre   = preSnap.docs[0].data();
+      role          = pre.role;
+      assignedEvent = pre.assignedEvent || null;
+      // Consume the record
+      await preSnap.docs[0].ref.delete();
+    }
   }
+
+  await userRef.set({
+    uid:           user.uid,
+    name:          user.displayName || '',
+    email,
+    photoURL:      user.photoURL || '',
+    role,
+    assignedEvent,
+    createdAt:     firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  return user;
 }
 
-/**
- * signInWithEmail(email, password)
- * For internal staff (Event Heads, Teachers, Admin).
- */
-async function signInWithEmail(email, password) {
-  try {
-    const cred = await auth.signInWithEmailAndPassword(email, password);
-    return cred.user;
-  } catch (err) {
-    console.error('Email Sign-In error:', err);
-    throw err;
-  }
-}
-
-/**
- * signOut()
- */
 async function signOut() {
   await auth.signOut();
   window.location.href = 'index.html';
 }
 
-/**
- * onAuthStateChanged(callback)
- * Wraps the Firebase listener for convenience.
- */
-function onAuthChanged(callback) {
-  return auth.onAuthStateChanged(callback);
-}
+function onAuthChanged(cb) { return auth.onAuthStateChanged(cb); }
+function getCurrentUser()   { return auth.currentUser; }
 
-/**
- * getCurrentUser()
- */
-function getCurrentUser() {
-  return auth.currentUser;
-}
-
-// ============================================================
-//  USER MANAGEMENT
-// ============================================================
-
-/**
- * ensureUserDoc(firebaseUser, defaultRole)
- * Creates a Firestore user doc on first sign-in; skips if exists.
- */
-async function ensureUserDoc(firebaseUser, defaultRole = 'student') {
-  const ref = db.collection('users').doc(firebaseUser.uid);
-  const snap = await ref.get();
-  if (!snap.exists) {
-    await ref.set({
-      uid:           firebaseUser.uid,
-      name:          firebaseUser.displayName || '',
-      email:         firebaseUser.email || '',
-      role:          defaultRole,
-      assignedEvent: null,
-      createdAt:     firebase.firestore.FieldValue.serverTimestamp()
-    });
-  }
-}
-
-/**
- * getUserDoc(uid) → user data object | null
- */
+// ── User docs ─────────────────────────────────────────────
 async function getUserDoc(uid) {
   const snap = await db.collection('users').doc(uid).get();
   return snap.exists ? { id: snap.id, ...snap.data() } : null;
 }
 
-/**
- * updateUserRole(uid, role, assignedEvent?)
- * Admin / Teacher use.
- */
 async function updateUserRole(uid, role, assignedEvent = null) {
   await db.collection('users').doc(uid).update({ role, assignedEvent });
 }
 
-/**
- * getAllUsers() → array of user objects
- */
 async function getAllUsers() {
-  const snap = await db.collection('users').get();
+  const snap = await db.collection('users').orderBy('name').get();
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-// ============================================================
-//  EVENTS
-// ============================================================
-
+// ── Pre-registration ───────────────────────────────────────
 /**
- * getEvents() → array of event objects
+ * preRegisterUser — Admin adds a Gmail + role before person signs in.
+ * Throws: 'ALREADY_SIGNED_IN' | 'ALREADY_PRE_REGISTERED'
  */
+async function preRegisterUser(adminUid, email, role, assignedEvent = null, note = '') {
+  const norm = email.trim().toLowerCase();
+  if (norm === SUPERADMIN_EMAIL) throw new Error('SUPERADMIN');
+
+  const liveSnap = await db.collection('users').where('email', '==', norm).limit(1).get();
+  if (!liveSnap.empty) throw new Error('ALREADY_SIGNED_IN');
+
+  const qSnap = await db.collection('pre_registered').where('email', '==', norm).limit(1).get();
+  if (!qSnap.empty) throw new Error('ALREADY_PRE_REGISTERED');
+
+  await db.collection('pre_registered').add({
+    email: norm, role,
+    assignedEvent: assignedEvent || null,
+    note: note.trim() || '',
+    addedBy: adminUid,
+    addedAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
+
+async function getAllPreRegistered() {
+  const snap = await db.collection('pre_registered').orderBy('addedAt', 'desc').get();
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+async function deletePreRegistration(docId) {
+  await db.collection('pre_registered').doc(docId).delete();
+}
+
+function listenToPreRegistered(cb) {
+  return db.collection('pre_registered').orderBy('addedAt', 'desc')
+    .onSnapshot(snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+}
+
+// ── Events ────────────────────────────────────────────────
 async function getEvents() {
-  const snap = await db.collection('events').orderBy('title').get();
+  const snap = await db.collection('events').orderBy('createdAt', 'desc').get();
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-/**
- * getEvent(eventId) → event object | null
- */
-async function getEvent(eventId) {
-  const snap = await db.collection('events').doc(eventId).get();
+async function getEvent(id) {
+  const snap = await db.collection('events').doc(id).get();
   return snap.exists ? { id: snap.id, ...snap.data() } : null;
 }
 
-/**
- * createEvent(data) → new event doc id
- */
 async function createEvent(data) {
   const ref = await db.collection('events').add({
-    ...data,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
   return ref.id;
 }
 
-/**
- * updateEvent(eventId, data)
- */
-async function updateEvent(eventId, data) {
-  await db.collection('events').doc(eventId).update(data);
+async function updateEvent(id, data) {
+  await db.collection('events').doc(id).update(data);
 }
 
-/**
- * deleteEvent(eventId)
- */
-async function deleteEvent(eventId) {
-  await db.collection('events').doc(eventId).delete();
+async function deleteEvent(id) {
+  await db.collection('events').doc(id).delete();
 }
 
-/**
- * listenToEvents(callback) → unsubscribe fn
- * Real-time listener for the events collection.
- */
-function listenToEvents(callback) {
-  return db.collection('events').orderBy('title').onSnapshot(snap => {
-    const events = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    callback(events);
-  });
+function listenToEvents(cb) {
+  return db.collection('events').orderBy('createdAt', 'desc')
+    .onSnapshot(snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
 }
 
-// ============================================================
-//  REGISTRATIONS
-// ============================================================
-
-/**
- * registerForEvent(studentUid, eventId, formData)
- * Prevents duplicate registrations using compound query.
- */
+// ── Registrations ─────────────────────────────────────────
 async function registerForEvent(studentUid, eventId, formData) {
-  // Check for existing registration
-  const existing = await db.collection('registrations')
+  const dup = await db.collection('registrations')
     .where('studentUid', '==', studentUid)
-    .where('eventId', '==', eventId)
-    .get();
-
-  if (!existing.empty) {
-    throw new Error('ALREADY_REGISTERED');
-  }
+    .where('eventId', '==', eventId).get();
+  if (!dup.empty) throw new Error('ALREADY_REGISTERED');
 
   const ref = await db.collection('registrations').add({
-    eventId,
-    studentUid,
-    studentName:     formData.studentName,
-    classSection:    formData.classSection,
-    phone:           formData.phone || '',
-    email:           formData.email || '',
+    eventId, studentUid,
+    studentName:  formData.studentName,
+    classSection: formData.classSection,
+    phone:        formData.phone  || '',
+    email:        formData.email  || '',
     selectionStatus: 'pending',
-    registeredAt:    firebase.firestore.FieldValue.serverTimestamp()
+    registeredAt: firebase.firestore.FieldValue.serverTimestamp()
   });
   return ref.id;
 }
 
-/**
- * getRegistrationsForEvent(eventId) → array
- */
 async function getRegistrationsForEvent(eventId) {
   const snap = await db.collection('registrations')
-    .where('eventId', '==', eventId)
-    .orderBy('registeredAt', 'desc')
-    .get();
+    .where('eventId', '==', eventId).orderBy('registeredAt', 'desc').get();
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-/**
- * getAllRegistrations() → array (Teacher / Admin)
- */
 async function getAllRegistrations() {
   const snap = await db.collection('registrations').orderBy('registeredAt', 'desc').get();
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-/**
- * getMyRegistrations(studentUid) → array
- */
-async function getMyRegistrations(studentUid) {
-  const snap = await db.collection('registrations')
-    .where('studentUid', '==', studentUid)
-    .get();
+async function getMyRegistrations(uid) {
+  const snap = await db.collection('registrations').where('studentUid', '==', uid).get();
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-/**
- * updateSelectionStatus(regId, status)
- * status: "pending" | "selected" | "waitlisted"
- */
 async function updateSelectionStatus(regId, status) {
   await db.collection('registrations').doc(regId).update({ selectionStatus: status });
 }
 
-/**
- * listenToRegistrationsForEvent(eventId, callback) → unsubscribe fn
- */
-function listenToRegistrationsForEvent(eventId, callback) {
-  return db.collection('registrations')
-    .where('eventId', '==', eventId)
+function listenToRegistrationsForEvent(eventId, cb) {
+  return db.collection('registrations').where('eventId', '==', eventId)
     .orderBy('registeredAt', 'desc')
-    .onSnapshot(snap => {
-      const regs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      callback(regs);
-    });
+    .onSnapshot(snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
 }
 
-/**
- * listenToAllRegistrations(callback) → unsubscribe fn
- */
-function listenToAllRegistrations(callback) {
-  return db.collection('registrations')
-    .orderBy('registeredAt', 'desc')
-    .onSnapshot(snap => {
-      const regs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      callback(regs);
-    });
+function listenToAllRegistrations(cb) {
+  return db.collection('registrations').orderBy('registeredAt', 'desc')
+    .onSnapshot(snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
 }
 
-// ============================================================
-//  NOTICES & TASKS
-// ============================================================
-
-/**
- * createNoticeOrTask(authorUid, eventId, data)
- * data: { type: "notice"|"task", title, content, status: "draft"|"published" }
- */
+// ── Notices & Tasks ────────────────────────────────────────
 async function createNoticeOrTask(authorUid, eventId, data) {
   const ref = await db.collection('notices_tasks').add({
-    ...data,
-    authorUid,
-    eventId,
+    ...data, authorUid, eventId,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
   return ref.id;
 }
 
-/**
- * updateNoticeOrTask(docId, updates)
- */
 async function updateNoticeOrTask(docId, updates) {
   await db.collection('notices_tasks').doc(docId).update({
-    ...updates,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    ...updates, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   });
 }
 
-/**
- * deleteNoticeOrTask(docId)
- */
 async function deleteNoticeOrTask(docId) {
   await db.collection('notices_tasks').doc(docId).delete();
 }
 
-/**
- * publishDraft(docId) — Shortcut to flip status to published.
- */
 async function publishDraft(docId) {
   await updateNoticeOrTask(docId, { status: 'published' });
 }
 
-/**
- * getNoticesForEvent(eventId, status?) → array
- * Pass status = "published" or "draft" to filter; omit for all.
- */
-async function getNoticesForEvent(eventId, status = null) {
-  let query = db.collection('notices_tasks').where('eventId', '==', eventId);
-  if (status) query = query.where('status', '==', status);
-  const snap = await query.orderBy('timestamp', 'desc').get();
+function listenToNoticesForEvent(eventId, cb) {
+  return db.collection('notices_tasks').where('eventId', '==', eventId)
+    .orderBy('timestamp', 'desc')
+    .onSnapshot(snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+}
+
+// ── Schedule items ─────────────────────────────────────────
+async function createScheduleItem(adminUid, data) {
+  const ref = await db.collection('schedule').add({
+    ...data, addedBy: adminUid,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  return ref.id;
+}
+
+async function deleteScheduleItem(id) {
+  await db.collection('schedule').doc(id).delete();
+}
+
+function listenToSchedule(cb) {
+  return db.collection('schedule').orderBy('day').orderBy('time')
+    .onSnapshot(snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+}
+
+async function getSchedule() {
+  const snap = await db.collection('schedule').orderBy('day').orderBy('time').get();
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
-/**
- * listenToNoticesForEvent(eventId, callback) → unsubscribe fn
- */
-function listenToNoticesForEvent(eventId, callback) {
-  return db.collection('notices_tasks')
-    .where('eventId', '==', eventId)
-    .orderBy('timestamp', 'desc')
-    .onSnapshot(snap => {
-      const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      callback(items);
-    });
-}
-
-// ============================================================
-//  MESSAGES
-// ============================================================
-
-/**
- * sendMessage(senderUid, receiverUid, eventId, messageBody)
- */
+// ── Messages ──────────────────────────────────────────────
 async function sendMessage(senderUid, receiverUid, eventId, messageBody) {
   const ref = await db.collection('messages').add({
-    senderUid,
-    receiverUid,
-    eventId,
-    messageBody,
+    senderUid, receiverUid, eventId, messageBody,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
   return ref.id;
 }
 
-/**
- * listenToConversation(uidA, uidB, callback) → unsubscribe fn
- * Listens to all messages between two users.
- */
-function listenToConversation(uidA, uidB, callback) {
-  // Firestore doesn't support OR queries natively pre-v10; use two listeners merged.
-  const results = { sent: [], received: [] };
-  const merge = () => {
-    const all = [...results.sent, ...results.received]
-      .sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
-    callback(all);
-  };
+function listenToConversation(uidA, uidB, cb) {
+  const r = { sent: [], recv: [] };
+  const merge = () => cb([...r.sent, ...r.recv]
+    .sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0)));
 
-  const unsub1 = db.collection('messages')
-    .where('senderUid', '==', uidA)
-    .where('receiverUid', '==', uidB)
+  const u1 = db.collection('messages')
+    .where('senderUid', '==', uidA).where('receiverUid', '==', uidB)
     .orderBy('timestamp')
-    .onSnapshot(snap => {
-      results.sent = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      merge();
-    });
+    .onSnapshot(s => { r.sent = s.docs.map(d => ({ id: d.id, ...d.data() })); merge(); });
 
-  const unsub2 = db.collection('messages')
-    .where('senderUid', '==', uidB)
-    .where('receiverUid', '==', uidA)
+  const u2 = db.collection('messages')
+    .where('senderUid', '==', uidB).where('receiverUid', '==', uidA)
     .orderBy('timestamp')
-    .onSnapshot(snap => {
-      results.received = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      merge();
-    });
+    .onSnapshot(s => { r.recv = s.docs.map(d => ({ id: d.id, ...d.data() })); merge(); });
 
-  return () => { unsub1(); unsub2(); };
+  return () => { u1(); u2(); };
 }
 
-/**
- * getMessagesForEvent(eventId) → array (Teacher overview)
- */
-async function getMessagesForEvent(eventId) {
-  const snap = await db.collection('messages')
-    .where('eventId', '==', eventId)
-    .orderBy('timestamp', 'desc')
-    .get();
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-}
-
-// ============================================================
-//  ANALYTICS HELPERS
-// ============================================================
-
-/**
- * getRegistrationCountPerEvent() → { eventId: count, ... }
- */
+// ── Analytics ─────────────────────────────────────────────
 async function getRegistrationCountPerEvent() {
   const snap = await db.collection('registrations').get();
   const counts = {};
@@ -448,63 +328,22 @@ async function getRegistrationCountPerEvent() {
   return counts;
 }
 
-/**
- * listenToActivityLog(callback, limit?) → unsubscribe fn
- * Watches notices_tasks for recent activity feed.
- */
-function listenToActivityLog(callback, limit = 20) {
-  return db.collection('notices_tasks')
-    .orderBy('timestamp', 'desc')
-    .limit(limit)
-    .onSnapshot(snap => {
-      const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      callback(items);
-    });
+function listenToActivityLog(cb, limit = 25) {
+  return db.collection('notices_tasks').orderBy('timestamp', 'desc').limit(limit)
+    .onSnapshot(snap => cb(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
 }
 
-// ============================================================
-//  EXPORTS (module pattern via global object)
-// ============================================================
+// ── Exports ────────────────────────────────────────────────
 window.CYFirebase = {
-  initFirebase,
-  // Auth
-  signInWithGoogle,
-  signInWithEmail,
-  signOut,
-  onAuthChanged,
-  getCurrentUser,
-  // Users
-  ensureUserDoc,
-  getUserDoc,
-  updateUserRole,
-  getAllUsers,
-  // Events
-  getEvents,
-  getEvent,
-  createEvent,
-  updateEvent,
-  deleteEvent,
-  listenToEvents,
-  // Registrations
-  registerForEvent,
-  getRegistrationsForEvent,
-  getAllRegistrations,
-  getMyRegistrations,
-  updateSelectionStatus,
-  listenToRegistrationsForEvent,
-  listenToAllRegistrations,
-  // Notices & Tasks
-  createNoticeOrTask,
-  updateNoticeOrTask,
-  deleteNoticeOrTask,
-  publishDraft,
-  getNoticesForEvent,
-  listenToNoticesForEvent,
-  // Messages
-  sendMessage,
-  listenToConversation,
-  getMessagesForEvent,
-  // Analytics
-  getRegistrationCountPerEvent,
-  listenToActivityLog
+  initFirebase, signInWithGoogle, signOut, onAuthChanged, getCurrentUser,
+  getUserDoc, updateUserRole, getAllUsers,
+  preRegisterUser, getAllPreRegistered, deletePreRegistration, listenToPreRegistered,
+  getEvents, getEvent, createEvent, updateEvent, deleteEvent, listenToEvents,
+  registerForEvent, getRegistrationsForEvent, getAllRegistrations, getMyRegistrations,
+  updateSelectionStatus, listenToRegistrationsForEvent, listenToAllRegistrations,
+  createNoticeOrTask, updateNoticeOrTask, deleteNoticeOrTask, publishDraft, listenToNoticesForEvent,
+  createScheduleItem, deleteScheduleItem, listenToSchedule, getSchedule,
+  sendMessage, listenToConversation,
+  getRegistrationCountPerEvent, listenToActivityLog,
+  SUPERADMIN_EMAIL
 };
