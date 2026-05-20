@@ -1,439 +1,1076 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Critically Yours — DPS Megacity, Kolkata</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Critically Yours — DPS Megacity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#090d07;--bg2:#0f160b;--bg3:#141e0e;
-  --gold:#c9a84c;--gold2:#e8c97a;--gold3:#a07830;
-  --green:#4a7c2f;--green2:#6aab3a;--green3:#2d5016;
-  --surface:#111a0d;--surface2:#182315;
-  --border:rgba(106,171,58,0.22);--border2:rgba(201,168,76,0.2);
-  --text:#e0ead4;--text2:#a8be90;--text3:#6a8a54;
-  --crimson:#7a1a1a;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',serif;overflow-x:hidden;min-height:100vh}
-body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(74,124,47,0.08),transparent 70%);pointer-events:none}
+  :root {
+    --ink: #0a0a0a;
+    --parchment: #f5f0e8;
+    --cream: #faf7f2;
+    --gold: #b8922a;
+    --gold-light: #d4ac4e;
+    --gold-pale: #f0e4c0;
+    --red-accent: #8b1a1a;
+    --muted: #6b6355;
+    --border: rgba(184,146,42,0.25);
+    --border-strong: rgba(184,146,42,0.5);
+    --shadow: rgba(10,10,10,0.08);
+  }
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0.9rem 2.5rem;transition:all 0.4s}
-nav.scrolled{background:rgba(9,13,7,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
-.nav-logo{display:flex;align-items:center;gap:0.8rem;text-decoration:none}
-.nav-logo img{height:42px;width:auto;object-fit:contain;border-radius:50%;border:1px solid var(--border2)}
-.nav-logo-text{line-height:1.1}
-.nav-logo-name{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:var(--gold);letter-spacing:0.04em;font-style:italic}
-.nav-logo-school{font-family:'Monotype Corsiva',cursive;font-size:0.72rem;color:var(--text3);display:block;margin-top:2px}
-.nav-links{display:flex;gap:2rem;align-items:center}
-.nav-links a{text-decoration:none;color:var(--text2);font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.3s;position:relative}
-.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;right:0;height:1px;background:var(--green2);transform:scaleX(0);transform-origin:left;transition:transform 0.3s}
-.nav-links a:hover{color:var(--green2)}
-.nav-links a:hover::after{transform:scaleX(1)}
-.nav-btn{background:var(--green3);border:1px solid var(--green2);color:var(--text) !important;padding:0.5rem 1.4rem;border-radius:2px;transition:background 0.3s !important}
-.nav-btn:hover{background:var(--green2) !important;color:var(--bg) !important}
-.nav-btn::after{display:none !important}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
-.hamburger span{width:22px;height:2px;background:var(--text2);border-radius:2px;transition:all 0.3s}
-.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(9,13,7,0.98);z-index:300;flex-direction:column;align-items:center;justify-content:center;gap:2rem}
-.mobile-menu.open{display:flex}
-.mobile-menu a{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;font-style:italic;color:var(--text);text-decoration:none;transition:color 0.3s}
-.mobile-menu a:hover{color:var(--green2)}
-.mobile-close{position:absolute;top:1.5rem;right:2rem;font-size:2rem;color:var(--text3);cursor:pointer;background:none;border:none}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* HERO */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:7rem 2rem 5rem;text-align:center;overflow:hidden}
-.hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(45,80,22,0.2),transparent 70%),radial-gradient(ellipse 40% 30% at 80% 80%,rgba(201,168,76,0.06),transparent),linear-gradient(180deg,#090d07 0%,#0d1409 60%,#090d07 100%)}
-.hero-grid-lines{position:absolute;inset:0;z-index:0;pointer-events:none}
-.hero-eyebrow{position:relative;z-index:2;font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--green2);margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.9s 0.2s forwards;display:flex;align-items:center;justify-content:center;gap:1rem}
-.hero-eyebrow::before,.hero-eyebrow::after{content:'';display:inline-block;width:32px;height:1px;background:var(--green2);opacity:0.5}
-.hero-school{position:relative;z-index:2;font-family:'Monotype Corsiva',cursive;font-size:clamp(0.85rem,1.8vw,1.1rem);color:var(--text3);margin-bottom:1.8rem;opacity:0;animation:fadeUp 0.9s 0.35s forwards;letter-spacing:0.06em}
-.hero-title{position:relative;z-index:2;font-family:'Playfair Display',serif;font-size:clamp(3.8rem,11vw,9.5rem);font-weight:900;line-height:0.9;color:var(--text);opacity:0;animation:fadeUp 0.9s 0.5s forwards}
-.hero-title em{font-style:italic;color:var(--gold);display:block;font-size:0.78em}
-.hero-subtitle{position:relative;z-index:2;font-size:clamp(1rem,2.5vw,1.35rem);font-weight:300;color:var(--text3);max-width:520px;margin:2rem auto 0;line-height:1.9;font-style:italic;opacity:0;animation:fadeUp 0.9s 0.7s forwards}
-.hero-actions{position:relative;z-index:2;display:flex;gap:1rem;margin-top:3rem;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp 0.9s 0.9s forwards}
-.btn-gold{background:var(--gold);color:var(--bg);padding:0.9rem 2.5rem;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;text-decoration:none;display:inline-block;transition:all 0.3s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));box-shadow:0 4px 20px rgba(201,168,76,0.2)}
-.btn-gold:hover{background:var(--gold2);box-shadow:0 6px 30px rgba(201,168,76,0.35);transform:translateY(-2px)}
-.btn-outline{background:transparent;color:var(--text2);padding:0.9rem 2.5rem;border:1px solid var(--border);cursor:pointer;font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;display:inline-block;transition:all 0.3s}
-.btn-outline:hover{border-color:var(--green2);color:var(--green2);transform:translateY(-2px)}
-.hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:0.4rem;opacity:0;animation:fadeIn 1s 1.4s forwards}
-.hero-scroll span{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--text3)}
-.scroll-bar{width:1px;height:36px;background:linear-gradient(to bottom,var(--green2),transparent);animation:scrollPulse 2s ease-in-out infinite}
+  html { scroll-behavior: smooth; }
 
-/* MARQUEE */
-.marquee-band{background:linear-gradient(135deg,var(--green3),#1e3a10);padding:0.7rem 0;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;z-index:2}
-.marquee-inner{display:flex;width:max-content;animation:marquee 35s linear infinite}
-.marquee-item{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(224,234,212,0.7);padding:0 2rem;white-space:nowrap}
-.marquee-sep{color:var(--gold);opacity:0.6;margin-right:0.5rem}
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
 
-/* SECTIONS */
-.section{padding:6rem 2rem;position:relative;z-index:1}
-.section-inner{max-width:1100px;margin:0 auto}
-.section-label{font-family:'DM Mono',monospace;font-size:0.66rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--green2);margin-bottom:1rem;display:flex;align-items:center;gap:0.7rem}
-.section-label::before{content:'';display:inline-block;width:20px;height:1px;background:var(--green2)}
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
 
-/* ABOUT */
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;margin-top:2rem}
-.about-heading{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:700;line-height:1.1;margin-bottom:1.5rem}
-.about-heading em{font-style:italic;color:var(--gold)}
-.about-text{font-size:1.05rem;line-height:1.9;color:var(--text2);margin-bottom:1.2rem}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem}
-.stat-card{border:1px solid var(--border);padding:1.2rem;background:var(--surface);text-align:center}
-.stat-num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--green2);line-height:1}
-.stat-label{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-top:0.3rem}
-.about-card{background:var(--surface);border:1px solid var(--border);padding:2.5rem;display:flex;flex-direction:column;gap:1.5rem;position:relative;overflow:hidden}
-.about-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--green3),var(--gold),var(--green3))}
-.about-card-quote{font-family:'Playfair Display',serif;font-size:1.15rem;font-style:italic;color:var(--text);line-height:1.8}
-.about-card-author{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3)}
-.school-badge{border:1px solid var(--border2);padding:1rem;text-align:center}
-.school-badge-name{font-family:'Monotype Corsiva',cursive;font-size:1.1rem;color:var(--gold);line-height:1.3}
-.school-badge-sub{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text3);margin-top:0.3rem}
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--parchment); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
 
-/* EVENTS */
-.events-header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2.5rem}
-.events-heading{font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:700}
-.events-heading em{font-style:italic;color:var(--gold)}
-.events-note{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;color:var(--text3);text-align:right;max-width:200px}
-.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
-.event-card{background:var(--bg2);padding:1.8rem 1.5rem;position:relative;overflow:hidden;transition:background 0.35s;cursor:default}
-.event-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--green2),transparent);transform:scaleX(0);transition:transform 0.4s}
-.event-card:hover{background:var(--surface)}
-.event-card:hover::after{transform:scaleX(1)}
-.event-num{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--gold);letter-spacing:0.2em;margin-bottom:0.8rem;opacity:0.7}
-.event-name{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--text);margin-bottom:0.6rem;line-height:1.2}
-.event-desc{font-size:0.9rem;color:var(--text3);line-height:1.7;margin-bottom:1rem}
-.event-tag{display:inline-block;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--green2);border:1px solid var(--border);padding:0.2rem 0.6rem}
-.events-empty{grid-column:1/-1;padding:3rem;text-align:center;font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3)}
+  /* ── LOADER ── */
+  #loader {
+    position: fixed; inset: 0; background: var(--ink); z-index: 10000;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #loader.hidden { opacity: 0; visibility: hidden; }
+  #loader .l-title {
+    font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 4rem);
+    color: var(--gold-pale); letter-spacing: 0.15em; font-style: italic;
+    animation: fadeUp 1s ease forwards;
+  }
+  #loader .l-sub {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.3em;
+    color: var(--muted); margin-top: 0.5rem; text-transform: uppercase;
+    animation: fadeUp 1s 0.3s ease forwards; opacity: 0;
+  }
+  #loader .l-line {
+    width: 0; height: 1px; background: var(--gold); margin-top: 2rem;
+    animation: expandLine 1.2s 0.5s ease forwards;
+  }
+  @keyframes expandLine { to { width: 200px; } }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px);} to { opacity:1; transform:translateY(0);} }
 
-/* TIMELINE */
-.timeline-section{background:var(--bg2)}
-.timeline-wrap{max-width:640px;margin:2rem auto 0}
-.timeline-item{display:flex;gap:1.8rem;margin-bottom:2.5rem;position:relative;opacity:0;transform:translateY(20px);transition:all 0.7s}
-.timeline-item.visible{opacity:1;transform:translateY(0)}
-.timeline-item::before{content:'';position:absolute;left:1.2rem;top:2.2rem;bottom:-2rem;width:1px;background:var(--border)}
-.timeline-item:last-child::before{display:none}
-.t-dot{width:2.4rem;height:2.4rem;min-width:2.4rem;border-radius:50%;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1}
-.t-dot-inner{width:7px;height:7px;border-radius:50%;background:var(--green2)}
-.t-date{font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.3rem}
-.t-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:0.3rem}
-.t-desc{font-size:0.88rem;color:var(--text3);line-height:1.7}
-.timeline-empty{text-align:center;font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);padding:2rem}
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 1.2rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: all 0.4s ease;
+  }
+  nav.scrolled {
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 4rem;
+    box-shadow: 0 4px 30px var(--shadow);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif; font-size: 1.4rem; font-style: italic;
+    color: var(--ink); text-decoration: none; letter-spacing: 0.05em;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--muted); text-decoration: none;
+    transition: color 0.3s; position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -3px; left: 0; width: 0; height: 1px;
+    background: var(--gold); transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { width: 100%; }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
+  .hamburger span { display: block; width: 24px; height: 1.5px; background: var(--ink); transition: all 0.3s; }
 
-/* ANNOUNCEMENTS */
-.announce-list{display:flex;flex-direction:column;gap:1rem;margin-top:1.5rem}
-.announce-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green2);padding:1.2rem 1.5rem;transition:border-left-color 0.3s}
-.announce-card.urgent{border-left-color:var(--gold)}
-.announce-meta{display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;flex-wrap:wrap}
-.announce-tag{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:2px}
-.announce-tag.general{background:rgba(74,124,47,0.2);color:var(--green2);border:1px solid var(--border)}
-.announce-tag.urgent{background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid var(--border2)}
-.announce-date{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text3)}
-.announce-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:0.3rem}
-.announce-body{font-size:0.9rem;color:var(--text2);line-height:1.7}
-.announce-author{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text3);margin-top:0.5rem}
-.announce-empty{text-align:center;font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);padding:2rem}
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    background: var(--ink);
+    padding: 2rem;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(184,146,42,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(139,26,26,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 20% 20%, rgba(184,146,42,0.05) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(184,146,42,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(184,146,42,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent);
+  }
+  .hero-ornament {
+    position: absolute; width: 600px; height: 600px;
+    border: 1px solid rgba(184,146,42,0.1);
+    border-radius: 50%; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    animation: rotateSlow 30s linear infinite;
+  }
+  .hero-ornament::before {
+    content: ''; position: absolute; inset: 40px;
+    border: 1px solid rgba(184,146,42,0.08); border-radius: 50%;
+    animation: rotateSlow 20s linear infinite reverse;
+  }
+  @keyframes rotateSlow { to { transform: translate(-50%,-50%) rotate(360deg); } }
 
-/* CTA */
-.cta-section{padding:7rem 2rem;text-align:center;position:relative;z-index:1;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;background:linear-gradient(135deg,rgba(45,80,22,0.12),rgba(201,168,76,0.05))}
-.cta-section::before{content:'CY';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:28vw;font-weight:900;font-style:italic;color:rgba(74,124,47,0.04);user-select:none;pointer-events:none;white-space:nowrap}
-.cta-heading{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,4.5rem);font-weight:900;line-height:1;position:relative;z-index:1}
-.cta-heading em{font-style:italic;color:var(--gold)}
-.cta-sub{font-size:1.1rem;color:var(--text3);margin:1.5rem auto 2.5rem;max-width:460px;line-height:1.8;position:relative;z-index:1}
+  .hero-content {
+    position: relative; z-index: 2; text-align: center; max-width: 900px;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 0.8s 1.5s forwards;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    color: var(--gold-pale); line-height: 0.95;
+    font-style: italic; font-weight: 700;
+    opacity: 0; animation: fadeUp 1s 1.7s forwards;
+    text-shadow: 0 0 80px rgba(184,146,42,0.2);
+  }
+  .hero-title em { font-style: normal; color: var(--gold); }
+  .hero-subtitle {
+    font-size: clamp(1rem, 2vw, 1.3rem); color: rgba(245,240,232,0.6);
+    margin-top: 1.5rem; font-style: italic; letter-spacing: 0.05em;
+    opacity: 0; animation: fadeUp 0.8s 2s forwards;
+  }
+  .hero-divider {
+    display: flex; align-items: center; gap: 1rem; justify-content: center;
+    margin: 2rem 0;
+    opacity: 0; animation: fadeUp 0.8s 2.1s forwards;
+  }
+  .hero-divider::before, .hero-divider::after {
+    content: ''; flex: 1; max-width: 100px; height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold));
+  }
+  .hero-divider::after { background: linear-gradient(to left, transparent, var(--gold)); }
+  .hero-divider span { color: var(--gold); font-size: 1.2rem; }
 
-/* FOOTER */
-footer{padding:2.5rem 2.5rem;border-top:1px solid var(--border);position:relative;z-index:1}
-.footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem}
-.footer-brand-name{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;font-style:italic;color:var(--gold)}
-.footer-school{font-family:'Monotype Corsiva',cursive;font-size:0.78rem;color:var(--text3);display:block;margin-top:2px}
-.footer-links{display:flex;gap:1.8rem;flex-wrap:wrap}
-.footer-links a{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);text-decoration:none;transition:color 0.3s}
-.footer-links a:hover{color:var(--green2)}
-.footer-copy{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text3);letter-spacing:0.08em}
+  .hero-date-badge {
+    display: inline-flex; flex-direction: column; align-items: center;
+    border: 1px solid var(--border-strong);
+    padding: 1rem 2.5rem; margin-top: 0.5rem;
+    opacity: 0; animation: fadeUp 0.8s 2.2s forwards;
+    position: relative;
+  }
+  .hero-date-badge::before, .hero-date-badge::after {
+    content: ''; position: absolute;
+    width: 8px; height: 8px;
+    border: 1px solid var(--gold);
+  }
+  .hero-date-badge::before { top: -4px; left: -4px; border-right: none; border-bottom: none; }
+  .hero-date-badge::after { bottom: -4px; right: -4px; border-left: none; border-top: none; }
+  .date-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; }
+  .date-value { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold-pale); letter-spacing: 0.05em; }
+  .date-sub { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.15em; }
 
-/* ANIMATIONS */
-@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-@keyframes scrollPulse{0%,100%{opacity:1}50%{opacity:0.2}}
-.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.8s ease,transform 0.8s ease}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.rd1{transition-delay:0.15s}.rd2{transition-delay:0.3s}.rd3{transition-delay:0.45s}
+  .hero-cta {
+    display: flex; gap: 1rem; justify-content: center; margin-top: 2.5rem; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 0.8s 2.4s forwards;
+  }
+  .btn-primary {
+    background: var(--gold); color: var(--ink); border: none;
+    padding: 0.9rem 2.5rem; font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+    cursor: pointer; text-decoration: none; display: inline-block;
+    transition: all 0.3s; position: relative; overflow: hidden;
+  }
+  .btn-primary::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--gold-light); transform: translateX(-100%); transition: transform 0.3s;
+  }
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+  .btn-ghost {
+    background: transparent; color: var(--gold-pale); border: 1px solid var(--border-strong);
+    padding: 0.9rem 2.5rem; font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+    cursor: pointer; text-decoration: none; display: inline-block;
+    transition: all 0.3s;
+  }
+  .btn-ghost:hover { background: rgba(184,146,42,0.1); border-color: var(--gold); }
 
-/* RESPONSIVE */
-@media(max-width:768px){
-  nav{padding:0.8rem 1.2rem}
-  .nav-links{display:none}
-  .hamburger{display:flex}
-  .section{padding:4rem 1.2rem}
-  .about-grid{grid-template-columns:1fr;gap:2.5rem}
-  .stat-grid{grid-template-columns:1fr 1fr}
-  footer{padding:2rem 1.2rem}
-  .footer-inner{flex-direction:column;text-align:center}
-  .footer-links{justify-content:center}
-  .cta-section{padding:5rem 1.2rem}
-}
+  .scroll-indicator {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    opacity: 0; animation: fadeUp 0.8s 3s forwards;
+  }
+  .scroll-indicator span { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; }
+  .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--gold), transparent); animation: scrollPulse 2s infinite; }
+  @keyframes scrollPulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+  /* ── SECTIONS ── */
+  section { padding: 6rem 4rem; }
+  .section-header { text-align: center; margin-bottom: 4rem; }
+  .section-tag {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.2rem);
+    font-style: italic; line-height: 1.1; color: var(--ink);
+  }
+  .section-rule {
+    display: flex; align-items: center; gap: 1rem; justify-content: center; margin-top: 1.2rem;
+  }
+  .section-rule::before, .section-rule::after {
+    content: ''; width: 60px; height: 1px; background: var(--gold-light);
+  }
+  .section-rule span { color: var(--gold); font-size: 0.9rem; }
+
+  /* ── ABOUT / FEST INFO ── */
+  #about { background: var(--cream); }
+  .info-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px; max-width: 1100px; margin: 0 auto;
+  }
+  .info-card {
+    background: var(--parchment); padding: 3rem 2.5rem;
+    border: 1px solid var(--border); position: relative;
+    transition: all 0.4s; overflow: hidden;
+  }
+  .info-card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 3px; height: 0; background: var(--gold);
+    transition: height 0.4s;
+  }
+  .info-card:hover::before { height: 100%; }
+  .info-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px var(--shadow); }
+  .info-icon { font-size: 2rem; margin-bottom: 1.2rem; display: block; }
+  .info-card h3 {
+    font-family: 'Playfair Display', serif; font-size: 1.3rem;
+    color: var(--ink); margin-bottom: 0.8rem; font-style: italic;
+  }
+  .info-card p { color: var(--muted); font-size: 0.95rem; line-height: 1.7; }
+  .info-card .info-value {
+    font-family: 'Playfair Display', serif; font-size: 1.6rem;
+    color: var(--gold); font-weight: 600; margin-top: 0.5rem;
+  }
+
+  #fest-date-display { font-family: 'Playfair Display', serif; font-style: italic; color: var(--gold); }
+  #fest-venue-display, #fest-tagline-display { color: var(--muted); }
+
+  /* ── RULES ── */
+  #rules { background: var(--ink); color: var(--gold-pale); }
+  #rules .section-title { color: var(--gold-pale); }
+  #rules .section-tag { color: var(--gold); }
+  .rules-container { max-width: 900px; margin: 0 auto; }
+  .rules-intro {
+    text-align: center; font-size: 1.05rem; color: rgba(245,240,232,0.6);
+    margin-bottom: 3rem; font-style: italic;
+  }
+  .rule-item {
+    display: flex; gap: 2rem; padding: 1.8rem 0;
+    border-bottom: 1px solid rgba(184,146,42,0.1);
+    opacity: 0; transform: translateX(-30px);
+    transition: all 0.5s ease;
+  }
+  .rule-item.visible { opacity: 1; transform: translateX(0); }
+  .rule-num {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    color: var(--gold); letter-spacing: 0.2em; min-width: 40px;
+    padding-top: 0.3rem;
+  }
+  .rule-text { font-size: 1rem; color: rgba(245,240,232,0.75); line-height: 1.8; }
+  .rule-text strong { color: var(--gold-light); }
+
+  /* ── EVENTS ── */
+  #events { background: var(--cream); }
+  .events-loading {
+    text-align: center; padding: 4rem;
+    font-family: 'DM Mono', monospace; font-size: 0.75rem;
+    letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase;
+  }
+  .events-loading::after { content: '...'; animation: dots 1.5s infinite; }
+  @keyframes dots { 0%{content:'.';}33%{content:'..';}66%{content:'...';}100%{content:'.';} }
+  .events-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 2px; max-width: 1200px; margin: 0 auto;
+  }
+  .event-card {
+    background: var(--parchment); border: 1px solid var(--border);
+    overflow: hidden; transition: all 0.4s; cursor: pointer;
+    display: flex; flex-direction: column;
+    opacity: 0; transform: translateY(30px);
+  }
+  .event-card.visible { opacity: 1; transform: translateY(0); }
+  .event-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(10,10,10,0.12); }
+  .event-card-header {
+    padding: 2.5rem 2.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .event-logo-wrap {
+    width: 80px; height: 80px; margin-bottom: 1.2rem;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border-strong); background: var(--cream);
+  }
+  .event-logo-wrap img {
+    width: 100%; height: 100%; object-fit: contain; padding: 8px;
+  }
+  .event-logo-placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; background: var(--gold-pale);
+  }
+  .event-tag {
+    font-family: 'DM Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.5rem; display: block;
+  }
+  .event-name {
+    font-family: 'Playfair Display', serif; font-size: 1.6rem;
+    font-style: italic; color: var(--ink); line-height: 1.2;
+  }
+  .event-card-body { padding: 1.5rem 2.5rem; flex: 1; }
+  .event-desc { font-size: 0.95rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.2rem; }
+  .event-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .event-meta-item {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase;
+  }
+  .event-meta-item svg { opacity: 0.5; }
+  .event-card-footer {
+    padding: 1.5rem 2.5rem;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .event-slots {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase;
+  }
+  .btn-enroll {
+    background: var(--ink); color: var(--gold-pale);
+    border: 1px solid var(--ink); padding: 0.7rem 1.8rem;
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s; text-decoration: none;
+    display: inline-block;
+  }
+  .btn-enroll:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .no-events-msg {
+    text-align: center; padding: 5rem 2rem;
+    grid-column: 1/-1;
+  }
+  .no-events-msg h3 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.8rem; color: var(--muted); }
+  .no-events-msg p { font-size: 0.9rem; color: var(--muted); margin-top: 0.5rem; font-family: 'DM Mono', monospace; letter-spacing: 0.1em; }
+
+  /* ── VOLUNTEER ── */
+  #volunteer { background: var(--parchment); }
+  .volunteer-inner {
+    max-width: 700px; margin: 0 auto; text-align: center;
+  }
+  .volunteer-status {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    padding: 0.8rem 2rem; border: 1px solid var(--border);
+    background: var(--cream); margin-bottom: 2rem;
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #888; }
+  .status-dot.open { background: #4CAF50; box-shadow: 0 0 10px rgba(76,175,80,0.4); animation: pulse 2s infinite; }
+  .status-dot.closed { background: var(--red-accent); }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+  .status-text { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; }
+  .volunteer-desc { font-size: 1.05rem; color: var(--muted); margin-bottom: 2.5rem; line-height: 1.9; }
+  .btn-volunteer {
+    background: transparent; color: var(--ink); border: 1.5px solid var(--gold);
+    padding: 1rem 3rem; font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s; display: inline-block; text-decoration: none;
+    position: relative; overflow: hidden;
+  }
+  .btn-volunteer::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--gold); transform: translateY(100%); transition: transform 0.3s;
+    z-index: -1;
+  }
+  .btn-volunteer:hover { color: var(--ink); }
+  .btn-volunteer:hover::before { transform: translateY(0); }
+  .volunteer-closed-note {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em;
+    color: var(--muted); font-style: italic;
+  }
+
+  /* ── CONTACT ── */
+  #contact { background: var(--ink); color: var(--gold-pale); }
+  #contact .section-title { color: var(--gold-pale); }
+  .contact-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2px; max-width: 1000px; margin: 0 auto;
+  }
+  .contact-card {
+    background: rgba(245,240,232,0.04); border: 1px solid rgba(184,146,42,0.12);
+    padding: 2.5rem; transition: all 0.4s;
+    display: flex; flex-direction: column; gap: 0.8rem;
+  }
+  .contact-card:hover { background: rgba(184,146,42,0.05); border-color: var(--border-strong); }
+  .contact-role {
+    font-family: 'DM Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+  }
+  .contact-name {
+    font-family: 'Playfair Display', serif; font-size: 1.2rem;
+    font-style: italic; color: var(--gold-pale);
+  }
+  .contact-phone {
+    font-family: 'DM Mono', monospace; font-size: 0.9rem;
+    color: rgba(245,240,232,0.5); letter-spacing: 0.1em;
+  }
+  .contact-phone a { color: var(--gold-light); text-decoration: none; transition: color 0.3s; }
+  .contact-phone a:hover { color: var(--gold-pale); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink); border-top: 1px solid rgba(184,146,42,0.1);
+    padding: 3rem 4rem; text-align: center;
+  }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-style: italic; color: var(--gold-pale); margin-bottom: 0.5rem; }
+  .footer-sub { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase; margin-bottom: 1.5rem; }
+  .footer-copy { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; color: rgba(107,99,85,0.5); text-transform: uppercase; }
+  .footer-links { display: flex; justify-content: center; gap: 2rem; margin: 1rem 0; }
+  .footer-links a { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--muted); text-decoration: none; transition: color 0.3s; text-transform: uppercase; }
+  .footer-links a:hover { color: var(--gold); }
+
+  /* ── EVENT MODAL ── */
+  #event-modal {
+    position: fixed; inset: 0; z-index: 5000;
+    background: rgba(10,10,10,0.85); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem; opacity: 0; visibility: hidden;
+    transition: all 0.4s;
+  }
+  #event-modal.open { opacity: 1; visibility: visible; }
+  .modal-box {
+    background: var(--parchment); max-width: 720px; width: 100%;
+    max-height: 85vh; overflow-y: auto;
+    transform: scale(0.95) translateY(20px); transition: transform 0.4s;
+    position: relative;
+  }
+  #event-modal.open .modal-box { transform: scale(1) translateY(0); }
+  .modal-close {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    background: none; border: none; cursor: pointer;
+    font-size: 1.2rem; color: var(--muted); transition: color 0.3s; z-index: 1;
+  }
+  .modal-close:hover { color: var(--ink); }
+  .modal-header { padding: 3rem 3rem 2rem; border-bottom: 1px solid var(--border); }
+  .modal-logo { width: 100px; height: 100px; object-fit: contain; margin-bottom: 1.2rem; border: 1px solid var(--border); padding: 8px; background: var(--cream); }
+  .modal-event-tag { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
+  .modal-event-name { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-style: italic; color: var(--ink); }
+  .modal-body { padding: 2rem 3rem; }
+  .modal-section-head { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; margin-top: 1.8rem; }
+  .modal-section-head:first-child { margin-top: 0; }
+  .modal-text { font-size: 1rem; color: var(--muted); line-height: 1.85; }
+  .procedure-list { list-style: none; counter-reset: steps; }
+  .procedure-list li {
+    counter-increment: steps; display: flex; gap: 1rem; margin-bottom: 0.8rem;
+    font-size: 0.95rem; color: var(--muted);
+  }
+  .procedure-list li::before {
+    content: counter(steps, decimal-leading-zero);
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    color: var(--gold); min-width: 30px; padding-top: 0.3rem;
+  }
+  .modal-footer { padding: 2rem 3rem; border-top: 1px solid var(--border); }
+
+  /* ── VOLUNTEER MODAL ── */
+  #vol-modal {
+    position: fixed; inset: 0; z-index: 5000;
+    background: rgba(10,10,10,0.85); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem; opacity: 0; visibility: hidden; transition: all 0.4s;
+  }
+  #vol-modal.open { opacity: 1; visibility: visible; }
+  .vol-modal-box {
+    background: var(--parchment); max-width: 600px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    transform: scale(0.95); transition: transform 0.4s;
+    padding: 3rem; position: relative;
+  }
+  #vol-modal.open .vol-modal-box { transform: scale(1); }
+  .form-group { margin-bottom: 1.5rem; }
+  .form-label { display: block; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%; background: var(--cream); border: 1px solid var(--border);
+    padding: 0.9rem 1rem; font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+    color: var(--ink); transition: border-color 0.3s; outline: none;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
+  .form-textarea { resize: vertical; min-height: 100px; }
+  .form-select { cursor: pointer; }
+  .consent-box { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem; }
+  .consent-box input[type="checkbox"] { margin-top: 0.3rem; accent-color: var(--gold); width: 16px; height: 16px; flex-shrink: 0; }
+  .consent-text { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+  .success-msg {
+    text-align: center; padding: 2rem;
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 1.4rem; color: var(--gold);
+    display: none;
+  }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 9000;
+    background: var(--ink); color: var(--gold-pale); padding: 1rem 2rem;
+    border-left: 3px solid var(--gold); font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 0.1em;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.4s; max-width: 350px;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── ANIMATED REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── MOBILE NAV ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    nav.scrolled { padding: 0.7rem 1.5rem; }
+    .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--cream); border-bottom: 1px solid var(--border); padding: 1.5rem; gap: 1.5rem; }
+    .nav-links.open { display: flex; }
+    .hamburger { display: flex; }
+    section { padding: 4rem 1.5rem; }
+    .events-grid { grid-template-columns: 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .modal-body, .modal-header, .modal-footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .vol-modal-box { padding: 2rem 1.5rem; }
+  }
 </style>
 </head>
 <body>
 
+<!-- LOADER -->
+<div id="loader">
+  <div class="l-title">Critically Yours</div>
+  <div class="l-sub">DPS Megacity · Humanities Fest</div>
+  <div class="l-line"></div>
+</div>
+
+<!-- NAV -->
 <nav id="navbar">
-  <a class="nav-logo" href="index.html">
-    <img src="cys_logo.png" alt="CY" onerror="this.style.display='none'"/>
-    <div class="nav-logo-text">
-      <span class="nav-logo-name">Critically Yours</span>
-      <span class="nav-logo-school">Delhi Public School Megacity, Kolkata</span>
-    </div>
-  </a>
-  <div class="nav-links">
-    <a href="#about">About</a>
-    <a href="#events">Events</a>
-    <a href="#timeline">Schedule</a>
-    <a href="#announcements">Updates</a>
-    <a href="login.html" class="nav-btn">Portal Login</a>
-  </div>
-  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+  <a href="#" class="nav-logo">Critically <span>Yours</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#rules">Guidelines</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#volunteer">Volunteer</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
-  </div>
+  </button>
 </nav>
 
-<div class="mobile-menu" id="mobileMenu">
-  <button class="mobile-close" onclick="toggleMenu()">✕</button>
-  <a href="#about" onclick="toggleMenu()">About</a>
-  <a href="#events" onclick="toggleMenu()">Events</a>
-  <a href="#timeline" onclick="toggleMenu()">Schedule</a>
-  <a href="#announcements" onclick="toggleMenu()">Updates</a>
-  <a href="login.html">Enter Portal</a>
-</div>
-
 <!-- HERO -->
-<section class="hero" id="home">
+<section id="hero">
   <div class="hero-bg"></div>
-  <svg class="hero-grid-lines" viewBox="0 0 1440 900" fill="none" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none">
-    <line x1="0" y1="180" x2="1440" y2="180" stroke="rgba(106,171,58,0.05)" stroke-width="1"/>
-    <line x1="0" y1="540" x2="1440" y2="540" stroke="rgba(106,171,58,0.05)" stroke-width="1"/>
-    <line x1="180" y1="0" x2="180" y2="900" stroke="rgba(106,171,58,0.04)" stroke-width="1"/>
-    <line x1="1260" y1="0" x2="1260" y2="900" stroke="rgba(106,171,58,0.04)" stroke-width="1"/>
-    <circle cx="720" cy="450" r="280" stroke="rgba(74,124,47,0.07)" stroke-width="1"/>
-    <circle cx="720" cy="450" r="420" stroke="rgba(201,168,76,0.04)" stroke-width="1"/>
-    <polygon points="720,150 1000,500 440,500" stroke="rgba(106,171,58,0.04)" stroke-width="1" fill="none"/>
-  </svg>
-  <div class="hero-eyebrow">Intra-School Humanities Fest · Political Science</div>
-  <div class="hero-school">Delhi Public School Megacity, Kolkata</div>
-  <h1 class="hero-title">Critically<em>Yours</em></h1>
-  <p class="hero-subtitle">Where intellect meets debate, and ideas shape the future. A celebration of political thought, diplomacy &amp; critical discourse.</p>
-  <div class="hero-actions">
-    <a href="login.html" class="btn-gold">Register / Login</a>
-    <a href="#events" class="btn-outline">Explore Events</a>
+  <div class="hero-grid"></div>
+  <div class="hero-ornament"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Delhi Public School Megacity, Kolkata · presents</p>
+    <h1 class="hero-title">Critically<br><em>Yours</em></h1>
+    <p class="hero-subtitle">A celebration of the humanities — of thought, expression &amp; critical inquiry</p>
+    <div class="hero-divider"><span>◆</span></div>
+    <div class="hero-date-badge">
+      <span class="date-label">Fest Date</span>
+      <span class="date-value" id="hero-date-val">TBA</span>
+      <span class="date-sub" id="hero-venue-val">Venue to be announced</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#events" class="btn-primary"><span>Explore Events</span></a>
+      <a href="#about" class="btn-ghost">Learn More</a>
+    </div>
   </div>
-  <div class="hero-scroll"><span>Scroll</span><div class="scroll-bar"></div></div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
 </section>
 
-<!-- MARQUEE -->
-<div class="marquee-band" aria-hidden="true">
-  <div class="marquee-inner" id="marqueeInner"></div>
-</div>
-
 <!-- ABOUT -->
-<section class="section" id="about">
-  <div class="section-inner">
-    <div class="section-label reveal">About the Fest</div>
-    <div class="about-grid">
-      <div>
-        <h2 class="about-heading reveal">A Forum for <em>Bold Minds</em></h2>
-        <p class="about-text reveal rd1">Critically Yours is an intra-school humanities festival organised by the students of the Humanities stream at Delhi Public School Megacity, Kolkata. At its heart lies deep engagement with political science, governance, diplomacy, and global affairs.</p>
-        <p class="about-text reveal rd2">From simulated parliaments to geopolitical crises, every event challenges conventional thinking and sharpens analytical discourse.</p>
-        <div class="stat-grid reveal rd3">
-          <div class="stat-card"><div class="stat-num" id="sEvents">—</div><div class="stat-label">Events</div></div>
-          <div class="stat-card"><div class="stat-num" id="sParticipants">—</div><div class="stat-label">Participants</div></div>
-          <div class="stat-card"><div class="stat-num" id="sDays">—</div><div class="stat-label">Days</div></div>
-          <div class="stat-card"><div class="stat-num" id="sTeam">—</div><div class="stat-label">Team Members</div></div>
-        </div>
-      </div>
-      <div class="reveal rd2" style="display:flex;flex-direction:column;gap:1.2rem">
-        <div class="about-card">
-          <div class="about-card-quote">"The price of apathy towards public affairs is to be ruled by evil men."</div>
-          <div class="about-card-author">— Plato</div>
-        </div>
-        <div class="school-badge">
-          <div class="school-badge-name">Delhi Public School Megacity, Kolkata</div>
-          <div class="school-badge-sub">Organised by Humanities Stream Students</div>
-        </div>
-      </div>
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-tag">The Fest</span>
+    <h2 class="section-title">What is Critically Yours?</h2>
+    <div class="section-rule"><span>◆</span></div>
+  </div>
+  <div class="info-grid">
+    <div class="info-card reveal">
+      <span class="info-icon">📅</span>
+      <h3>Fest Date</h3>
+      <p>Mark your calendars for an extraordinary day of intellectual discourse and creative expression.</p>
+      <div class="info-value" id="about-date">To Be Announced</div>
+    </div>
+    <div class="info-card reveal">
+      <span class="info-icon">📍</span>
+      <h3>Venue</h3>
+      <p>Hosted at the vibrant campus of Delhi Public School Megacity, Kolkata.</p>
+      <div class="info-value" id="about-venue" style="font-size:1.1rem;">DPS Megacity, Kolkata</div>
+    </div>
+    <div class="info-card reveal">
+      <span class="info-icon">✍️</span>
+      <h3>About the Fest</h3>
+      <p id="about-tagline">Critically Yours is DPS Megacity's premier humanities festival — where young minds engage in debate, literature, history, and the arts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RULES -->
+<section id="rules">
+  <div class="section-header reveal">
+    <span class="section-tag">Participation</span>
+    <h2 class="section-title" style="color:var(--gold-pale);">Rules &amp; Guidelines</h2>
+    <div class="section-rule"><span>◆</span></div>
+  </div>
+  <div class="rules-container">
+    <p class="rules-intro" id="rules-intro">Kindly read all guidelines carefully before registering for any event.</p>
+    <div id="rules-list">
+      <!-- Loaded from Firebase -->
     </div>
   </div>
 </section>
 
 <!-- EVENTS -->
-<section class="section" id="events">
-  <div class="section-inner">
-    <div class="section-label reveal">Events</div>
-    <div class="events-header">
-      <h2 class="events-heading reveal">The <em>Arena</em> Awaits</h2>
-      <div class="events-note reveal rd2">All event details set by Admin &amp; Core Team</div>
+<section id="events">
+  <div class="section-header reveal">
+    <span class="section-tag">Compete &amp; Create</span>
+    <h2 class="section-title">Events</h2>
+    <div class="section-rule"><span>◆</span></div>
+    <p style="color:var(--muted);margin-top:1rem;font-size:0.95rem;" id="multi-event-notice"></p>
+  </div>
+  <div class="events-grid" id="events-grid">
+    <div class="events-loading">Loading Events</div>
+  </div>
+</section>
+
+<!-- VOLUNTEER -->
+<section id="volunteer">
+  <div class="volunteer-inner">
+    <div class="section-header reveal">
+      <span class="section-tag">Join the Team</span>
+      <h2 class="section-title">Volunteer</h2>
+      <div class="section-rule"><span>◆</span></div>
     </div>
-    <div class="events-grid" id="eventsGrid">
-      <div class="events-empty" id="eventsPlaceholder">Loading events...</div>
+    <div id="vol-status-wrap" class="reveal">
+      <div class="volunteer-status" id="vol-status-badge">
+        <div class="status-dot" id="vol-dot"></div>
+        <span class="status-text" id="vol-status-text">Checking status…</span>
+      </div>
+      <p class="volunteer-desc" id="vol-desc">Be part of the organizing team behind Critically Yours. Volunteers help ensure a seamless and memorable experience for all participants. Applications open soon!</p>
+      <div id="vol-action"></div>
     </div>
   </div>
 </section>
 
-<!-- TIMELINE -->
-<section class="section timeline-section" id="timeline">
-  <div class="section-inner">
-    <div class="section-label reveal">Schedule</div>
-    <h2 class="events-heading reveal" style="margin-bottom:0.5rem">Important <em>Dates</em></h2>
-    <p class="reveal rd1" style="font-size:0.9rem;color:var(--text3);margin-bottom:0.5rem">Set by Admin &amp; Core Team</p>
-    <div class="timeline-wrap" id="timelineWrap">
-      <div class="timeline-empty" id="timelinePlaceholder">Loading schedule...</div>
-    </div>
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header reveal">
+    <span class="section-tag">Reach Out</span>
+    <h2 class="section-title" style="color:var(--gold-pale);">Contact Us</h2>
+    <div class="section-rule"><span>◆</span></div>
   </div>
-</section>
-
-<!-- ANNOUNCEMENTS -->
-<section class="section" id="announcements">
-  <div class="section-inner">
-    <div class="section-label reveal">Latest Updates</div>
-    <h2 class="events-heading reveal">Announcements</h2>
-    <div class="announce-list" id="announceList">
-      <div class="announce-empty" id="announcePlaceholder">Loading announcements...</div>
-    </div>
+  <div class="contact-grid" id="contact-grid">
+    <p style="color:var(--muted);text-align:center;grid-column:1/-1;font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.15em;">LOADING CONTACT DETAILS…</p>
   </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section">
-  <h2 class="cta-heading reveal">Ready to<br/><em>Challenge</em> the World?</h2>
-  <p class="cta-sub reveal rd1">Register through the portal using your Google account. Join your team and let the debates begin.</p>
-  <div class="reveal rd2"><a href="login.html" class="btn-gold">Enter the Portal</a></div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-inner">
-    <div>
-      <div class="footer-brand-name">Critically Yours</div>
-      <span class="footer-school">Delhi Public School Megacity, Kolkata</span>
-    </div>
-    <div class="footer-links">
-      <a href="#about">About</a>
-      <a href="#events">Events</a>
-      <a href="#timeline">Schedule</a>
-      <a href="login.html">Portal</a>
-    </div>
-    <div class="footer-copy">&copy; 2025 Critically Yours · DPS Megacity Kolkata</div>
+  <div class="footer-logo">Critically Yours</div>
+  <div class="footer-sub">Delhi Public School Megacity · Kolkata</div>
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="#events">Events</a>
+    <a href="#contact">Contact</a>
+    <a href="admin.html">Admin</a>
   </div>
+  <div class="footer-copy">&copy; <span id="yr"></span> Critically Yours · DPS Megacity · All rights reserved</div>
 </footer>
 
+<!-- EVENT MODAL -->
+<div id="event-modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close-btn" aria-label="Close">✕</button>
+    <div class="modal-header">
+      <div id="modal-logo-wrap"></div>
+      <span class="modal-event-tag" id="modal-category"></span>
+      <h2 class="modal-event-name" id="modal-name"></h2>
+    </div>
+    <div class="modal-body">
+      <p class="modal-section-head">About this Event</p>
+      <p class="modal-text" id="modal-desc"></p>
+      <div id="modal-procedure-wrap" style="display:none;">
+        <p class="modal-section-head">How to Participate</p>
+        <ol class="procedure-list" id="modal-procedure"></ol>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn-enroll" id="modal-enroll-btn">Enroll Now</a>
+    </div>
+  </div>
+</div>
+
+<!-- VOLUNTEER MODAL -->
+<div id="vol-modal" role="dialog" aria-modal="true">
+  <div class="vol-modal-box">
+    <button class="modal-close" id="vol-modal-close" style="position:absolute;top:1.5rem;right:1.5rem;" aria-label="Close">✕</button>
+    <h2 style="font-family:'Playfair Display',serif;font-style:italic;font-size:2rem;margin-bottom:0.5rem;">Volunteer Application</h2>
+    <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin-bottom:2rem;">Critically Yours · DPS Megacity</p>
+    <div id="vol-form-wrap">
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input type="text" class="form-input" id="v-name" placeholder="Your full name" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Class &amp; Section *</label>
+        <input type="text" class="form-input" id="v-class" placeholder="e.g. XI-A">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Roll Number *</label>
+        <input type="text" class="form-input" id="v-roll" placeholder="Your roll number">
+      </div>
+      <div class="form-group">
+        <label class="form-label">School Email ID *</label>
+        <input type="email" class="form-input" id="v-email" placeholder="yourname@dpsmegacity.in">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Why do you want to volunteer? *</label>
+        <textarea class="form-textarea" id="v-why" placeholder="Tell us why you'd like to be part of the team..."></textarea>
+      </div>
+      <div class="consent-box">
+        <input type="checkbox" id="v-consent">
+        <label class="consent-text" for="v-consent">I agree to share my personal information with the Critically Yours Management Team for the purpose of this application.</label>
+      </div>
+      <button class="btn-primary" onclick="submitVolunteer()" style="width:100%;padding:1rem;font-size:0.75rem;"><span>Submit Application</span></button>
+    </div>
+    <div class="success-msg" id="vol-success">
+      🎉 Thank you! Your volunteer application has been received. We'll be in touch soon.
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- Firebase -->
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getFirestore,collection,getDocs,query,orderBy,where,limit}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, getDoc, collection, getDocs, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-const app=initializeApp({apiKey:"AIzaSyCw-1ZShAXu8c5ZqnFXvS5S-YRqHReMydk",authDomain:"critically-yours.firebaseapp.com",projectId:"critically-yours",storageBucket:"critically-yours.firebasestorage.app",messagingSenderId:"861621080895",appId:"1:861621080895:web:14f06cbf7d98402dc8398a",measurementId:"G-RWFZRJ0673"});
-const db=getFirestore(app);
+const firebaseConfig = {
+  apiKey: "AIzaSyCDHweuTs5xV7s4biHnvFOOOmEjy2h58NU",
+  authDomain: "fluxprep.firebaseapp.com",
+  projectId: "fluxprep",
+  storageBucket: "fluxprep.firebasestorage.app",
+  messagingSenderId: "751139531861",
+  appId: "1:751139531861:web:dfefad1bab33fc2489f8dc",
+  measurementId: "G-EDZH3BMDNY"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// Marquee
-const words=['Political Science','Mock Parliament','Geopolitics','Critically Yours','Debate','Model UN','Diplomacy','DPS Megacity','Policy Analysis','Critical Discourse','Humanities Fest','Kolkata'];
-const mi=document.getElementById('marqueeInner');
-[...words,...words].forEach(w=>{const s=document.createElement('span');s.className='marquee-item';s.innerHTML=`<span class="marquee-sep">✦</span>${w}`;mi.appendChild(s)});
+// Expose db globally
+window._db = db;
+window._addDoc = addDoc;
+window._collection = collection;
+window._serverTimestamp = serverTimestamp;
 
-// Nav scroll
-window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',scrollY>60));
-
-// Reveal
-const revObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revObs.unobserve(e.target)}}),{threshold:0.08,rootMargin:'0px 0px -50px 0px'});
-document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
-
-function reObserve(){document.querySelectorAll('.reveal:not(.visible)').forEach(el=>revObs.observe(el));}
-
-// Stats animation
-function animNum(el,n,sfx=''){let c=0;const s=Math.max(1,Math.ceil(n/40));const iv=setInterval(()=>{c=Math.min(c+s,n);el.textContent=c+sfx;if(c>=n)clearInterval(iv)},35);}
-const statsObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){loadStats();statsObs.disconnect()}}),{threshold:0.4});
-const sg=document.querySelector('.stat-grid');if(sg)statsObs.observe(sg);
-
-async function loadStats(){
-  try{
-    const cfg=await getDocs(collection(db,'siteConfig'));
-    let stats={events:0,participants:0,days:0,team:0};
-    cfg.forEach(d=>{const dt=d.data();if(dt.statsEvents)stats.events=dt.statsEvents;if(dt.statsParticipants)stats.participants=dt.statsParticipants;if(dt.statsDays)stats.days=dt.statsDays;if(dt.statsTeam)stats.team=dt.statsTeam;});
-    // fallback: count from collections
-    if(!stats.events){const esnap=await getDocs(collection(db,'events'));stats.events=esnap.size||0;}
-    if(!stats.participants){const psnap=await getDocs(query(collection(db,'users'),where('role','==','participant')));stats.participants=psnap.size||0;}
-    const se=document.getElementById('sEvents');const sp=document.getElementById('sParticipants');const sd=document.getElementById('sDays');const st=document.getElementById('sTeam');
-    if(stats.events>0)animNum(se,stats.events,'+');else se.textContent='—';
-    if(stats.participants>0)animNum(sp,stats.participants,'+');else sp.textContent='—';
-    if(stats.days>0)animNum(sd,stats.days);else sd.textContent='—';
-    if(stats.team>0)animNum(st,stats.team,'+');else st.textContent='—';
-  }catch(e){console.warn(e)}
+// ── LOAD FEST SETTINGS ──
+async function loadSettings() {
+  try {
+    const snap = await getDoc(doc(db, 'settings', 'fest'));
+    if (snap.exists()) {
+      const d = snap.data();
+      // Dates
+      const fDate = d.festDate || 'To Be Announced';
+      const fVenue = d.venue || 'DPS Megacity, Kolkata';
+      document.getElementById('hero-date-val').textContent = fDate;
+      document.getElementById('hero-venue-val').textContent = fVenue;
+      document.getElementById('about-date').textContent = fDate;
+      document.getElementById('about-venue').textContent = fVenue;
+      if (d.aboutText) document.getElementById('about-tagline').textContent = d.aboutText;
+      if (d.rulesIntro) document.getElementById('rules-intro').textContent = d.rulesIntro;
+      // Multi event
+      window._multiEvent = d.multiEventAllowed !== false;
+      const notice = document.getElementById('multi-event-notice');
+      notice.textContent = window._multiEvent
+        ? 'You may register for multiple events.'
+        : 'You may register for one event only.';
+    }
+  } catch(e){ console.warn('Settings load failed', e); }
 }
 
-// Events
-async function loadEvents(){
-  const grid=document.getElementById('eventsGrid');
-  const ph=document.getElementById('eventsPlaceholder');
-  try{
-    const snap=await getDocs(query(collection(db,'events'),orderBy('order','asc')));
-    ph.remove();
-    if(snap.empty){grid.innerHTML='<div class="events-empty">Events will be announced by the Admin &amp; Core Team.</div>';return;}
-    snap.docs.forEach((doc,i)=>{
-      const ev=doc.data();
-      const card=document.createElement('div');card.className='event-card';
-      card.innerHTML=`<div class="event-num">0${String(i+1).padStart(2,'0')}</div><div class="event-name">${ev.name||'Event'}</div><div class="event-desc">${ev.description||'Details coming soon.'}</div><span class="event-tag">${ev.category||'Event'}</span>`;
-      grid.appendChild(card);
+// ── LOAD RULES ──
+async function loadRules() {
+  try {
+    const snap = await getDocs(collection(db, 'rules'));
+    const rulesList = document.getElementById('rules-list');
+    if (snap.empty) {
+      rulesList.innerHTML = '<p style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:0.75rem;letter-spacing:0.15em;text-align:center;">Rules will be published soon.</p>';
+      return;
+    }
+    const rules = [];
+    snap.forEach(d => rules.push({...d.data(), id: d.id}));
+    rules.sort((a,b) => (a.order||0)-(b.order||0));
+    rulesList.innerHTML = rules.map((r,i) => `
+      <div class="rule-item">
+        <span class="rule-num">${String(i+1).padStart(2,'0')}</span>
+        <p class="rule-text">${r.text || r.rule || ''}</p>
+      </div>`).join('');
+    // Animate
+    setTimeout(() => {
+      document.querySelectorAll('.rule-item').forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), i * 80);
+      });
+    }, 300);
+  } catch(e){ console.warn('Rules load failed', e); }
+}
+
+// ── LOAD EVENTS ──
+async function loadEvents() {
+  try {
+    const snap = await getDocs(collection(db, 'events'));
+    const grid = document.getElementById('events-grid');
+    if (snap.empty) {
+      grid.innerHTML = `<div class="no-events-msg"><h3>Events Coming Soon</h3><p>Check back later for event listings.</p></div>`;
+      return;
+    }
+    const events = [];
+    snap.forEach(d => events.push({...d.data(), id: d.id}));
+    events.sort((a,b) => (a.order||0)-(b.order||0));
+    window._events = events;
+    grid.innerHTML = events.map((ev,i) => `
+      <div class="event-card" data-id="${ev.id}" style="transition-delay:${i*0.07}s;">
+        <div class="event-card-header">
+          <div class="event-logo-wrap">
+            ${ev.logoUrl
+              ? `<img src="${ev.logoUrl}" alt="${ev.name} logo">`
+              : `<div class="event-logo-placeholder">🎭</div>`}
+          </div>
+          <span class="event-tag">${ev.category || 'Event'}</span>
+          <h3 class="event-name">${ev.name}</h3>
+        </div>
+        <div class="event-card-body">
+          <p class="event-desc">${ev.shortDesc || ev.description?.substring(0,180) || ''}${ev.description?.length > 180 ? '…' : ''}</p>
+          <div class="event-meta">
+            ${ev.maxParticipants ? `<span class="event-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>${ev.maxParticipants} max</span>` : ''}
+            ${ev.duration ? `<span class="event-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>${ev.duration}</span>` : ''}
+          </div>
+        </div>
+        <div class="event-card-footer">
+          <span class="event-slots">${ev.slots ? `${ev.slots} slots available` : 'Open registration'}</span>
+          <button class="btn-enroll" onclick="openEventModal('${ev.id}')">Details &amp; Enroll</button>
+        </div>
+      </div>`).join('');
+
+    // Animate in
+    setTimeout(() => {
+      document.querySelectorAll('.event-card').forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), i * 80);
+      });
+    }, 200);
+  } catch(e) {
+    document.getElementById('events-grid').innerHTML = `<div class="no-events-msg"><h3>Events Coming Soon</h3><p>Check back later.</p></div>`;
+  }
+}
+
+// ── LOAD CONTACTS ──
+async function loadContacts() {
+  try {
+    const snap = await getDocs(collection(db, 'contacts'));
+    const grid = document.getElementById('contact-grid');
+    if (snap.empty) {
+      grid.innerHTML = `<p style="color:var(--muted);text-align:center;grid-column:1/-1;font-family:'DM Mono',monospace;font-size:0.75rem;">Contact details will be updated soon.</p>`;
+      return;
+    }
+    const contacts = [];
+    snap.forEach(d => contacts.push({...d.data(), id: d.id}));
+    contacts.sort((a,b) => (a.order||0)-(b.order||0));
+    grid.innerHTML = contacts.map(c => `
+      <div class="contact-card">
+        <span class="contact-role">${c.role || 'Team Member'}</span>
+        <div class="contact-name">${c.name}</div>
+        <div class="contact-phone">${c.phone ? `<a href="tel:${c.phone}">${c.phone}</a>` : ''}
+          ${c.email ? `<br><a href="mailto:${c.email}" style="font-size:0.75rem;">${c.email}</a>` : ''}</div>
+      </div>`).join('');
+  } catch(e) { console.warn('Contacts load failed', e); }
+}
+
+// ── LOAD VOLUNTEER STATUS ──
+async function loadVolunteer() {
+  try {
+    const snap = await getDoc(doc(db, 'settings', 'volunteer'));
+    const dot = document.getElementById('vol-dot');
+    const statusText = document.getElementById('vol-status-text');
+    const actionWrap = document.getElementById('vol-action');
+    const descEl = document.getElementById('vol-desc');
+    if (snap.exists()) {
+      const d = snap.data();
+      window._volOpen = d.open === true;
+      if (d.description) descEl.textContent = d.description;
+      if (window._volOpen) {
+        dot.classList.add('open');
+        statusText.textContent = 'Applications Open';
+        actionWrap.innerHTML = `<button class="btn-volunteer" onclick="openVolModal()">Apply to Volunteer</button>`;
+      } else {
+        dot.classList.add('closed');
+        statusText.textContent = 'Applications Closed';
+        actionWrap.innerHTML = `<p class="volunteer-closed-note">The volunteer application window is not open yet. Check back soon.</p>`;
+      }
+    } else {
+      dot.classList.add('closed');
+      statusText.textContent = 'Coming Soon';
+      actionWrap.innerHTML = `<p class="volunteer-closed-note">Volunteer details will be announced soon.</p>`;
+    }
+  } catch(e) { console.warn('Volunteer load failed', e); }
+}
+
+// Init
+(async () => {
+  await loadSettings();
+  await Promise.all([loadRules(), loadEvents(), loadContacts(), loadVolunteer()]);
+})();
+
+// ── EVENT MODAL ──
+window.openEventModal = function(id) {
+  const ev = window._events?.find(e => e.id === id);
+  if (!ev) return;
+  document.getElementById('modal-name').textContent = ev.name;
+  document.getElementById('modal-category').textContent = ev.category || 'Event';
+  document.getElementById('modal-desc').textContent = ev.description || '';
+  const logoWrap = document.getElementById('modal-logo-wrap');
+  logoWrap.innerHTML = ev.logoUrl
+    ? `<img src="${ev.logoUrl}" class="modal-logo" alt="${ev.name} logo">`
+    : `<div style="width:100px;height:100px;border:1px solid var(--border);background:var(--gold-pale);display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:1.2rem;">🎭</div>`;
+  const procWrap = document.getElementById('modal-procedure-wrap');
+  const procList = document.getElementById('modal-procedure');
+  if (ev.procedure && ev.procedure.length) {
+    procWrap.style.display = 'block';
+    procList.innerHTML = ev.procedure.map(p => `<li>${p}</li>`).join('');
+  } else { procWrap.style.display = 'none'; }
+  const enrollBtn = document.getElementById('modal-enroll-btn');
+  enrollBtn.href = `enroll.html?event=${encodeURIComponent(ev.id)}&name=${encodeURIComponent(ev.name)}`;
+  document.getElementById('event-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+document.getElementById('modal-close-btn').addEventListener('click', () => {
+  document.getElementById('event-modal').classList.remove('open');
+  document.body.style.overflow = '';
+});
+document.getElementById('event-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('event-modal')) {
+    document.getElementById('event-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+});
+
+// ── VOLUNTEER MODAL ──
+window.openVolModal = function() {
+  document.getElementById('vol-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+document.getElementById('vol-modal-close').addEventListener('click', () => {
+  document.getElementById('vol-modal').classList.remove('open');
+  document.body.style.overflow = '';
+});
+document.getElementById('vol-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('vol-modal')) {
+    document.getElementById('vol-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+});
+
+// ── SUBMIT VOLUNTEER ──
+window.submitVolunteer = async function() {
+  const name = document.getElementById('v-name').value.trim();
+  const cls = document.getElementById('v-class').value.trim();
+  const roll = document.getElementById('v-roll').value.trim();
+  const email = document.getElementById('v-email').value.trim();
+  const why = document.getElementById('v-why').value.trim();
+  const consent = document.getElementById('v-consent').checked;
+  if (!name || !cls || !roll || !email || !why) { showToast('Please fill in all required fields.'); return; }
+  if (!consent) { showToast('Please provide your consent to continue.'); return; }
+  if (!email.endsWith('@dpsmegacity.in')) { showToast('Please use your school email (@dpsmegacity.in).'); return; }
+  try {
+    await window._addDoc(window._collection(window._db, 'volunteers'), {
+      name, class: cls, roll, email, why, submittedAt: window._serverTimestamp()
     });
-  }catch(e){ph.textContent='Events will be announced soon.';console.warn(e)}
-}
+    document.getElementById('vol-form-wrap').style.display = 'none';
+    document.getElementById('vol-success').style.display = 'block';
+  } catch(e) { showToast('Submission failed. Please try again.'); }
+};
 
-// Dates
-async function loadDates(){
-  const wrap=document.getElementById('timelineWrap');
-  const ph=document.getElementById('timelinePlaceholder');
-  try{
-    const snap=await getDocs(query(collection(db,'importantDates'),orderBy('date','asc')));
-    ph.remove();
-    if(snap.empty){wrap.innerHTML='<div class="timeline-empty">Important dates will be announced by the Core Team.</div>';return;}
-    snap.docs.forEach((doc,i)=>{
-      const d=doc.data();
-      const dateStr=d.date?.toDate?d.date.toDate().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}):d.dateStr||'TBA';
-      const item=document.createElement('div');item.className='timeline-item';
-      item.innerHTML=`<div class="t-dot"><div class="t-dot-inner"></div></div><div><div class="t-date">${dateStr}</div><div class="t-title">${d.title||''}</div><div class="t-desc">${d.description||''}</div></div>`;
-      wrap.appendChild(item);
-      setTimeout(()=>{const tObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');tObs.unobserve(e.target)}}),{threshold:0.1});tObs.observe(item);},100*i);
-    });
-  }catch(e){ph.textContent='Schedule will be announced soon.';console.warn(e)}
-}
-
-// Announcements (public only)
-async function loadAnnouncements(){
-  const list=document.getElementById('announceList');
-  const ph=document.getElementById('announcePlaceholder');
-  try{
-    const snap=await getDocs(query(collection(db,'announcements'),where('public','==',true),orderBy('createdAt','desc'),limit(5)));
-    ph.remove();
-    if(snap.empty){list.innerHTML='<div class="announce-empty">No public announcements yet.</div>';return;}
-    snap.docs.forEach(doc=>{
-      const a=doc.data();
-      const ts=a.createdAt?.toDate?a.createdAt.toDate().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
-      const card=document.createElement('div');card.className='announce-card'+(a.urgent?' urgent':'');
-      card.innerHTML=`<div class="announce-meta"><span class="announce-tag ${a.urgent?'urgent':'general'}">${a.urgent?'Urgent':'General'}</span><span class="announce-date">${ts}</span></div><div class="announce-title">${a.title||''}</div><div class="announce-body">${a.body||''}</div><div class="announce-author">— ${a.authorName||'Core Team'}</div>`;
-      list.appendChild(card);
-    });
-  }catch(e){ph.textContent='Announcements will appear here.';console.warn(e)}
-}
-
-loadEvents();loadDates();loadAnnouncements();
+// ── TOAST ──
+window.showToast = function(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+};
 </script>
 
 <script>
-function toggleMenu(){
-  const m=document.getElementById('mobileMenu');
-  m.classList.toggle('open');
-  document.body.style.overflow=m.classList.contains('open')?'hidden':'';
-}
+// ── LOADER ──
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+  }, 2400);
+});
+
+// ── NAV SCROLL ──
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ── HAMBURGER ──
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+// ── INTERSECTION OBSERVER ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── YEAR ──
+document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>

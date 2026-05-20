@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enroll — Critically Yours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --parchment: #f5f0e8;
+    --cream: #faf7f2;
+    --gold: #b8922a;
+    --gold-light: #d4ac4e;
+    --gold-pale: #f0e4c0;
+    --red-accent: #8b1a1a;
+    --muted: #6b6355;
+    --border: rgba(184,146,42,0.25);
+    --border-strong: rgba(184,146,42,0.5);
+    --shadow: rgba(10,10,10,0.08);
+    --success: #2d6a4f;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--parchment); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); }
+
+  /* ── HEADER ── */
+  .enroll-header {
+    background: var(--ink); padding: 2rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(184,146,42,0.15);
+  }
+  .header-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-style: italic; color: var(--gold-pale); text-decoration: none; }
+  .header-logo span { color: var(--gold); }
+  .header-back { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.3s; display: flex; align-items: center; gap: 0.5rem; }
+  .header-back:hover { color: var(--gold); }
+
+  /* ── MAIN ── */
+  .enroll-main {
+    display: grid; grid-template-columns: 1fr 400px;
+    min-height: calc(100vh - 80px);
+  }
+  .form-panel {
+    padding: 4rem;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar-panel {
+    background: var(--ink); padding: 4rem 3rem;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  }
+
+  /* ── FORM HEADER ── */
+  .form-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.7rem; display: block; }
+  .form-title { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-style: italic; line-height: 1.1; color: var(--ink); margin-bottom: 0.5rem; }
+  .form-subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 2.5rem; }
+  .form-divider { height: 1px; background: var(--border); margin-bottom: 2.5rem; }
+
+  /* ── FORM FIELDS ── */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .form-group { margin-bottom: 1.6rem; }
+  .form-label {
+    display: block; font-family: 'DM Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .form-label .required { color: var(--gold); margin-left: 2px; }
+  .form-input, .form-select {
+    width: 100%; background: var(--parchment); border: 1px solid var(--border);
+    padding: 0.9rem 1.1rem; font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+    color: var(--ink); transition: all 0.3s; outline: none;
+    appearance: none; -webkit-appearance: none;
+  }
+  .form-input:focus, .form-select:focus {
+    border-color: var(--gold); background: white;
+    box-shadow: 0 0 0 3px rgba(184,146,42,0.08);
+  }
+  .form-input.error { border-color: var(--red-accent); }
+  .form-input:disabled { opacity: 0.6; cursor: not-allowed; }
+  .form-helper { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--muted); margin-top: 0.4rem; }
+  .form-helper.age-display { color: var(--gold); font-size: 0.65rem; }
+  .select-wrap { position: relative; }
+  .select-wrap::after { content: '▾'; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--gold); pointer-events: none; font-size: 0.8rem; }
+
+  /* ── EVENT SELECTION ── */
+  .event-select-grid { display: flex; flex-direction: column; gap: 0.8rem; }
+  .event-option {
+    display: flex; align-items: center; gap: 1rem; padding: 1rem 1.2rem;
+    border: 1px solid var(--border); background: var(--parchment); cursor: pointer;
+    transition: all 0.3s; position: relative;
+  }
+  .event-option:hover { border-color: var(--gold-light); }
+  .event-option.selected { border-color: var(--gold); background: var(--gold-pale); }
+  .event-option input[type="checkbox"], .event-option input[type="radio"] { accent-color: var(--gold); width: 16px; height: 16px; flex-shrink: 0; }
+  .event-option-name { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.05rem; flex: 1; }
+  .event-option-cat { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .loading-events-note { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--muted); padding: 1rem; text-align: center; }
+
+  /* ── CONSENT ── */
+  .consent-wrap {
+    border: 1px solid var(--border); padding: 1.5rem;
+    background: var(--parchment); margin-bottom: 2rem;
+  }
+  .consent-title { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
+  .consent-inner { display: flex; gap: 1rem; align-items: flex-start; }
+  .consent-inner input[type="checkbox"] { accent-color: var(--gold); width: 16px; height: 16px; flex-shrink: 0; margin-top: 0.3rem; }
+  .consent-text { font-size: 0.92rem; color: var(--muted); line-height: 1.7; }
+  .consent-text strong { color: var(--ink); }
+
+  /* ── SUBMIT ── */
+  .btn-submit {
+    width: 100%; background: var(--ink); color: var(--gold-pale);
+    border: none; padding: 1.2rem; font-family: 'DM Mono', monospace;
+    font-size: 0.78rem; letter-spacing: 0.25em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.4s; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+  }
+  .btn-submit::before { content: ''; position: absolute; inset: 0; background: var(--gold); transform: translateY(100%); transition: transform 0.4s; }
+  .btn-submit:hover::before { transform: translateY(0); }
+  .btn-submit:hover { color: var(--ink); }
+  .btn-submit span { position: relative; z-index: 1; }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-submit:disabled::before { display: none; }
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(240,228,192,0.3); border-top-color: var(--gold-pale); border-radius: 50%; animation: spin 0.8s linear infinite; position: relative; z-index: 1; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── SUCCESS ── */
+  .success-screen {
+    display: none; text-align: center; padding: 4rem 2rem;
+  }
+  .success-icon { font-size: 4rem; margin-bottom: 1.5rem; display: block; }
+  .success-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-style: italic; color: var(--ink); margin-bottom: 1rem; }
+  .success-sub { color: var(--muted); font-size: 1rem; margin-bottom: 2rem; max-width: 450px; margin-left: auto; margin-right: auto; }
+  .success-id { font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.2em; color: var(--gold); background: var(--gold-pale); padding: 0.8rem 1.5rem; display: inline-block; margin-bottom: 2rem; }
+
+  /* ── SIDEBAR ── */
+  .sidebar-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-style: italic; color: var(--gold-pale); margin-bottom: 0.5rem; }
+  .sidebar-sub { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 2.5rem; }
+  .sidebar-divider { height: 1px; background: rgba(184,146,42,0.15); margin: 1.5rem 0; }
+  .sidebar-section-title { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+  .sidebar-info-item { display: flex; gap: 1rem; padding: 0.8rem 0; border-bottom: 1px solid rgba(184,146,42,0.08); }
+  .sidebar-info-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); min-width: 70px; padding-top: 0.2rem; }
+  .sidebar-info-value { color: rgba(245,240,232,0.7); font-size: 0.95rem; }
+  .selected-events-list { list-style: none; }
+  .selected-events-list li { padding: 0.6rem 0; border-bottom: 1px solid rgba(184,146,42,0.08); color: var(--gold-pale); font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; }
+  .selected-events-list li::before { content: '◆'; color: var(--gold); font-size: 0.5rem; }
+  .privacy-note { background: rgba(184,146,42,0.06); border: 1px solid rgba(184,146,42,0.12); padding: 1.2rem; margin-top: 1.5rem; }
+  .privacy-note p { font-size: 0.82rem; color: rgba(245,240,232,0.45); line-height: 1.7; font-style: italic; }
+
+  /* ── ERROR ── */
+  .error-msg { color: var(--red-accent); font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; margin-top: 0.4rem; display: none; }
+  .error-msg.show { display: block; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 9000;
+    background: var(--ink); color: var(--gold-pale); padding: 1rem 2rem;
+    border-left: 3px solid var(--gold); font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 0.1em;
+    transform: translateY(100px); opacity: 0; transition: all 0.4s; max-width: 350px;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.error { border-left-color: var(--red-accent); }
+
+  @media (max-width: 900px) {
+    .enroll-main { grid-template-columns: 1fr; }
+    .sidebar-panel { display: none; }
+    .form-panel { padding: 2rem 1.5rem; }
+    .enroll-header { padding: 1.2rem 1.5rem; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="enroll-header">
+  <a href="index.html" class="header-logo">Critically <span>Yours</span></a>
+  <a href="index.html" class="header-back">← Back to Home</a>
+</header>
+
+<div class="enroll-main">
+
+  <!-- FORM PANEL -->
+  <div class="form-panel">
+
+    <!-- SUCCESS SCREEN -->
+    <div class="success-screen" id="success-screen">
+      <span class="success-icon">✦</span>
+      <h2 class="success-title">Enrollment Confirmed</h2>
+      <p class="success-sub">Your registration has been successfully submitted. We look forward to seeing you at <em>Critically Yours</em>!</p>
+      <div class="success-id" id="success-id-display"></div>
+      <br>
+      <a href="index.html" style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);text-decoration:none;border-bottom:1px solid var(--border-strong);padding-bottom:2px;">← Return to Home</a>
+    </div>
+
+    <!-- FORM -->
+    <div id="form-container">
+      <span class="form-eyebrow">Registration</span>
+      <h1 class="form-title">Enroll Now</h1>
+      <p class="form-subtitle">Fill in your details to register for <em>Critically Yours</em>.</p>
+      <div class="form-divider"></div>
+
+      <!-- PERSONAL -->
+      <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;">Personal Information</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="f-name">Full Name <span class="required">*</span></label>
+          <input type="text" class="form-input" id="f-name" placeholder="As per school records" autocomplete="name">
+          <span class="error-msg" id="err-name">Please enter your full name.</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="f-dob">Date of Birth <span class="required">*</span></label>
+          <input type="date" class="form-input" id="f-dob" oninput="calcAge()">
+          <span class="form-helper age-display" id="age-display"></span>
+          <span class="error-msg" id="err-dob">Please enter your date of birth.</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="f-class">Class <span class="required">*</span></label>
+          <div class="select-wrap">
+            <select class="form-select" id="f-class">
+              <option value="">Select Class</option>
+              <option>VI</option><option>VII</option><option>VIII</option>
+              <option>IX</option><option>X</option><option>XI</option><option>XII</option>
+            </select>
+          </div>
+          <span class="error-msg" id="err-class">Please select your class.</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="f-section">Section <span class="required">*</span></label>
+          <input type="text" class="form-input" id="f-section" placeholder="e.g. A, B, C…">
+          <span class="error-msg" id="err-section">Please enter your section.</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="f-roll">Roll Number <span class="required">*</span></label>
+          <input type="text" class="form-input" id="f-roll" placeholder="Your roll number">
+          <span class="error-msg" id="err-roll">Please enter your roll number.</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="f-teacher">Class Teacher <span class="required">*</span></label>
+          <input type="text" class="form-input" id="f-teacher" placeholder="Full name of your class teacher">
+          <span class="error-msg" id="err-teacher">Please enter your class teacher's name.</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="f-email">School Email ID <span class="required">*</span></label>
+        <input type="email" class="form-input" id="f-email" placeholder="yourname@dpsmegacity.in">
+        <span class="form-helper">Must end with @dpsmegacity.in</span>
+        <span class="error-msg" id="err-email">Please enter a valid school email address.</span>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <!-- EVENTS -->
+      <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem;" id="events-select-label">Event Selection <span class="required" style="color:var(--gold);">*</span></p>
+      <p class="form-helper" style="margin-bottom:1.2rem;" id="events-select-hint">Loading events…</p>
+      <div class="event-select-grid" id="event-select-grid">
+        <p class="loading-events-note">Loading events…</p>
+      </div>
+      <span class="error-msg" id="err-events">Please select at least one event.</span>
+
+      <div class="form-divider" style="margin-top:2rem;"></div>
+
+      <!-- CONSENT -->
+      <div class="consent-wrap">
+        <p class="consent-title">Data Consent</p>
+        <div class="consent-inner">
+          <input type="checkbox" id="f-consent">
+          <label class="consent-text" for="f-consent">
+            I confirm that the information provided above is accurate. I consent to sharing my personal details — including my name, class, date of birth, roll number, and school email — with the <strong>Critically Yours Management Team</strong> at Delhi Public School Megacity, Kolkata, for the purpose of event registration and communication.
+          </label>
+        </div>
+        <span class="error-msg" id="err-consent">You must consent to proceed with registration.</span>
+      </div>
+
+      <button class="btn-submit" id="submit-btn" onclick="submitEnrollment()">
+        <span id="btn-text">Submit Enrollment</span>
+        <div class="spinner" id="btn-spinner" style="display:none;"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar-panel">
+    <h2 class="sidebar-title">Critically Yours</h2>
+    <p class="sidebar-sub">DPS Megacity · Kolkata</p>
+    <div class="sidebar-divider"></div>
+    <p class="sidebar-section-title">Fest Details</p>
+    <div class="sidebar-info-item"><span class="sidebar-info-label">Date</span><span class="sidebar-info-value" id="s-date">—</span></div>
+    <div class="sidebar-info-item"><span class="sidebar-info-label">Venue</span><span class="sidebar-info-value" id="s-venue">DPS Megacity, Kolkata</span></div>
+    <div class="sidebar-divider"></div>
+    <p class="sidebar-section-title">Selected Events</p>
+    <ul class="selected-events-list" id="selected-events-display">
+      <li style="color:var(--muted);font-size:0.85rem;font-style:italic;">No events selected yet</li>
+    </ul>
+    <div class="privacy-note">
+      <p>Your information is collected only for registration purposes and will not be shared outside the Critically Yours organizing team.</p>
+    </div>
+    <div class="sidebar-divider"></div>
+    <p style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;color:rgba(107,99,85,0.4);text-transform:uppercase;">Need help? Visit the contact section on the main page.</p>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, getDoc, collection, getDocs, addDoc, serverTimestamp, query, where } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCDHweuTs5xV7s4biHnvFOOOmEjy2h58NU",
+  authDomain: "fluxprep.firebaseapp.com",
+  projectId: "fluxprep",
+  storageBucket: "fluxprep.firebasestorage.app",
+  messagingSenderId: "751139531861",
+  appId: "1:751139531861:web:dfefad1bab33fc2489f8dc",
+  measurementId: "G-EDZH3BMDNY"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Check URL for pre-selected event
+const urlParams = new URLSearchParams(window.location.search);
+const preEventId = urlParams.get('event');
+const preEventName = urlParams.get('name');
+
+let multiEventAllowed = false;
+let allEvents = [];
+
+// ── LOAD SETTINGS ──
+async function loadSettings() {
+  try {
+    const snap = await getDoc(doc(db, 'settings', 'fest'));
+    if (snap.exists()) {
+      const d = snap.data();
+      if (d.festDate) document.getElementById('s-date').textContent = d.festDate;
+      if (d.venue) document.getElementById('s-venue').textContent = d.venue;
+      multiEventAllowed = d.multiEventAllowed !== false;
+    }
+  } catch(e) {}
+}
+
+// ── LOAD EVENTS ──
+async function loadEvents() {
+  try {
+    const snap = await getDocs(collection(db, 'events'));
+    const grid = document.getElementById('event-select-grid');
+    const hint = document.getElementById('events-select-hint');
+    if (snap.empty) {
+      grid.innerHTML = '<p class="loading-events-note" style="color:var(--muted);">No events listed yet.</p>';
+      hint.textContent = 'Events will be published soon.';
+      return;
+    }
+    allEvents = [];
+    snap.forEach(d => allEvents.push({...d.data(), id: d.id}));
+    allEvents.sort((a,b) => (a.order||0)-(b.order||0));
+
+    hint.textContent = multiEventAllowed
+      ? 'You may select multiple events.'
+      : 'Select one event to participate in.';
+
+    grid.innerHTML = allEvents.map(ev => `
+      <label class="event-option" id="opt-${ev.id}">
+        <input type="${multiEventAllowed ? 'checkbox' : 'radio'}"
+          name="event_selection"
+          value="${ev.id}"
+          data-name="${ev.name}"
+          onchange="updateSelection()"
+          ${preEventId === ev.id ? 'checked' : ''}>
+        <div style="flex:1;">
+          <div class="event-option-name">${ev.name}</div>
+          <div class="event-option-cat">${ev.category || 'Event'}</div>
+        </div>
+      </label>`).join('');
+
+    // Mark pre-selected
+    if (preEventId) {
+      const el = document.getElementById(`opt-${preEventId}`);
+      if (el) el.classList.add('selected');
+    }
+    updateSelection();
+  } catch(e) {
+    document.getElementById('event-select-grid').innerHTML = '<p class="loading-events-note" style="color:var(--muted);">Failed to load events.</p>';
+  }
+}
+
+// ── UPDATE SELECTION DISPLAY ──
+window.updateSelection = function() {
+  const checked = document.querySelectorAll('#event-select-grid input:checked');
+  const displayList = document.getElementById('selected-events-display');
+
+  document.querySelectorAll('.event-option').forEach(el => {
+    el.classList.toggle('selected', el.querySelector('input').checked);
+  });
+
+  if (checked.length === 0) {
+    displayList.innerHTML = '<li style="color:var(--muted);font-size:0.85rem;font-style:italic;">No events selected yet</li>';
+  } else {
+    displayList.innerHTML = Array.from(checked).map(inp => `<li>${inp.dataset.name}</li>`).join('');
+  }
+};
+
+// ── CALC AGE ──
+window.calcAge = function() {
+  const dob = document.getElementById('f-dob').value;
+  const ageDisplay = document.getElementById('age-display');
+  if (!dob) { ageDisplay.textContent = ''; return; }
+  const today = new Date();
+  const birth = new Date(dob);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  if (age < 0 || age > 30) { ageDisplay.textContent = 'Please check date of birth.'; return; }
+  ageDisplay.textContent = `Age: ${age} years old`;
+};
+
+// ── VALIDATE ──
+function validate() {
+  let ok = true;
+  const fields = [
+    { id: 'f-name', err: 'err-name', check: v => v.trim().length >= 2 },
+    { id: 'f-dob', err: 'err-dob', check: v => !!v },
+    { id: 'f-class', err: 'err-class', check: v => !!v },
+    { id: 'f-section', err: 'err-section', check: v => !!v.trim() },
+    { id: 'f-roll', err: 'err-roll', check: v => !!v.trim() },
+    { id: 'f-teacher', err: 'err-teacher', check: v => v.trim().length >= 2 },
+    { id: 'f-email', err: 'err-email', check: v => v.trim().endsWith('@dpsmegacity.in') },
+  ];
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    const errEl = document.getElementById(f.err);
+    const valid = f.check(el.value);
+    errEl.classList.toggle('show', !valid);
+    el.classList.toggle('error', !valid);
+    if (!valid) ok = false;
+  });
+  // Events
+  const checked = document.querySelectorAll('#event-select-grid input:checked');
+  const evErr = document.getElementById('err-events');
+  if (checked.length === 0) { evErr.classList.add('show'); ok = false; } else evErr.classList.remove('show');
+  // Consent
+  const consent = document.getElementById('f-consent');
+  const conErr = document.getElementById('err-consent');
+  if (!consent.checked) { conErr.classList.add('show'); ok = false; } else conErr.classList.remove('show');
+  return ok;
+}
+
+// ── SUBMIT ──
+window.submitEnrollment = async function() {
+  if (!validate()) { showToast('Please fix the errors above.', true); return; }
+  const btn = document.getElementById('submit-btn');
+  const btnText = document.getElementById('btn-text');
+  const spinner = document.getElementById('btn-spinner');
+  btn.disabled = true; btnText.style.display = 'none'; spinner.style.display = 'block';
+  try {
+    const checked = Array.from(document.querySelectorAll('#event-select-grid input:checked'));
+    const selectedEvents = checked.map(inp => ({ id: inp.value, name: inp.dataset.name }));
+    const dob = document.getElementById('f-dob').value;
+    const today = new Date();
+    const birth = new Date(dob);
+    let age = today.getFullYear() - birth.getFullYear();
+    if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
+    const ref = await addDoc(collection(db, 'enrollments'), {
+      fullName: document.getElementById('f-name').value.trim(),
+      dob,
+      age,
+      class: document.getElementById('f-class').value,
+      section: document.getElementById('f-section').value.trim().toUpperCase(),
+      rollNumber: document.getElementById('f-roll').value.trim(),
+      classTeacher: document.getElementById('f-teacher').value.trim(),
+      email: document.getElementById('f-email').value.trim().toLowerCase(),
+      events: selectedEvents,
+      eventIds: selectedEvents.map(e => e.id),
+      eventNames: selectedEvents.map(e => e.name),
+      consentGiven: true,
+      submittedAt: serverTimestamp()
+    });
+    document.getElementById('form-container').style.display = 'none';
+    const ss = document.getElementById('success-screen');
+    ss.style.display = 'block';
+    document.getElementById('success-id-display').textContent = `Registration ID: ${ref.id.substring(0,8).toUpperCase()}`;
+  } catch(e) {
+    showToast('Submission failed. Please check your connection and try again.', true);
+    btn.disabled = false; btnText.style.display = 'block'; spinner.style.display = 'none';
+  }
+};
+
+// ── TOAST ──
+window.showToast = function(msg, isErr = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('error', isErr);
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+};
+
+// Init
+(async () => {
+  await loadSettings();
+  await loadEvents();
+})();
+</script>
+</body>
+</html>

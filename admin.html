@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Critically Yours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --bg: #0f0f0f;
+    --panel: #161616;
+    --panel2: #1c1c1c;
+    --gold: #b8922a;
+    --gold-light: #d4ac4e;
+    --gold-pale: #f0e4c0;
+    --muted: #6b6355;
+    --muted2: #888;
+    --border: rgba(184,146,42,0.18);
+    --border-strong: rgba(184,146,42,0.4);
+    --red: #c0392b;
+    --green: #27ae60;
+    --cream: #faf7f2;
+    --parchment: #f5f0e8;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--gold-pale); font-family: 'Cormorant Garamond', serif; font-size: 16px; line-height: 1.6; min-height: 100vh; }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--panel); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: var(--bg); padding: 2rem;
+    background-image:
+      radial-gradient(ellipse 60% 60% at 50% 40%, rgba(184,146,42,0.05) 0%, transparent 70%);
+  }
+  .login-box {
+    background: var(--panel); border: 1px solid var(--border);
+    padding: 3rem; width: 100%; max-width: 420px;
+    animation: fadeUp 0.6s ease;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+  .login-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2rem; color: var(--gold-pale); margin-bottom: 0.3rem; }
+  .login-sub { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; margin-bottom: 2.5rem; }
+  .login-label { display: block; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .login-input {
+    width: 100%; background: var(--panel2); border: 1px solid var(--border);
+    padding: 0.9rem 1rem; color: var(--gold-pale); font-family: 'DM Mono', monospace;
+    font-size: 0.85rem; outline: none; transition: border-color 0.3s; margin-bottom: 1.2rem;
+  }
+  .login-input:focus { border-color: var(--gold); }
+  .login-btn {
+    width: 100%; background: var(--gold); color: var(--ink); border: none;
+    padding: 1rem; font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
+    transition: background 0.3s;
+  }
+  .login-btn:hover { background: var(--gold-light); }
+  .login-err { color: var(--red); font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; margin-top: 0.8rem; display: none; text-align: center; }
+  .login-err.show { display: block; }
+
+  /* ── ADMIN LAYOUT ── */
+  #admin-screen { display: none; min-height: 100vh; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.2rem; color: var(--gold-pale); }
+  .topbar-right { display: flex; align-items: center; gap: 1.5rem; }
+  .topbar-user { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; }
+  .logout-btn { background: none; border: 1px solid var(--border); padding: 0.4rem 1rem; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: all 0.3s; }
+  .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* ── BODY LAYOUT ── */
+  .admin-body { display: flex; min-height: calc(100vh - 60px); }
+
+  /* ── SIDEBAR ── */
+  .admin-sidebar {
+    width: 220px; flex-shrink: 0; background: var(--panel);
+    border-right: 1px solid var(--border); padding: 2rem 0;
+    position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto;
+  }
+  .sidebar-section-label { font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); padding: 0 1.5rem; margin-bottom: 0.5rem; margin-top: 1rem; }
+  .sidebar-nav-item {
+    display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 1.5rem;
+    font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); cursor: pointer;
+    transition: all 0.2s; border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+  .sidebar-nav-item:hover { color: var(--gold-pale); background: rgba(184,146,42,0.05); }
+  .sidebar-nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(184,146,42,0.07); }
+  .sidebar-nav-item .nav-badge { background: var(--gold); color: var(--ink); border-radius: 10px; padding: 1px 7px; font-size: 0.55rem; margin-left: auto; }
+
+  /* ── CONTENT ── */
+  .admin-content { flex: 1; padding: 2.5rem; overflow-y: auto; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* ── PAGE HEADER ── */
+  .page-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+  .page-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2rem; color: var(--gold-pale); }
+  .page-sub { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 0.3rem; }
+
+  /* ── STATS CARDS ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1px; margin-bottom: 2.5rem; }
+  .stat-card { background: var(--panel); border: 1px solid var(--border); padding: 1.5rem; }
+  .stat-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); font-weight: 700; }
+
+  /* ── FORMS ── */
+  .admin-form { background: var(--panel); border: 1px solid var(--border); padding: 2rem; margin-bottom: 2rem; }
+  .admin-form-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.4rem; color: var(--gold-pale); margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+  .af-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .af-full { grid-column: 1/-1; }
+  .af-group { margin-bottom: 0; }
+  .af-label { display: block; font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+  .af-input, .af-select, .af-textarea {
+    width: 100%; background: var(--panel2); border: 1px solid var(--border);
+    padding: 0.75rem 0.9rem; color: var(--gold-pale); font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; outline: none; transition: border-color 0.3s;
+  }
+  .af-input:focus, .af-select:focus, .af-textarea:focus { border-color: var(--gold); }
+  .af-textarea { resize: vertical; min-height: 90px; }
+  .af-select { cursor: pointer; }
+  .af-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid var(--border); }
+  .af-toggle-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; color: var(--gold-pale); text-transform: uppercase; }
+  .af-toggle-desc { font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem; }
+  .toggle-switch { position: relative; width: 46px; height: 24px; flex-shrink: 0; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: var(--panel2); border: 1px solid var(--border); cursor: pointer; transition: all 0.3s; border-radius: 24px; }
+  .toggle-slider::before { content: ''; position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; background: var(--muted); border-radius: 50%; transition: all 0.3s; }
+  .toggle-switch input:checked + .toggle-slider { background: rgba(184,146,42,0.15); border-color: var(--gold); }
+  .toggle-switch input:checked + .toggle-slider::before { transform: translateX(22px); background: var(--gold); }
+
+  /* ── BUTTONS ── */
+  .btn-save { background: var(--gold); color: var(--ink); border: none; padding: 0.8rem 2rem; font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: background 0.3s; }
+  .btn-save:hover { background: var(--gold-light); }
+  .btn-add { background: transparent; color: var(--gold); border: 1px solid var(--border-strong); padding: 0.6rem 1.5rem; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; }
+  .btn-add:hover { background: rgba(184,146,42,0.1); }
+  .btn-danger { background: transparent; color: var(--red); border: 1px solid rgba(192,57,43,0.3); padding: 0.4rem 0.8rem; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; }
+  .btn-danger:hover { background: rgba(192,57,43,0.1); }
+  .btn-edit { background: transparent; color: var(--gold); border: 1px solid var(--border); padding: 0.4rem 0.8rem; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; }
+  .btn-edit:hover { background: rgba(184,146,42,0.08); }
+
+  /* ── TABLE ── */
+  .admin-table-wrap { overflow-x: auto; }
+  .admin-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .admin-table th { background: var(--panel2); padding: 0.8rem 1rem; text-align: left; font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .admin-table td { padding: 0.9rem 1rem; border-bottom: 1px solid rgba(184,146,42,0.06); color: rgba(240,228,192,0.75); vertical-align: top; }
+  .admin-table tr:hover td { background: rgba(184,146,42,0.03); }
+  .table-badge { display: inline-block; padding: 2px 8px; font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 2px; }
+  .badge-gold { background: rgba(184,146,42,0.15); color: var(--gold); }
+  .badge-green { background: rgba(39,174,96,0.15); color: #4ade80; }
+
+  /* ── EVENT ITEM IN ADMIN ── */
+  .event-item {
+    background: var(--panel); border: 1px solid var(--border); padding: 1.5rem;
+    margin-bottom: 1px; display: flex; align-items: center; gap: 1.5rem;
+    transition: border-color 0.3s;
+  }
+  .event-item:hover { border-color: var(--border-strong); }
+  .event-item-info { flex: 1; }
+  .event-item-name { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; color: var(--gold-pale); }
+  .event-item-cat { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; margin-top: 0.2rem; }
+  .event-item-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+  /* ── RULE ITEM ── */
+  .rule-admin-item { background: var(--panel); border: 1px solid var(--border); padding: 1.2rem 1.5rem; margin-bottom: 1px; display: flex; align-items: center; gap: 1rem; }
+  .rule-num-badge { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--gold); min-width: 30px; }
+  .rule-admin-text { flex: 1; font-size: 0.95rem; color: rgba(240,228,192,0.7); }
+
+  /* ── CONTACT ITEM ── */
+  .contact-admin-item { background: var(--panel); border: 1px solid var(--border); padding: 1.2rem 1.5rem; margin-bottom: 1px; display: flex; align-items: center; gap: 1rem; }
+
+  /* ── PROCEDURE FIELDS ── */
+  .procedure-fields { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.8rem; }
+  .procedure-field-row { display: flex; gap: 0.5rem; }
+  .procedure-field-row input { flex: 1; background: var(--panel2); border: 1px solid var(--border); padding: 0.6rem 0.8rem; color: var(--gold-pale); font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; outline: none; }
+  .procedure-field-row input:focus { border-color: var(--gold); }
+
+  /* ── MODAL ── */
+  .admin-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 2rem; opacity: 0; visibility: hidden; transition: all 0.3s; }
+  .admin-modal.open { opacity: 1; visibility: visible; }
+  .admin-modal-box { background: var(--panel); border: 1px solid var(--border); max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2.5rem; position: relative; transform: scale(0.97); transition: transform 0.3s; }
+  .admin-modal.open .admin-modal-box { transform: scale(1); }
+  .modal-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.6rem; color: var(--gold-pale); margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+  .modal-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; transition: color 0.3s; }
+  .modal-close:hover { color: var(--gold-pale); }
+  .modal-actions { display: flex; gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+
+  /* ── TOAST ── */
+  #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; background: var(--panel); color: var(--gold-pale); padding: 0.9rem 1.5rem; border-left: 3px solid var(--gold); font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; transform: translateY(80px); opacity: 0; transition: all 0.3s; max-width: 320px; }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.err { border-left-color: var(--red); }
+  #toast.success { border-left-color: var(--green); }
+
+  /* ── ENROLL TABLE EXTRAS ── */
+  .export-btn { background: transparent; color: var(--green); border: 1px solid rgba(39,174,96,0.3); padding: 0.5rem 1.2rem; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.3s; }
+  .export-btn:hover { background: rgba(39,174,96,0.08); }
+  .search-input { background: var(--panel2); border: 1px solid var(--border); padding: 0.6rem 1rem; color: var(--gold-pale); font-family: 'DM Mono', monospace; font-size: 0.7rem; outline: none; width: 260px; }
+  .search-input:focus { border-color: var(--gold); }
+  .filter-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+
+  @media (max-width: 768px) {
+    .admin-sidebar { display: none; }
+    .af-grid { grid-template-columns: 1fr; }
+    .topbar { padding: 1rem; }
+    .admin-content { padding: 1.5rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Critically Yours</div>
+    <div class="login-sub">Admin Portal · DPS Megacity</div>
+    <label class="login-label">Email</label>
+    <input type="email" class="login-input" id="login-email" value="admin@cys.dpsm" placeholder="admin@cys.dpsm">
+    <label class="login-label">Password</label>
+    <input type="password" class="login-input" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <p class="login-err" id="login-err">Invalid credentials. Please try again.</p>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="admin-screen">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">Critically Yours — Admin</div>
+    <div class="topbar-right">
+      <span class="topbar-user" id="topbar-user"></span>
+      <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+  <div class="admin-body">
+    <!-- SIDEBAR -->
+    <div class="admin-sidebar">
+      <span class="sidebar-section-label">Overview</span>
+      <div class="sidebar-nav-item active" onclick="switchTab('dashboard')">📊 Dashboard</div>
+      <div class="sidebar-nav-item" onclick="switchTab('enrollments')">📋 Enrollments <span class="nav-badge" id="enroll-badge">0</span></div>
+      <div class="sidebar-nav-item" onclick="switchTab('volunteers')">🙋 Volunteers <span class="nav-badge" id="vol-badge">0</span></div>
+      <span class="sidebar-section-label">Fest Config</span>
+      <div class="sidebar-nav-item" onclick="switchTab('settings')">⚙️ Settings</div>
+      <div class="sidebar-nav-item" onclick="switchTab('events')">🎭 Events</div>
+      <div class="sidebar-nav-item" onclick="switchTab('rules')">📜 Rules</div>
+      <div class="sidebar-nav-item" onclick="switchTab('contacts')">📞 Contacts</div>
+      <div class="sidebar-nav-item" onclick="switchTab('volunteer-settings')">🔑 Volunteer Setup</div>
+      <span class="sidebar-section-label">Site</span>
+      <a class="sidebar-nav-item" href="index.html" target="_blank">🌐 View Website</a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="admin-content">
+
+      <!-- DASHBOARD -->
+      <div class="tab-pane active" id="tab-dashboard">
+        <div class="page-header">
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-sub">Critically Yours · DPS Megacity · Overview</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card"><p class="stat-label">Total Enrollments</p><div class="stat-value" id="stat-enroll">—</div></div>
+          <div class="stat-card"><p class="stat-label">Events Listed</p><div class="stat-value" id="stat-events">—</div></div>
+          <div class="stat-card"><p class="stat-label">Volunteers Applied</p><div class="stat-value" id="stat-vol">—</div></div>
+          <div class="stat-card"><p class="stat-label">Rules Published</p><div class="stat-value" id="stat-rules">—</div></div>
+        </div>
+        <div class="admin-form">
+          <p class="admin-form-title">Recent Enrollments</p>
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="recent-table">
+              <thead><tr><th>Name</th><th>Class</th><th>Event(s)</th><th>Email</th><th>Date</th></tr></thead>
+              <tbody id="recent-tbody"><tr><td colspan="5" style="text-align:center;color:var(--muted);font-family:'DM Mono',monospace;font-size:0.65rem;">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ENROLLMENTS -->
+      <div class="tab-pane" id="tab-enrollments">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+          <div><h1 class="page-title">Enrollments</h1><p class="page-sub">All student registrations</p></div>
+          <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+        </div>
+        <div class="filter-row">
+          <input type="text" class="search-input" id="enroll-search" placeholder="Search by name, class, email…" oninput="filterEnrollments()">
+          <select class="search-input" id="enroll-event-filter" style="width:auto;" onchange="filterEnrollments()">
+            <option value="">All Events</option>
+          </select>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr>
+              <th>#</th><th>Name</th><th>Class</th><th>Sec</th><th>Roll</th>
+              <th>Teacher</th><th>DOB</th><th>Age</th><th>Email</th>
+              <th>Event(s)</th><th>Submitted</th>
+            </tr></thead>
+            <tbody id="enroll-tbody"><tr><td colspan="11" style="text-align:center;color:var(--muted);font-family:'DM Mono',monospace;font-size:0.65rem;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VOLUNTEERS -->
+      <div class="tab-pane" id="tab-volunteers">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+          <div><h1 class="page-title">Volunteers</h1><p class="page-sub">Volunteer applications</p></div>
+          <button class="export-btn" onclick="exportVolCSV()">Export CSV</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>#</th><th>Name</th><th>Class</th><th>Roll</th><th>Email</th><th>Why?</th><th>Date</th></tr></thead>
+            <tbody id="vol-tbody"><tr><td colspan="7" style="text-align:center;color:var(--muted);font-family:'DM Mono',monospace;font-size:0.65rem;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="tab-pane" id="tab-settings">
+        <div class="page-header"><h1 class="page-title">Fest Settings</h1><p class="page-sub">Configure the main fest details</p></div>
+        <div class="admin-form">
+          <p class="admin-form-title">General Information</p>
+          <div class="af-grid">
+            <div class="af-group">
+              <label class="af-label">Fest Date (display)</label>
+              <input type="text" class="af-input" id="set-date" placeholder="e.g. 12th September 2025">
+            </div>
+            <div class="af-group">
+              <label class="af-label">Venue</label>
+              <input type="text" class="af-input" id="set-venue" placeholder="e.g. DPS Megacity Auditorium">
+            </div>
+            <div class="af-group af-full">
+              <label class="af-label">About / Tagline</label>
+              <textarea class="af-textarea" id="set-about" placeholder="Short description about Critically Yours…"></textarea>
+            </div>
+            <div class="af-group af-full">
+              <label class="af-label">Rules Introduction Text</label>
+              <textarea class="af-textarea" id="set-rules-intro" placeholder="Introductory text shown above rules…"></textarea>
+            </div>
+          </div>
+          <div class="af-toggle-row" style="margin-top:1.5rem;">
+            <div>
+              <div class="af-toggle-label">Allow Multiple Event Enrollment</div>
+              <div class="af-toggle-desc">If enabled, students can register for more than one event.</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="set-multi">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div style="margin-top:1.5rem;">
+            <button class="btn-save" onclick="saveSettings()">Save Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVENTS -->
+      <div class="tab-pane" id="tab-events">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+          <div><h1 class="page-title">Events</h1><p class="page-sub">Manage fest events</p></div>
+          <button class="btn-add" onclick="openEventModal()">+ Add Event</button>
+        </div>
+        <div id="events-list">
+          <p style="color:var(--muted);font-family:'DM Mono',monospace;font-size:0.7rem;text-align:center;padding:2rem;">Loading events…</p>
+        </div>
+      </div>
+
+      <!-- RULES -->
+      <div class="tab-pane" id="tab-rules">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+          <div><h1 class="page-title">Rules & Guidelines</h1><p class="page-sub">Manage rules shown on the website</p></div>
+          <button class="btn-add" onclick="openRuleModal()">+ Add Rule</button>
+        </div>
+        <div id="rules-admin-list"></div>
+      </div>
+
+      <!-- CONTACTS -->
+      <div class="tab-pane" id="tab-contacts">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+          <div><h1 class="page-title">Contact Details</h1><p class="page-sub">Manage contact info shown on website</p></div>
+          <button class="btn-add" onclick="openContactModal()">+ Add Contact</button>
+        </div>
+        <div id="contacts-admin-list"></div>
+      </div>
+
+      <!-- VOLUNTEER SETTINGS -->
+      <div class="tab-pane" id="tab-volunteer-settings">
+        <div class="page-header"><h1 class="page-title">Volunteer Window</h1><p class="page-sub">Control the volunteer application window</p></div>
+        <div class="admin-form">
+          <div class="af-toggle-row">
+            <div>
+              <div class="af-toggle-label">Volunteer Applications Open</div>
+              <div class="af-toggle-desc">Toggle to open or close the volunteer application window on the website.</div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="vol-open-toggle">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="af-group" style="margin-top:1.5rem;">
+            <label class="af-label">Volunteer Section Description</label>
+            <textarea class="af-textarea" id="vol-description" placeholder="Description shown in the Volunteer section…"></textarea>
+          </div>
+          <div style="margin-top:1.5rem;"><button class="btn-save" onclick="saveVolSettings()">Save</button></div>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </div><!-- /admin-body -->
+</div><!-- /admin-screen -->
+
+<!-- EVENT MODAL -->
+<div class="admin-modal" id="event-modal">
+  <div class="admin-modal-box">
+    <button class="modal-close" onclick="closeModal('event-modal')">✕</button>
+    <p class="modal-title" id="event-modal-title">Add Event</p>
+    <input type="hidden" id="em-id">
+    <div class="af-grid">
+      <div class="af-group">
+        <label class="af-label">Event Name *</label>
+        <input type="text" class="af-input" id="em-name" placeholder="e.g. Debate Championship">
+      </div>
+      <div class="af-group">
+        <label class="af-label">Category</label>
+        <input type="text" class="af-input" id="em-category" placeholder="e.g. Oratory, Literary…">
+      </div>
+      <div class="af-group">
+        <label class="af-label">Short Description</label>
+        <input type="text" class="af-input" id="em-shortdesc" placeholder="One-line description">
+      </div>
+      <div class="af-group">
+        <label class="af-label">Logo URL (optional)</label>
+        <input type="url" class="af-input" id="em-logo" placeholder="https://…">
+      </div>
+      <div class="af-group af-full">
+        <label class="af-label">Full Description</label>
+        <textarea class="af-textarea" id="em-desc" placeholder="Detailed description of the event…"></textarea>
+      </div>
+      <div class="af-group">
+        <label class="af-label">Duration (optional)</label>
+        <input type="text" class="af-input" id="em-duration" placeholder="e.g. 45 minutes">
+      </div>
+      <div class="af-group">
+        <label class="af-label">Max Participants (optional)</label>
+        <input type="number" class="af-input" id="em-max" placeholder="e.g. 30">
+      </div>
+      <div class="af-group">
+        <label class="af-label">Slots Available (optional)</label>
+        <input type="number" class="af-input" id="em-slots" placeholder="e.g. 20">
+      </div>
+      <div class="af-group">
+        <label class="af-label">Display Order</label>
+        <input type="number" class="af-input" id="em-order" placeholder="1, 2, 3…">
+      </div>
+      <div class="af-group af-full">
+        <label class="af-label">How to Participate (step-by-step, one per line)</label>
+        <div class="procedure-fields" id="proc-fields">
+          <div class="procedure-field-row"><input type="text" placeholder="Step 1…"><button type="button" class="btn-danger" onclick="removeProcField(this)">✕</button></div>
+        </div>
+        <button type="button" class="btn-add" style="margin-top:0.6rem;" onclick="addProcField()">+ Add Step</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveEvent()">Save Event</button>
+      <button class="btn-danger" onclick="closeModal('event-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- RULE MODAL -->
+<div class="admin-modal" id="rule-modal">
+  <div class="admin-modal-box">
+    <button class="modal-close" onclick="closeModal('rule-modal')">✕</button>
+    <p class="modal-title" id="rule-modal-title">Add Rule</p>
+    <input type="hidden" id="rm-id">
+    <div class="af-group" style="margin-bottom:1.2rem;">
+      <label class="af-label">Rule Text *</label>
+      <textarea class="af-textarea" id="rm-text" placeholder="Enter the rule…"></textarea>
+    </div>
+    <div class="af-group">
+      <label class="af-label">Display Order</label>
+      <input type="number" class="af-input" id="rm-order" placeholder="1, 2, 3…">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveRule()">Save Rule</button>
+      <button class="btn-danger" onclick="closeModal('rule-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="admin-modal" id="contact-modal">
+  <div class="admin-modal-box">
+    <button class="modal-close" onclick="closeModal('contact-modal')">✕</button>
+    <p class="modal-title" id="contact-modal-title">Add Contact</p>
+    <input type="hidden" id="cm-id">
+    <div class="af-grid">
+      <div class="af-group">
+        <label class="af-label">Name *</label>
+        <input type="text" class="af-input" id="cm-name" placeholder="Full name">
+      </div>
+      <div class="af-group">
+        <label class="af-label">Role / Title *</label>
+        <input type="text" class="af-input" id="cm-role" placeholder="e.g. Faculty Coordinator">
+      </div>
+      <div class="af-group">
+        <label class="af-label">Phone Number</label>
+        <input type="tel" class="af-input" id="cm-phone" placeholder="+91 XXXXX XXXXX">
+      </div>
+      <div class="af-group">
+        <label class="af-label">Email</label>
+        <input type="email" class="af-input" id="cm-email" placeholder="email@dpsmegacity.in">
+      </div>
+      <div class="af-group">
+        <label class="af-label">Display Order</label>
+        <input type="number" class="af-input" id="cm-order" placeholder="1, 2, 3…">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="saveContact()">Save Contact</button>
+      <button class="btn-danger" onclick="closeModal('contact-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, getDocs, addDoc, updateDoc, deleteDoc, collection, orderBy, query, serverTimestamp, limit } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBLt5PVTomUQ_fhh-BXjxQXCfsR8xOrrSU",
+  authDomain: "cysdpsm.firebaseapp.com",
+  projectId: "cysdpsm",
+  storageBucket: "cysdpsm.firebasestorage.app",
+  messagingSenderId: "1058956548027",
+  appId: "1:1058956548027:web:37f8e59c337cdaff00569e",
+  measurementId: "G-17Z8VN58HY"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ── CACHE ──
+let allEnrollments = [];
+let allVolunteers = [];
+let allEvents = [];
+let allRules = [];
+let allContacts = [];
+
+// ── HARDCODED CREDENTIALS ──
+const ADMIN_EMAIL = 'admin@cys.dpsm';
+const ADMIN_PASS  = 'cysdpsm';
+
+// ── LOGIN ──
+window.doLogin = async function() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value.trim();
+  const errEl = document.getElementById('login-err');
+
+  // Hardcoded guard — reject before even hitting Firebase
+  if (email !== ADMIN_EMAIL || pass !== ADMIN_PASS) {
+    errEl.classList.add('show');
+    setTimeout(() => errEl.classList.remove('show'), 3000);
+    return;
+  }
+
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+    document.getElementById('topbar-user').textContent = email;
+    loadAll();
+  } catch(e) {
+    errEl.classList.add('show');
+    setTimeout(() => errEl.classList.remove('show'), 3000);
+  }
+};
+
+window.doLogout = async function() {
+  await signOut(auth);
+  location.reload();
+};
+
+// ── LOAD ALL ──
+async function loadAll() {
+  await Promise.all([
+    loadSettings(), loadEnrollments(), loadVolunteers(),
+    loadEvents(), loadRules(), loadContacts(), loadVolSettings()
+  ]);
+}
+
+// ── SETTINGS ──
+async function loadSettings() {
+  try {
+    const snap = await getDoc(doc(db, 'settings', 'fest'));
+    if (snap.exists()) {
+      const d = snap.data();
+      document.getElementById('set-date').value = d.festDate || '';
+      document.getElementById('set-venue').value = d.venue || '';
+      document.getElementById('set-about').value = d.aboutText || '';
+      document.getElementById('set-rules-intro').value = d.rulesIntro || '';
+      document.getElementById('set-multi').checked = d.multiEventAllowed !== false;
+    }
+  } catch(e) {}
+}
+
+window.saveSettings = async function() {
+  try {
+    await setDoc(doc(db, 'settings', 'fest'), {
+      festDate: document.getElementById('set-date').value.trim(),
+      venue: document.getElementById('set-venue').value.trim(),
+      aboutText: document.getElementById('set-about').value.trim(),
+      rulesIntro: document.getElementById('set-rules-intro').value.trim(),
+      multiEventAllowed: document.getElementById('set-multi').checked,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    showToast('Settings saved!', 'success');
+  } catch(e) { showToast('Save failed.', 'err'); }
+};
+
+// ── VOL SETTINGS ──
+async function loadVolSettings() {
+  try {
+    const snap = await getDoc(doc(db, 'settings', 'volunteer'));
+    if (snap.exists()) {
+      const d = snap.data();
+      document.getElementById('vol-open-toggle').checked = d.open === true;
+      document.getElementById('vol-description').value = d.description || '';
+    }
+  } catch(e) {}
+}
+window.saveVolSettings = async function() {
+  try {
+    await setDoc(doc(db, 'settings', 'volunteer'), {
+      open: document.getElementById('vol-open-toggle').checked,
+      description: document.getElementById('vol-description').value.trim(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    showToast('Volunteer settings saved!', 'success');
+  } catch(e) { showToast('Save failed.', 'err'); }
+};
+
+// ── ENROLLMENTS ──
+async function loadEnrollments() {
+  try {
+    const snap = await getDocs(collection(db, 'enrollments'));
+    allEnrollments = [];
+    snap.forEach(d => allEnrollments.push({...d.data(), id: d.id}));
+    allEnrollments.sort((a,b) => (b.submittedAt?.seconds||0)-(a.submittedAt?.seconds||0));
+    document.getElementById('stat-enroll').textContent = allEnrollments.length;
+    document.getElementById('enroll-badge').textContent = allEnrollments.length;
+    renderEnrollments(allEnrollments);
+    renderRecentEnrollments();
+    populateEventFilter();
+  } catch(e) {}
+}
+
+function fmtDate(ts) {
+  if (!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts.seconds * 1000);
+  return d.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+}
+
+function renderEnrollments(list) {
+  const tbody = document.getElementById('enroll-tbody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--muted);font-family:\'DM Mono\',monospace;font-size:0.65rem;padding:2rem;">No enrollments yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map((e, i) => `
+    <tr>
+      <td style="color:var(--muted);font-family:'DM Mono',monospace;font-size:0.6rem;">${i+1}</td>
+      <td><strong>${e.fullName || '—'}</strong></td>
+      <td><span class="table-badge badge-gold">${e.class || '—'}</span></td>
+      <td>${e.section || '—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.75rem;">${e.rollNumber || '—'}</td>
+      <td>${e.classTeacher || '—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;">${e.dob || '—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;">${e.age != null ? e.age : '—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.72rem;">${e.email || '—'}</td>
+      <td>${(e.eventNames || []).map(n => `<span class="table-badge badge-green" style="margin:1px;">${n}</span>`).join(' ')}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);">${fmtDate(e.submittedAt)}</td>
+    </tr>`).join('');
+}
+
+function renderRecentEnrollments() {
+  const tbody = document.getElementById('recent-tbody');
+  const recent = allEnrollments.slice(0, 8);
+  if (!recent.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);font-family:\'DM Mono\',monospace;font-size:0.65rem;">No enrollments yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = recent.map(e => `
+    <tr>
+      <td><strong>${e.fullName || '—'}</strong></td>
+      <td><span class="table-badge badge-gold">${e.class || ''}${e.section ? '-'+e.section : ''}</span></td>
+      <td>${(e.eventNames || []).map(n => `<span class="table-badge badge-green" style="margin:1px;">${n}</span>`).join(' ')}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.7rem;">${e.email || '—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);">${fmtDate(e.submittedAt)}</td>
+    </tr>`).join('');
+}
+
+function populateEventFilter() {
+  const sel = document.getElementById('enroll-event-filter');
+  const names = [...new Set(allEnrollments.flatMap(e => e.eventNames || []))];
+  sel.innerHTML = '<option value="">All Events</option>' + names.map(n => `<option value="${n}">${n}</option>`).join('');
+}
+
+window.filterEnrollments = function() {
+  const q = document.getElementById('enroll-search').value.toLowerCase();
+  const ev = document.getElementById('enroll-event-filter').value;
+  let filtered = allEnrollments;
+  if (q) filtered = filtered.filter(e =>
+    (e.fullName||'').toLowerCase().includes(q) ||
+    (e.email||'').toLowerCase().includes(q) ||
+    (e.class||'').toLowerCase().includes(q) ||
+    (e.rollNumber||'').toLowerCase().includes(q)
+  );
+  if (ev) filtered = filtered.filter(e => (e.eventNames||[]).includes(ev));
+  renderEnrollments(filtered);
+};
+
+window.exportCSV = function() {
+  const headers = ['#','Full Name','Class','Section','Roll No','Class Teacher','DOB','Age','Email','Event(s)','Submitted'];
+  const rows = allEnrollments.map((e,i) => [
+    i+1, e.fullName||'', e.class||'', e.section||'', e.rollNumber||'',
+    e.classTeacher||'', e.dob||'', e.age||'', e.email||'',
+    (e.eventNames||[]).join(' | '), fmtDate(e.submittedAt)
+  ]);
+  downloadCSV([headers, ...rows], 'cys_enrollments.csv');
+};
+
+window.exportVolCSV = function() {
+  const headers = ['#','Name','Class','Roll','Email','Why Volunteer','Submitted'];
+  const rows = allVolunteers.map((v,i) => [i+1, v.name||'', v.class||'', v.roll||'', v.email||'', (v.why||'').replace(/\n/g,' '), fmtDate(v.submittedAt)]);
+  downloadCSV([headers, ...rows], 'cys_volunteers.csv');
+};
+
+function downloadCSV(rows, filename) {
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+}
+
+// ── VOLUNTEERS ──
+async function loadVolunteers() {
+  try {
+    const snap = await getDocs(collection(db, 'volunteers'));
+    allVolunteers = [];
+    snap.forEach(d => allVolunteers.push({...d.data(), id: d.id}));
+    allVolunteers.sort((a,b) => (b.submittedAt?.seconds||0)-(a.submittedAt?.seconds||0));
+    document.getElementById('stat-vol').textContent = allVolunteers.length;
+    document.getElementById('vol-badge').textContent = allVolunteers.length;
+    const tbody = document.getElementById('vol-tbody');
+    if (!allVolunteers.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);font-family:\'DM Mono\',monospace;font-size:0.65rem;padding:2rem;">No applications yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = allVolunteers.map((v,i) => `
+      <tr>
+        <td style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);">${i+1}</td>
+        <td><strong>${v.name||'—'}</strong></td>
+        <td><span class="table-badge badge-gold">${v.class||'—'}</span></td>
+        <td style="font-family:'DM Mono',monospace;font-size:0.72rem;">${v.roll||'—'}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:0.72rem;">${v.email||'—'}</td>
+        <td style="font-size:0.88rem;max-width:220px;">${(v.why||'').substring(0,100)}${(v.why||'').length>100?'…':''}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);">${fmtDate(v.submittedAt)}</td>
+      </tr>`).join('');
+  } catch(e) {}
+}
+
+// ── EVENTS ──
+async function loadEvents() {
+  try {
+    const snap = await getDocs(collection(db, 'events'));
+    allEvents = [];
+    snap.forEach(d => allEvents.push({...d.data(), id: d.id}));
+    allEvents.sort((a,b) => (a.order||0)-(b.order||0));
+    document.getElementById('stat-events').textContent = allEvents.length;
+    renderEventsList();
+  } catch(e) {}
+}
+
+function renderEventsList() {
+  const wrap = document.getElementById('events-list');
+  if (!allEvents.length) {
+    wrap.innerHTML = '<p style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:0.7rem;text-align:center;padding:2rem;">No events yet. Click + Add Event to begin.</p>';
+    return;
+  }
+  wrap.innerHTML = allEvents.map(ev => `
+    <div class="event-item">
+      ${ev.logoUrl ? `<img src="${ev.logoUrl}" style="width:48px;height:48px;object-fit:contain;border:1px solid var(--border);padding:4px;">` : '<div style="width:48px;height:48px;background:var(--panel2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🎭</div>'}
+      <div class="event-item-info">
+        <div class="event-item-name">${ev.name}</div>
+        <div class="event-item-cat">${ev.category || 'Event'} ${ev.duration ? '· '+ev.duration : ''} ${ev.maxParticipants ? '· '+ev.maxParticipants+' max' : ''}</div>
+      </div>
+      <div class="event-item-actions">
+        <button class="btn-edit" onclick="openEventModal('${ev.id}')">Edit</button>
+        <button class="btn-danger" onclick="deleteEvent('${ev.id}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+window.openEventModal = function(id) {
+  const modal = document.getElementById('event-modal');
+  document.getElementById('event-modal-title').textContent = id ? 'Edit Event' : 'Add Event';
+  if (id) {
+    const ev = allEvents.find(e => e.id === id);
+    if (!ev) return;
+    document.getElementById('em-id').value = ev.id;
+    document.getElementById('em-name').value = ev.name || '';
+    document.getElementById('em-category').value = ev.category || '';
+    document.getElementById('em-shortdesc').value = ev.shortDesc || '';
+    document.getElementById('em-logo').value = ev.logoUrl || '';
+    document.getElementById('em-desc').value = ev.description || '';
+    document.getElementById('em-duration').value = ev.duration || '';
+    document.getElementById('em-max').value = ev.maxParticipants || '';
+    document.getElementById('em-slots').value = ev.slots || '';
+    document.getElementById('em-order').value = ev.order || '';
+    // Procedure
+    const pf = document.getElementById('proc-fields');
+    if (ev.procedure && ev.procedure.length) {
+      pf.innerHTML = ev.procedure.map(p => `<div class="procedure-field-row"><input type="text" value="${p.replace(/"/g,'&quot;')}" placeholder="Step…"><button type="button" class="btn-danger" onclick="removeProcField(this)">✕</button></div>`).join('');
+    } else {
+      pf.innerHTML = '<div class="procedure-field-row"><input type="text" placeholder="Step 1…"><button type="button" class="btn-danger" onclick="removeProcField(this)">✕</button></div>';
+    }
+  } else {
+    document.getElementById('em-id').value = '';
+    document.getElementById('em-name').value = '';
+    document.getElementById('em-category').value = '';
+    document.getElementById('em-shortdesc').value = '';
+    document.getElementById('em-logo').value = '';
+    document.getElementById('em-desc').value = '';
+    document.getElementById('em-duration').value = '';
+    document.getElementById('em-max').value = '';
+    document.getElementById('em-slots').value = '';
+    document.getElementById('em-order').value = '';
+    document.getElementById('proc-fields').innerHTML = '<div class="procedure-field-row"><input type="text" placeholder="Step 1…"><button type="button" class="btn-danger" onclick="removeProcField(this)">✕</button></div>';
+  }
+  modal.classList.add('open');
+};
+
+window.addProcField = function() {
+  const pf = document.getElementById('proc-fields');
+  const row = document.createElement('div');
+  row.className = 'procedure-field-row';
+  row.innerHTML = `<input type="text" placeholder="Next step…"><button type="button" class="btn-danger" onclick="removeProcField(this)">✕</button>`;
+  pf.appendChild(row);
+};
+window.removeProcField = function(btn) {
+  btn.closest('.procedure-field-row').remove();
+};
+
+window.saveEvent = async function() {
+  const name = document.getElementById('em-name').value.trim();
+  if (!name) { showToast('Event name is required.', 'err'); return; }
+  const procedure = Array.from(document.querySelectorAll('#proc-fields input'))
+    .map(i => i.value.trim()).filter(Boolean);
+  const data = {
+    name,
+    category: document.getElementById('em-category').value.trim(),
+    shortDesc: document.getElementById('em-shortdesc').value.trim(),
+    logoUrl: document.getElementById('em-logo').value.trim(),
+    description: document.getElementById('em-desc').value.trim(),
+    duration: document.getElementById('em-duration').value.trim(),
+    maxParticipants: document.getElementById('em-max').value ? Number(document.getElementById('em-max').value) : null,
+    slots: document.getElementById('em-slots').value ? Number(document.getElementById('em-slots').value) : null,
+    order: document.getElementById('em-order').value ? Number(document.getElementById('em-order').value) : 99,
+    procedure,
+    updatedAt: serverTimestamp()
+  };
+  const id = document.getElementById('em-id').value;
+  try {
+    if (id) { await updateDoc(doc(db, 'events', id), data); }
+    else { await addDoc(collection(db, 'events'), {...data, createdAt: serverTimestamp()}); }
+    closeModal('event-modal');
+    await loadEvents();
+    showToast('Event saved!', 'success');
+  } catch(e) { showToast('Save failed.', 'err'); }
+};
+
+window.deleteEvent = async function(id) {
+  if (!confirm('Delete this event? This cannot be undone.')) return;
+  try {
+    await deleteDoc(doc(db, 'events', id));
+    await loadEvents();
+    showToast('Event deleted.', 'success');
+  } catch(e) { showToast('Delete failed.', 'err'); }
+};
+
+// ── RULES ──
+async function loadRules() {
+  try {
+    const snap = await getDocs(collection(db, 'rules'));
+    allRules = [];
+    snap.forEach(d => allRules.push({...d.data(), id: d.id}));
+    allRules.sort((a,b) => (a.order||0)-(b.order||0));
+    document.getElementById('stat-rules').textContent = allRules.length;
+    renderRules();
+  } catch(e) {}
+}
+function renderRules() {
+  const wrap = document.getElementById('rules-admin-list');
+  if (!allRules.length) {
+    wrap.innerHTML = '<p style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:0.7rem;text-align:center;padding:2rem;">No rules yet.</p>';
+    return;
+  }
+  wrap.innerHTML = allRules.map((r,i) => `
+    <div class="rule-admin-item">
+      <span class="rule-num-badge">${String(i+1).padStart(2,'0')}</span>
+      <div class="rule-admin-text">${r.text||r.rule||''}</div>
+      <button class="btn-edit" onclick="openRuleModal('${r.id}')">Edit</button>
+      <button class="btn-danger" onclick="deleteRule('${r.id}')">Delete</button>
+    </div>`).join('');
+}
+window.openRuleModal = function(id) {
+  document.getElementById('rule-modal-title').textContent = id ? 'Edit Rule' : 'Add Rule';
+  if (id) {
+    const r = allRules.find(x => x.id === id);
+    if (!r) return;
+    document.getElementById('rm-id').value = r.id;
+    document.getElementById('rm-text').value = r.text || r.rule || '';
+    document.getElementById('rm-order').value = r.order || '';
+  } else {
+    document.getElementById('rm-id').value = '';
+    document.getElementById('rm-text').value = '';
+    document.getElementById('rm-order').value = '';
+  }
+  document.getElementById('rule-modal').classList.add('open');
+};
+window.saveRule = async function() {
+  const text = document.getElementById('rm-text').value.trim();
+  if (!text) { showToast('Rule text is required.', 'err'); return; }
+  const data = { text, order: Number(document.getElementById('rm-order').value)||99, updatedAt: serverTimestamp() };
+  const id = document.getElementById('rm-id').value;
+  try {
+    if (id) { await updateDoc(doc(db, 'rules', id), data); }
+    else { await addDoc(collection(db, 'rules'), {...data, createdAt: serverTimestamp()}); }
+    closeModal('rule-modal');
+    await loadRules();
+    showToast('Rule saved!', 'success');
+  } catch(e) { showToast('Save failed.', 'err'); }
+};
+window.deleteRule = async function(id) {
+  if (!confirm('Delete this rule?')) return;
+  try {
+    await deleteDoc(doc(db, 'rules', id));
+    await loadRules();
+    showToast('Rule deleted.', 'success');
+  } catch(e) { showToast('Delete failed.', 'err'); }
+};
+
+// ── CONTACTS ──
+async function loadContacts() {
+  try {
+    const snap = await getDocs(collection(db, 'contacts'));
+    allContacts = [];
+    snap.forEach(d => allContacts.push({...d.data(), id: d.id}));
+    allContacts.sort((a,b) => (a.order||0)-(b.order||0));
+    renderContacts();
+  } catch(e) {}
+}
+function renderContacts() {
+  const wrap = document.getElementById('contacts-admin-list');
+  if (!allContacts.length) {
+    wrap.innerHTML = '<p style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:0.7rem;text-align:center;padding:2rem;">No contacts yet.</p>';
+    return;
+  }
+  wrap.innerHTML = allContacts.map(c => `
+    <div class="contact-admin-item">
+      <div style="flex:1;">
+        <div style="font-family:'Playfair Display',serif;font-style:italic;color:var(--gold-pale);">${c.name}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-top:2px;">${c.role||''}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);margin-top:4px;">${c.phone||''} ${c.email ? '· '+c.email : ''}</div>
+      </div>
+      <button class="btn-edit" onclick="openContactModal('${c.id}')">Edit</button>
+      <button class="btn-danger" onclick="deleteContact('${c.id}')">Delete</button>
+    </div>`).join('');
+}
+window.openContactModal = function(id) {
+  document.getElementById('contact-modal-title').textContent = id ? 'Edit Contact' : 'Add Contact';
+  if (id) {
+    const c = allContacts.find(x => x.id === id);
+    if (!c) return;
+    document.getElementById('cm-id').value = c.id;
+    document.getElementById('cm-name').value = c.name || '';
+    document.getElementById('cm-role').value = c.role || '';
+    document.getElementById('cm-phone').value = c.phone || '';
+    document.getElementById('cm-email').value = c.email || '';
+    document.getElementById('cm-order').value = c.order || '';
+  } else {
+    ['cm-id','cm-name','cm-role','cm-phone','cm-email','cm-order'].forEach(id => document.getElementById(id).value = '');
+  }
+  document.getElementById('contact-modal').classList.add('open');
+};
+window.saveContact = async function() {
+  const name = document.getElementById('cm-name').value.trim();
+  if (!name) { showToast('Name is required.', 'err'); return; }
+  const data = {
+    name, role: document.getElementById('cm-role').value.trim(),
+    phone: document.getElementById('cm-phone').value.trim(),
+    email: document.getElementById('cm-email').value.trim(),
+    order: Number(document.getElementById('cm-order').value)||99,
+    updatedAt: serverTimestamp()
+  };
+  const id = document.getElementById('cm-id').value;
+  try {
+    if (id) { await updateDoc(doc(db, 'contacts', id), data); }
+    else { await addDoc(collection(db, 'contacts'), {...data, createdAt: serverTimestamp()}); }
+    closeModal('contact-modal');
+    await loadContacts();
+    showToast('Contact saved!', 'success');
+  } catch(e) { showToast('Save failed.', 'err'); }
+};
+window.deleteContact = async function(id) {
+  if (!confirm('Delete this contact?')) return;
+  try {
+    await deleteDoc(doc(db, 'contacts', id));
+    await loadContacts();
+    showToast('Contact deleted.', 'success');
+  } catch(e) { showToast('Delete failed.', 'err'); }
+};
+
+// ── MODALS ──
+window.closeModal = function(id) {
+  document.getElementById(id).classList.remove('open');
+};
+document.querySelectorAll('.admin-modal').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ── TOAST ──
+window.showToast = function(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = type ? `show ${type}` : 'show';
+  setTimeout(() => t.classList.remove('show'), 3500);
+};
+
+// ── TAB SWITCH ──
+window.switchTab = function(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav-item').forEach(i => i.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+  document.querySelectorAll('.sidebar-nav-item').forEach(i => {
+    if (i.getAttribute('onclick') === `switchTab('${name}')`) i.classList.add('active');
+  });
+};
+</script>
+</body>
+</html>
