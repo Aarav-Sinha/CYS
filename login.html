@@ -1,274 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign In — Critically Yours</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet"/>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{-webkit-font-smoothing:antialiased}
-    :root{
-      --bg:#08090d;--bg2:#0e1017;--bg3:#141720;
-      --border:rgba(255,255,255,0.07);--border2:rgba(201,163,72,0.25);
-      --gold:#c9a348;--gold2:#e8c46a;--gold3:rgba(201,163,72,0.1);
-      --ivory:#f2ead8;
-      --t1:rgba(255,255,255,0.92);--t2:rgba(255,255,255,0.55);--t3:rgba(255,255,255,0.28);
-      --f-serif:'Cormorant Garamond',Georgia,serif;
-      --f-sans:'Inter',system-ui,sans-serif;
-      --f-mono:'JetBrains Mono',monospace;
-      --r:14px;--r-sm:8px;
-    }
-    body{
-      font-family:var(--f-sans);background:var(--bg);color:var(--t1);
-      min-height:100vh;display:flex;align-items:center;justify-content:center;
-      position:relative;overflow:hidden;
-    }
-    body::before{
-      content:'';position:fixed;inset:0;
-      background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(201,163,72,0.06) 0%,transparent 60%);
-      pointer-events:none;
-    }
-    .orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none}
-    .orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(201,163,72,0.07),transparent 70%);top:-200px;left:-150px}
-    .orb2{width:350px;height:350px;background:radial-gradient(circle,rgba(100,80,200,0.04),transparent 70%);bottom:-100px;right:-100px}
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login — Critically Yours</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#090d07;--bg2:#0f160b;--bg3:#141e0e;--gold:#c9a84c;--gold2:#e8c97a;--green:#4a7c2f;--green2:#6aab3a;--green3:#2d5016;--surface:#111a0d;--border:rgba(106,171,58,0.22);--border2:rgba(201,168,76,0.2);--text:#e0ead4;--text2:#a8be90;--text3:#6a8a54;--red:#c0392b;--red-bg:rgba(192,57,43,0.12)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',serif;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 30% 50%,rgba(45,80,22,0.12),transparent 70%);pointer-events:none;z-index:0}
 
-    .card{
-      width:100%;max-width:420px;margin:1.5rem;
-      background:#0f1119;border:1px solid var(--border2);border-radius:var(--r);
-      box-shadow:0 32px 80px rgba(0,0,0,0.7);padding:2.5rem;
-      position:relative;z-index:1;
-      animation:cardIn 0.5s cubic-bezier(0.16,1,0.3,1) both;
-    }
-    @keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(0.97)}to{opacity:1;transform:none}}
+/* LAYOUT */
+.login-wrap{flex:1;display:flex;min-height:100vh}
+.login-left{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;position:relative;z-index:1}
+.login-right{width:400px;min-width:400px;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;position:relative;overflow:hidden}
+.login-right::before{content:'CY';position:absolute;bottom:-2rem;right:-1rem;font-family:'Playfair Display',serif;font-size:16rem;font-weight:900;font-style:italic;color:rgba(74,124,47,0.05);user-select:none;pointer-events:none;line-height:1}
 
-    .brand{text-align:center;margin-bottom:2rem}
-    .logo-box{
-      width:72px;height:72px;border-radius:14px;
-      background:var(--gold3);border:1px solid var(--border2);
-      display:flex;align-items:center;justify-content:center;
-      margin:0 auto 1rem;overflow:hidden;
-    }
-    .logo-box img{width:56px;height:56px;object-fit:contain}
-    .brand-title{font-family:var(--f-serif);font-size:1.75rem;font-weight:600;color:var(--ivory)}
-    .brand-title em{font-style:italic;color:var(--gold)}
-    .brand-inst{font-family:var(--f-mono);font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--t3);margin-top:4px}
+/* BACK */
+.back-link{position:fixed;top:1.2rem;left:1.5rem;z-index:100;text-decoration:none;font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:0.5rem;transition:color 0.3s}
+.back-link:hover{color:var(--green2)}
+.back-link::before{content:'←';font-family:inherit}
 
-    .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(201,163,72,0.25),transparent);margin:1.75rem 0}
+/* BRAND */
+.brand{text-align:center;margin-bottom:2.5rem}
+.brand img{height:56px;width:auto;object-fit:contain;border-radius:50%;border:1px solid var(--border2);margin-bottom:0.8rem}
+.brand-name{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;font-style:italic;color:var(--gold);line-height:1}
+.brand-school{font-family:'Monotype Corsiva',cursive;font-size:0.8rem;color:var(--text3);display:block;margin-top:4px}
 
-    .section-label{font-family:var(--f-mono);font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);opacity:0.8;text-align:center;display:block;margin-bottom:1.25rem}
+/* BOX */
+.login-box{width:100%;max-width:420px}
+.login-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--text);margin-bottom:0.4rem}
+.login-sub{font-size:0.95rem;color:var(--text3);margin-bottom:2rem;line-height:1.6}
 
-    .google-btn{
-      width:100%;display:flex;align-items:center;justify-content:center;gap:12px;
-      padding:0.85rem 1.5rem;border-radius:var(--r-sm);
-      background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
-      color:var(--t1);font-family:var(--f-sans);font-size:0.9rem;font-weight:500;
-      cursor:pointer;transition:all 0.2s;
-    }
-    .google-btn:hover{background:rgba(255,255,255,0.10);border-color:rgba(255,255,255,0.22);transform:translateY(-1px)}
-    .google-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+/* GOOGLE BTN */
+.google-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:0.9rem;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:0.95rem 1.5rem;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;transition:all 0.3s;position:relative;overflow:hidden}
+.google-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(106,171,58,0.08),rgba(201,168,76,0.05));opacity:0;transition:opacity 0.3s}
+.google-btn:hover{border-color:var(--green2);transform:translateY(-1px)}
+.google-btn:hover::before{opacity:1}
+.google-btn svg{width:20px;height:20px;flex-shrink:0}
+.google-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 
-    .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.1);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
+.or-divider{display:flex;align-items:center;gap:1rem;margin:1.5rem 0;color:var(--text3);font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.2em}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--border)}
 
-    .info-box{
-      background:var(--gold3);border:1px solid var(--border2);border-radius:var(--r-sm);
-      padding:12px 14px;font-size:0.78rem;color:var(--t2);line-height:1.6;
-      margin-top:1.25rem;
-    }
-    .info-box strong{color:var(--gold);font-weight:500}
+.login-note{font-size:0.85rem;color:var(--text3);text-align:center;line-height:1.6;margin-top:1.5rem}
+.login-note strong{color:var(--text2)}
 
-    .back-link{
-      display:flex;align-items:center;justify-content:center;gap:6px;
-      margin-top:1.75rem;font-size:0.78rem;color:var(--t3);text-decoration:none;
-      transition:color 0.2s;
-    }
-    .back-link:hover{color:var(--t2)}
+.error-msg{background:var(--red-bg);border:1px solid rgba(192,57,43,0.3);color:#e07060;padding:0.8rem 1rem;font-family:'DM Mono',monospace;font-size:0.72rem;margin-bottom:1.2rem;display:none;border-radius:2px}
+.error-msg.show{display:block}
+.info-msg{background:rgba(74,124,47,0.12);border:1px solid var(--border);color:var(--green2);padding:0.8rem 1rem;font-family:'DM Mono',monospace;font-size:0.72rem;margin-bottom:1.2rem;display:none;border-radius:2px}
+.info-msg.show{display:block}
 
-    #error-msg{
-      background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);
-      border-radius:var(--r-sm);padding:10px 14px;font-size:0.8rem;color:#fca5a5;
-      margin-top:1rem;display:none;
-    }
+/* ONBOARDING MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(9,13,7,0.92);z-index:500;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:2rem 1rem;backdrop-filter:blur(6px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);width:100%;max-width:560px;position:relative;margin:auto;animation:slideUp 0.4s ease}
+.modal-header{padding:2rem 2rem 1.2rem;border-bottom:1px solid var(--border)}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--text);font-style:italic}
+.modal-sub{font-size:0.88rem;color:var(--text3);margin-top:0.3rem}
+.modal-top-bar{height:3px;background:linear-gradient(to right,var(--green3),var(--gold),var(--green3));margin-bottom:0}
+.modal-body{padding:1.8rem 2rem}
 
-    #toast-root{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:8px}
-    .toast{
-      display:flex;align-items:center;gap:10px;padding:0.875rem 1.25rem;
-      border-radius:var(--r-sm);font-size:0.83rem;
-      background:#1a1d27;border:1px solid var(--border);
-      box-shadow:0 8px 32px rgba(0,0,0,0.5);
-      transform:translateX(110%);transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);
-      min-width:240px;
-    }
-    .toast.show{transform:translateX(0)}
-    .toast.success{border-left:3px solid #4ade80}
-    .toast.error{border-left:3px solid #f87171}
-    .toast.info{border-left:3px solid var(--gold)}
-  </style>
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-group{display:flex;flex-direction:column;gap:0.4rem}
+.form-group.full{grid-column:1/-1}
+.form-label{font-family:'DM Mono',monospace;font-size:0.64rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text3)}
+.form-label span{color:var(--gold);margin-left:2px}
+.form-input,.form-select{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:0.7rem 0.9rem;font-family:'Cormorant Garamond',serif;font-size:1rem;outline:none;transition:border-color 0.3s,box-shadow 0.3s;-webkit-appearance:none;appearance:none;border-radius:0}
+.form-input::placeholder{color:var(--text3);opacity:0.6}
+.form-input:focus,.form-select:focus{border-color:var(--green2);box-shadow:0 0 0 2px rgba(106,171,58,0.1)}
+.form-input.err,.form-select.err{border-color:var(--red)}
+.form-hint{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text3)}
+.form-readonly{background:var(--bg3);cursor:not-allowed;opacity:0.7}
+.modal-footer{padding:1.2rem 2rem 1.8rem;display:flex;gap:1rem;flex-wrap:wrap}
+.btn-submit{background:var(--gold);color:var(--bg);padding:0.85rem 2rem;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;transition:all 0.3s;flex:1}
+.btn-submit:hover{background:var(--gold2)}
+.btn-submit:disabled{opacity:0.5;cursor:not-allowed}
+.btn-cancel{background:transparent;color:var(--text3);padding:0.85rem 1.5rem;border:1px solid var(--border);cursor:pointer;font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;transition:all 0.3s}
+.btn-cancel:hover{border-color:var(--text3);color:var(--text)}
+
+/* RIGHT PANEL */
+.rp-quote{font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;color:var(--text);line-height:1.6;text-align:center;margin-bottom:1rem;position:relative;z-index:1}
+.rp-author{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3);text-align:center;position:relative;z-index:1}
+.rp-divider{width:40px;height:1px;background:var(--border2);margin:1.5rem auto;position:relative;z-index:1}
+.rp-badge{border:1px solid var(--border);padding:1rem 1.2rem;text-align:center;position:relative;z-index:1}
+.rp-badge-name{font-family:'Monotype Corsiva',cursive;font-size:0.9rem;color:var(--gold);line-height:1.4}
+
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* SPINNER */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(224,234,212,0.2);border-top-color:var(--text);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:768px){
+  .login-wrap{flex-direction:column}
+  .login-right{display:none}
+  .login-left{padding:2rem 1.2rem;padding-top:4rem}
+  .form-grid{grid-template-columns:1fr}
+  .form-group.full{grid-column:1}
+  .modal{max-width:100%}
+  .modal-body{padding:1.2rem}
+  .modal-footer{flex-direction:column}
+}
+select.form-select option{background:var(--bg2);color:var(--text)}
+</style>
 </head>
 <body>
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
 
-<div class="card">
-  <div class="brand">
-    <div class="logo-box">
-      <img src="cys_logo.png" alt="CYS" onerror="this.outerHTML='<span style=\'font-family:var(--f-serif);font-size:1.6rem;color:var(--gold);font-style:italic\'>CY</span>'"/>
+<a class="back-link" href="index.html">Home</a>
+
+<div class="login-wrap">
+  <div class="login-left">
+    <div class="login-box">
+      <div class="brand">
+        <img src="cys_logo.png" alt="CY" onerror="this.style.display='none'"/>
+        <div class="brand-name">Critically Yours</div>
+        <span class="brand-school">Delhi Public School Megacity, Kolkata</span>
+      </div>
+      <div class="login-title">Welcome to the Portal</div>
+      <p class="login-sub">Sign in with your Google account to access the Critically Yours fest management system.</p>
+      <div class="error-msg" id="errMsg"></div>
+      <div class="info-msg" id="infoMsg"></div>
+      <button class="google-btn" id="googleBtn" onclick="signInGoogle()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Continue with Google
+      </button>
+      <p class="login-note"><strong>First time?</strong> After signing in, you'll complete a one-time registration form.<br/>Your role will be assigned by the Admin.</p>
     </div>
-    <div class="brand-title">Critically <em>Yours</em></div>
-    <div class="brand-inst">DPS Megacity · Kolkata</div>
   </div>
-
-  <div class="divider"></div>
-
-  <span class="section-label">Sign in to continue</span>
-
-  <button class="google-btn" id="google-btn" onclick="signInGoogle()">
-    <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
-      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-    </svg>
-    Continue with Google
-  </button>
-
-  <div id="error-msg"></div>
-
-  <div class="info-box">
-    <strong>Students:</strong> Sign in to enrol for events.<br/>
-    <strong>Staff / Team:</strong> Your role is assigned by the administrator after sign-in.
+  <div class="login-right">
+    <div class="rp-quote">"Knowledge is the foundation of power, and discourse the weapon of change."</div>
+    <div class="rp-author">— Critically Yours</div>
+    <div class="rp-divider"></div>
+    <div class="rp-badge">
+      <div class="rp-badge-name">Delhi Public School Megacity, Kolkata</div>
+    </div>
   </div>
-
-  <a href="index.html" class="back-link">← Back to Homepage</a>
 </div>
 
-<div id="toast-root"></div>
+<!-- ONBOARDING MODAL -->
+<div class="modal-overlay" id="onboardModal">
+  <div class="modal">
+    <div class="modal-top-bar"></div>
+    <div class="modal-header">
+      <div class="modal-title">Complete Your Profile</div>
+      <div class="modal-sub">One-time registration — please fill all fields accurately.</div>
+    </div>
+    <div class="modal-body">
+      <div class="error-msg" id="formErr"></div>
+      <form id="onboardForm" novalidate>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">Google Account (Email) <span>*</span></label>
+            <input class="form-input form-readonly" id="f_email" type="email" readonly/>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Full Name <span>*</span></label>
+            <input class="form-input" id="f_name" type="text" placeholder="As per school records"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Class <span>*</span></label>
+            <select class="form-select" id="f_class">
+              <option value="">Select</option>
+              <option>IX</option><option>X</option><option>XI</option><option>XII</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Section <span>*</span></label>
+            <input class="form-input" id="f_section" type="text" placeholder="e.g. A"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Roll Number <span>*</span></label>
+            <input class="form-input" id="f_roll" type="number" placeholder="e.g. 14"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Registration Number <span>*</span></label>
+            <input class="form-input" id="f_reg" type="text" placeholder="School reg. no."/>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Class Teacher Name <span>*</span></label>
+            <input class="form-input" id="f_ct" type="text" placeholder="Full name of your class teacher"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date of Birth <span>*</span></label>
+            <input class="form-input" id="f_dob" type="date"/>
+            <span class="form-hint" id="ageHint"></span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gender <span>*</span></label>
+            <select class="form-select" id="f_gender">
+              <option value="">Select</option>
+              <option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-submit" id="submitOnboard" onclick="submitOnboarding()">Submit Registration</button>
+      <button class="btn-cancel" onclick="cancelOnboard()">Cancel &amp; Sign Out</button>
+    </div>
+  </div>
+</div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getFirestore,doc,getDoc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey:"AIzaSyCw-1ZShAXu8c5ZqnFXvS5S-YRqHReMydk",
-  authDomain:"critically-yours.firebaseapp.com",
-  projectId:"critically-yours",
-  storageBucket:"critically-yours.firebasestorage.app",
-  messagingSenderId:"861621080895",
-  appId:"1:861621080895:web:14f06cbf7d98402dc8398a"
-};
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-const gp   = new GoogleAuthProvider();
-gp.setCustomParameters({prompt:"select_account"});
+const app=initializeApp({apiKey:"AIzaSyCw-1ZShAXu8c5ZqnFXvS5S-YRqHReMydk",authDomain:"critically-yours.firebaseapp.com",projectId:"critically-yours",storageBucket:"critically-yours.firebasestorage.app",messagingSenderId:"861621080895",appId:"1:861621080895:web:14f06cbf7d98402dc8398a",measurementId:"G-RWFZRJ0673"});
+const db=getFirestore(app);
+const auth=getAuth(app);
+const provider=new GoogleAuthProvider();
 
-const ADMIN_EMAIL = "aaravhfs@gmail.com";
+let currentUser=null;
 
-// Get redirect params
-const params = new URLSearchParams(window.location.search);
-const nextUrl  = params.get("next") || "dashboard.html";
+function showErr(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.add('show')}
+function hideErr(id){const el=document.getElementById(id);el.classList.remove('show')}
+function showInfo(msg){const el=document.getElementById('infoMsg');el.textContent=msg;el.classList.add('show')}
 
-function toast(msg, type="info"){
-  const root = document.getElementById("toast-root");
-  const t = document.createElement("div");
-  t.className=`toast ${type}`;
-  t.textContent=msg;
-  root.appendChild(t);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add("show")));
-  setTimeout(()=>{t.classList.remove("show");setTimeout(()=>t.remove(),350)},3000);
-}
-
-// If already signed in, redirect
-onAuthStateChanged(auth, async user=>{
-  if(user){
-    await ensureUserDoc(user);
-    window.location.href = nextUrl;
-  }
+// DOB → age
+document.getElementById('f_dob').addEventListener('change',function(){
+  if(!this.value)return;
+  const dob=new Date(this.value);const now=new Date();
+  let age=now.getFullYear()-dob.getFullYear();
+  const m=now.getMonth()-dob.getMonth();
+  if(m<0||(m===0&&now.getDate()<dob.getDate()))age--;
+  document.getElementById('ageHint').textContent=age>=0?`Age: ${age} years`:'';
 });
 
-async function ensureUserDoc(user){
-  const ref = doc(db,"users",user.uid);
-  const snap = await getDoc(ref);
-  if(!snap.exists()){
-    const role = user.email===ADMIN_EMAIL ? "admin" : "student";
-    await setDoc(ref,{
-      uid: user.uid,
-      name: user.displayName||"",
-      email: user.email||"",
-      photoURL: user.photoURL||"",
-      role,
-      subRole: null,
-      assignedEvent: null,
-      permissions: role==="admin" ? getAllPermissions() : getDefaultPermissions("student"),
-      createdAt: serverTimestamp()
-    });
-  } else {
-    // If admin email but not yet set as admin
-    if(user.email===ADMIN_EMAIL && snap.data().role!=="admin"){
-      await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js")
-        .then(({updateDoc})=>updateDoc(ref,{role:"admin",permissions:getAllPermissions()}));
-    }
-  }
-}
-
-function getAllPermissions(){
-  return {
-    viewEvents:true, manageEvents:true, viewRegistrations:true, manageRegistrations:true,
-    viewParticipants:true, selectParticipants:true, viewNotices:true, manageNotices:true,
-    viewTasks:true, manageTasks:true, viewMessages:true, sendMessages:true,
-    viewAnalytics:true, manageUsers:true, manageRoles:true, manageSubRoles:true,
-    viewActivityLog:true, systemSettings:true, assignRoles:true, viewAllEvents:true
-  };
-}
-function getDefaultPermissions(role){
-  return {
-    viewEvents: true,
-    manageEvents: (role === "admin"),
-    viewAllEvents: (role === "admin" || role === "teacher" || role === "core_team"),
-    viewRegistrations: (role === "admin" || role === "teacher" || role === "core_team" || role === "event_head"),
-    manageRegistrations: (role === "admin" || role === "teacher"),
-    selectParticipants: (role === "admin" || role === "teacher"),
-    viewParticipants: (role === "admin" || role === "teacher" || role === "event_head"),
-    viewNotices: true,
-    manageNotices: (role === "admin" || role === "teacher" || role === "event_head"),
-    viewTasks: true,
-    manageTasks: (role === "admin" || role === "teacher" || role === "event_head"),
-    viewMessages: (role !== "student"),
-    sendMessages: (role !== "student"),
-    viewAnalytics: (role === "admin" || role === "teacher" || role === "core_team"),
-    viewActivityLog: (role === "admin" || role === "teacher"),
-    manageUsers: (role === "admin"),
-    manageRoles: (role === "admin"),
-    manageSubRoles: (role === "admin"),
-    assignRoles: (role === "admin" || role === "teacher"),
-    systemSettings: (role === "admin")
-  };
-}
-
-window.signInGoogle = async ()=>{
-  const btn = document.getElementById("google-btn");
-  const err = document.getElementById("error-msg");
-  btn.disabled=true;
-  btn.innerHTML='<div class="spinner"></div> Signing in…';
-  err.style.display="none";
+window.signInGoogle=async function(){
+  const btn=document.getElementById('googleBtn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>&nbsp; Signing in...';
+  hideErr('errMsg');
   try{
-    const result = await signInWithPopup(auth, gp);
-    await ensureUserDoc(result.user);
-    toast("Welcome, "+result.user.displayName+"!","success");
-    setTimeout(()=>window.location.href=nextUrl, 800);
+    const result=await signInWithPopup(auth,provider);
+    currentUser=result.user;
+    await handleUser(currentUser);
   }catch(e){
+    showErr('errMsg',e.code==='auth/popup-closed-by-user'?'Sign-in cancelled. Please try again.':e.message||'Sign-in failed. Please try again.');
     btn.disabled=false;
-    btn.innerHTML=`<svg viewBox="0 0 24 24" width="20" height="20"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Continue with Google`;
-    err.style.display="block";
-    if(e.code==="auth/popup-closed-by-user") err.textContent="Sign-in cancelled.";
-    else err.textContent="Sign-in failed: "+e.message;
+    btn.innerHTML='<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Continue with Google';
   }
 };
+
+async function handleUser(user){
+  try{
+    const uRef=doc(db,'users',user.uid);
+    const uSnap=await getDoc(uRef);
+    if(uSnap.exists()&&uSnap.data().onboarded){
+      // Already registered → redirect to dashboard
+      window.location.href='dashboard.html';
+    } else {
+      // Show onboarding
+      document.getElementById('f_email').value=user.email;
+      document.getElementById('f_name').value=user.displayName||'';
+      document.getElementById('onboardModal').classList.add('open');
+      document.getElementById('googleBtn').disabled=false;
+      document.getElementById('googleBtn').innerHTML='<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Continue with Google';
+    }
+  }catch(e){showErr('errMsg','Error loading profile: '+e.message);}
+}
+
+window.cancelOnboard=async function(){
+  try{await signOut(auth);}catch(e){}
+  document.getElementById('onboardModal').classList.remove('open');
+  currentUser=null;
+};
+
+window.submitOnboarding=async function(){
+  hideErr('formErr');
+  const btn=document.getElementById('submitOnboard');
+  // Validate
+  const name=document.getElementById('f_name').value.trim();
+  const cls=document.getElementById('f_class').value;
+  const section=document.getElementById('f_section').value.trim().toUpperCase();
+  const roll=document.getElementById('f_roll').value.trim();
+  const reg=document.getElementById('f_reg').value.trim();
+  const ct=document.getElementById('f_ct').value.trim();
+  const dob=document.getElementById('f_dob').value;
+  const gender=document.getElementById('f_gender').value;
+  const email=document.getElementById('f_email').value.trim();
+
+  if(!name||!cls||!section||!roll||!reg||!ct||!dob||!gender){
+    showErr('formErr','Please fill all required fields.');
+    return;
+  }
+  if(!/^[A-Z]$/.test(section)&&section.length>3){showErr('formErr','Please enter a valid section.');return;}
+
+  // Calculate age
+  const dobDate=new Date(dob);const now=new Date();
+  let age=now.getFullYear()-dobDate.getFullYear();
+  const mm=now.getMonth()-dobDate.getMonth();
+  if(mm<0||(mm===0&&now.getDate()<dobDate.getDate()))age--;
+  if(age<5||age>25){showErr('formErr','Please enter a valid date of birth.');return;}
+
+  btn.disabled=true;btn.textContent='Saving...';
+  try{
+    const isAdmin=email.toLowerCase()==='aaravhfs@gmail.com';
+    await setDoc(doc(db,'users',currentUser.uid),{
+      uid:currentUser.uid,
+      email:email,
+      displayName:currentUser.displayName||name,
+      photoURL:currentUser.photoURL||'',
+      fullName:name,
+      class:cls,
+      section:section,
+      rollNumber:roll,
+      registrationNumber:reg,
+      classTeacher:ct,
+      dob:dob,
+      age:age,
+      gender:gender,
+      role:isAdmin?'admin':'pending',
+      onboarded:true,
+      createdAt:serverTimestamp(),
+      lastLogin:serverTimestamp()
+    },{merge:true});
+    window.location.href='dashboard.html';
+  }catch(e){
+    showErr('formErr','Failed to save profile: '+e.message);
+    btn.disabled=false;btn.textContent='Submit Registration';
+  }
+};
+
+onAuthStateChanged(auth,async user=>{
+  if(user){
+    currentUser=user;
+    try{
+      const uSnap=await getDoc(doc(db,'users',user.uid));
+      if(uSnap.exists()&&uSnap.data().onboarded){
+        // Update lastLogin
+        await setDoc(doc(db,'users',user.uid),{lastLogin:serverTimestamp()},{merge:true});
+        window.location.href='dashboard.html';
+      }
+    }catch(e){}
+  }
+});
 </script>
 </body>
 </html>

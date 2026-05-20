@@ -1,1527 +1,1532 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard — Critically Yours</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet"/>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{-webkit-font-smoothing:antialiased;height:100%}
-    :root{
-      --bg:#08090d;--bg2:#0c0e16;--bg3:#111420;--surface:#f5f5f510;--surface2:#ffffff0e;
-      --border:rgba(255,255,255,0.07);--border2:rgba(201,163,72,0.22);
-      --gold:#c9a348;--gold2:#e8c46a;--gold3:rgba(201,163,72,0.10);
-      --ivory:#f2ead8;--sidebar-w:256px;
-      --t1:rgba(255,255,255,0.92);--t2:rgba(255,255,255,0.55);--t3:rgba(255,255,255,0.25);
-      --f-serif:'Cormorant Garamond',Georgia,serif;
-      --f-sans:'Inter',system-ui,sans-serif;
-      --f-mono:'JetBrains Mono',monospace;
-      --r:12px;--r-sm:8px;
-    }
-    body{font-family:var(--f-sans);background:var(--bg);color:var(--t1);height:100%;display:flex;flex-direction:column;overflow-x:hidden}
-    ::-webkit-scrollbar{width:4px;height:4px}
-    ::-webkit-scrollbar-track{background:transparent}
-    ::-webkit-scrollbar-thumb{background:rgba(201,163,72,0.3);border-radius:2px}
-    button{cursor:pointer;border:none;background:none;font-family:var(--f-sans)}
-    a{text-decoration:none;color:inherit}
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard — Critically Yours</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#090d07;--bg2:#0f160b;--bg3:#141e0e;--gold:#c9a84c;--gold2:#e8c97a;--green:#4a7c2f;--green2:#6aab3a;--green3:#2d5016;--surface:#111a0d;--surface2:#182315;--border:rgba(106,171,58,0.22);--border2:rgba(201,168,76,0.2);--text:#e0ead4;--text2:#a8be90;--text3:#6a8a54;--red:#c0392b;--red-bg:rgba(192,57,43,0.1);--sidebar:220px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',serif;min-height:100vh;display:flex;flex-direction:column}
 
-    /* ===== LAYOUT ===== */
-    #app{display:flex;flex:1;min-height:100vh}
+/* LOADING SCREEN */
+#loadingScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.2rem}
+.load-logo{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;font-style:italic;color:var(--gold);animation:pulse 1.5s ease-in-out infinite}
+.load-sub{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--text3)}
+.load-bar-wrap{width:180px;height:2px;background:var(--border);overflow:hidden}
+.load-bar{height:100%;background:linear-gradient(to right,var(--green3),var(--green2));animation:loadBar 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+@keyframes loadBar{
+  0% { width: 0%; transform: translateX(0); }
+  70% { width: 100%; }
+  100% { width: 100%; transform: translateX(100%); }
+}
 
-    /* ===== SIDEBAR ===== */
-    #sidebar{
-      width:var(--sidebar-w);min-height:100vh;
-      background:#0b0d14;border-right:1px solid var(--border);
-      display:flex;flex-direction:column;
-      position:fixed;top:0;left:0;bottom:0;z-index:60;
-      transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);
-      overflow-y:auto;overflow-x:hidden;
-    }
-    #sidebar::-webkit-scrollbar{width:3px}
-    #sidebar::-webkit-scrollbar-thumb{background:transparent}
-    #sidebar:hover::-webkit-scrollbar-thumb{background:rgba(201,163,72,0.2)}
+/* LAYOUT */
+#appShell{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);min-width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:100;overflow-y:auto;transition:transform 0.3s}
+.sidebar-brand{padding:1.5rem 1.2rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-logo{display:flex;align-items:center;gap:0.6rem}
+.sidebar-logo img{height:32px;width:32px;border-radius:50%;border:1px solid var(--border2);object-fit:contain}
+.sidebar-logo-text{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:900;font-style:italic;color:var(--gold);line-height:1}
+.sidebar-logo-sub{font-family:'Monotype Corsiva',cursive;font-size:0.62rem;color:var(--text3);display:block;margin-top:2px}
+.sidebar-user{padding:1rem 1.2rem;border-bottom:1px solid var(--border);flex-shrink:0}
+.user-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid var(--border);display:block;margin-bottom:0.5rem}
+.user-name{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role-badge{display:inline-block;margin-top:0.3rem;font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:2px;border:1px solid}
+.role-admin{color:#ff9f43;border-color:rgba(255,159,67,0.3);background:rgba(255,159,67,0.08)}
+.role-core{color:var(--gold);border-color:var(--border2);background:rgba(201,168,76,0.07)}
+.role-teacher{color:#a29bfe;border-color:rgba(162,155,254,0.3);background:rgba(162,155,254,0.07)}
+.role-event_head{color:var(--green2);border-color:var(--border);background:rgba(106,171,58,0.07)}
+.role-volunteer_head{color:#fd79a8;border-color:rgba(253,121,168,0.3);background:rgba(253,121,168,0.07)}
+.role-management{color:#74b9ff;border-color:rgba(116,185,255,0.3);background:rgba(116,185,255,0.07)}
+.role-volunteer{color:var(--text2);border-color:var(--border);background:transparent}
+.role-participant{color:var(--text3);border-color:var(--border);background:transparent}
+.role-pending{color:var(--red);border-color:rgba(192,57,43,0.3);background:var(--red-bg)}
 
-    .sb-brand{
-      padding:1.25rem 1.25rem 1rem;
-      display:flex;align-items:center;gap:10px;
-      border-bottom:1px solid var(--border);flex-shrink:0;
-    }
-    .sb-logo{width:32px;height:32px;border-radius:7px;background:var(--gold3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
-    .sb-logo img{width:26px;height:26px;object-fit:contain}
-    .sb-brand-name{font-family:var(--f-serif);font-size:1.05rem;font-weight:600;color:var(--ivory);line-height:1.1}
-    .sb-brand-sub{font-family:var(--f-mono);font-size:0.5rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--t3);display:block;margin-top:2px}
+.sidebar-nav{flex:1;padding:0.8rem 0}
+.nav-section-label{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--text3);padding:0.6rem 1.2rem 0.3rem;margin-top:0.5rem}
+.nav-item{display:flex;align-items:center;gap:0.7rem;padding:0.65rem 1.2rem;cursor:pointer;transition:all 0.25s;font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);border-left:2px solid transparent;text-decoration:none;position:relative}
+.nav-item:hover{color:var(--text2);background:rgba(106,171,58,0.05)}
+.nav-item.active{color:var(--green2);border-left-color:var(--green2);background:rgba(106,171,58,0.08)}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.7}
+.nav-item.active svg{opacity:1}
+.nav-badge{position:absolute;right:0.8rem;background:var(--green3);color:var(--green2);font-size:0.55rem;padding:0.1rem 0.4rem;border-radius:10px;border:1px solid var(--border)}
 
-    .sb-user{padding:1rem 1.25rem;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
-    .sb-avatar{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border2);object-fit:cover;flex-shrink:0}
-    .sb-user-info{flex:1;min-width:0}
-    .sb-user-name{font-size:0.82rem;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .sb-user-role{font-family:var(--f-mono);font-size:0.56rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-top:2px}
+.sidebar-bottom{padding:0.8rem 1.2rem;border-top:1px solid var(--border);flex-shrink:0}
+.sign-out-btn{width:100%;background:transparent;border:1px solid var(--border);color:var(--text3);padding:0.6rem 1rem;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;transition:all 0.3s;text-align:center}
+.sign-out-btn:hover{border-color:var(--red);color:var(--red)}
 
-    .sb-nav{flex:1;padding:0.75rem 0.75rem 0}
-    .sb-section{font-family:var(--f-mono);font-size:0.52rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--t3);padding:0.75rem 0.5rem 0.3rem;display:block}
-    .sb-item{
-      display:flex;align-items:center;gap:9px;width:100%;
-      padding:0.6rem 0.75rem;border-radius:var(--r-sm);
-      font-size:0.8rem;color:var(--t2);
-      transition:all 0.15s;margin-bottom:2px;border:1px solid transparent;
-      text-align:left;
-    }
-    .sb-item:hover{background:var(--surface);color:var(--t1)}
-    .sb-item.active{background:var(--gold3);color:var(--gold2);border-color:rgba(201,163,72,0.18)}
-    .sb-item .sb-icon{width:16px;text-align:center;flex-shrink:0;font-size:0.9rem}
-    .sb-item .sb-label{flex:1}
+/* MAIN */
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0.9rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;font-style:italic;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.notif-btn{position:relative;background:none;border:1px solid var(--border);color:var(--text3);width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+.notif-btn:hover{border-color:var(--green2);color:var(--green2)}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--gold);border-radius:50%;display:none}
+.notif-dot.show{display:block}
+.hamburger-main{display:none;background:none;border:1px solid var(--border);color:var(--text3);width:36px;height:36px;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:8px}
+.hamburger-main span{width:16px;height:1.5px;background:currentColor;display:block}
+.content{flex:1;padding:2rem;overflow-y:auto}
 
-    .sb-bottom{padding:0.75rem;border-top:1px solid var(--border);flex-shrink:0}
-    .sb-signout{display:flex;align-items:center;gap:8px;width:100%;padding:0.6rem 0.75rem;border-radius:var(--r-sm);font-size:0.8rem;color:var(--t3);transition:all 0.15s}
-    .sb-signout:hover{background:rgba(248,113,113,0.07);color:#f87171}
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block}
 
-    /* ===== MAIN ===== */
-    #main{
-      margin-left:var(--sidebar-w);flex:1;
-      display:flex;flex-direction:column;min-height:100vh;
-    }
+/* CARDS */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);padding:1.2rem;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--border)}
+.stat-card.green::after{background:linear-gradient(to right,var(--green3),var(--green2))}
+.stat-card.gold::after{background:linear-gradient(to right,var(--gold3),var(--gold))}
+.sc-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--text);line-height:1;margin-bottom:0.2rem}
+.sc-label{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3)}
 
-    /* ===== TOPBAR ===== */
-    #topbar{
-      height:58px;border-bottom:1px solid var(--border);
-      display:flex;align-items:center;justify-content:space-between;
-      padding:0 1.75rem;position:sticky;top:0;z-index:40;
-      background:rgba(8,9,13,0.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-      flex-shrink:0;
-    }
-    .topbar-title{display:flex;flex-direction:column;gap:2px}
-    .topbar-h{font-family:var(--f-serif);font-size:1.25rem;font-weight:600;color:var(--ivory);line-height:1}
-    .topbar-sub{font-family:var(--f-mono);font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3)}
-    .topbar-right{display:flex;align-items:center;gap:10px}
-    #mb-toggle{display:none;width:36px;height:36px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border);align-items:center;justify-content:center;color:var(--t2);font-size:1.1rem}
+/* TABLES */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:0}
+table{width:100%;border-collapse:collapse;font-size:0.9rem}
+th{background:var(--surface2);font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);padding:0.7rem 1rem;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:0.75rem 1rem;border-bottom:1px solid rgba(106,171,58,0.1);color:var(--text2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(106,171,58,0.03)}
+.td-mono{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--text3)}
+.td-name{font-weight:600;color:var(--text)}
+.badge{display:inline-block;font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:2px;border:1px solid}
+.badge-green{color:var(--green2);border-color:var(--border);background:rgba(106,171,58,0.08)}
+.badge-gold{color:var(--gold);border-color:var(--border2);background:rgba(201,168,76,0.07)}
+.badge-red{color:#e07060;border-color:rgba(192,57,43,0.3);background:var(--red-bg)}
+.badge-grey{color:var(--text3);border-color:var(--border);background:transparent}
+.badge-purple{color:#a29bfe;border-color:rgba(162,155,254,0.3);background:rgba(162,155,254,0.07)}
 
-    /* ===== PAGE CONTENT ===== */
-    #page{flex:1;padding:1.75rem;overflow-y:auto}
+/* SECTION HEADINGS */
+.section-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.2rem}
+.section-head h2{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;font-style:italic;color:var(--text)}
+.btn-sm{background:var(--green3);border:1px solid var(--green2);color:var(--text);padding:0.5rem 1.1rem;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;transition:all 0.3s}
+.btn-sm:hover{background:var(--green2);color:var(--bg)}
+.btn-sm-gold{background:rgba(201,168,76,0.1);border:1px solid var(--border2);color:var(--gold)}
+.btn-sm-gold:hover{background:var(--gold);color:var(--bg)}
+.btn-sm-red{background:var(--red-bg);border:1px solid rgba(192,57,43,0.3);color:#e07060}
+.btn-sm-red:hover{background:rgba(192,57,43,0.25)}
+.btn-icon{background:none;border:none;cursor:pointer;color:var(--text3);transition:color 0.3s;padding:0.25rem;line-height:1}
+.btn-icon:hover{color:var(--green2)}
+.btn-icon.del:hover{color:#e07060}
 
-    /* ===== CARDS ===== */
-    .card{background:#0f1119;border:1px solid var(--border);border-radius:var(--r);padding:1.5rem}
-    .card-gold{background:#0f1119;border:1px solid var(--border2);border-radius:var(--r);padding:1.5rem}
-    .glass{background:rgba(255,255,255,0.03);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:var(--r)}
+/* FORMS (inline) */
+.form-row{display:flex;flex-wrap:wrap;gap:0.8rem;align-items:flex-end}
+.fi{display:flex;flex-direction:column;gap:0.3rem}
+.fi label{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3)}
+.fi input,.fi select,.fi textarea{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:0.6rem 0.8rem;font-family:'Cormorant Garamond',serif;font-size:0.95rem;outline:none;transition:border-color 0.3s;min-width:140px;border-radius:0}
+.fi input:focus,.fi select:focus,.fi textarea:focus{border-color:var(--green2)}
+.fi textarea{resize:vertical;min-height:80px;min-width:280px}
+.fi input::placeholder,.fi textarea::placeholder{color:var(--text3);opacity:0.5}
+select option{background:var(--bg2)}
 
-    /* ===== GRID ===== */
-    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
-    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
-    @media(max-width:900px){.grid-4,.grid-3{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:600px){.grid-4,.grid-3,.grid-2{grid-template-columns:1fr}}
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(9,13,7,0.9);z-index:500;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:2rem 1rem;backdrop-filter:blur(6px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);width:100%;max-width:560px;position:relative;margin:auto;animation:slideUp 0.35s ease}
+.modal-top{height:3px;background:linear-gradient(to right,var(--green3),var(--gold),var(--green3))}
+.modal-hd{padding:1.5rem 1.8rem 1rem;border-bottom:1px solid var(--border);font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;font-style:italic;color:var(--text)}
+.modal-bd{padding:1.5rem 1.8rem}
+.modal-ft{padding:1rem 1.8rem 1.5rem;display:flex;gap:0.8rem;border-top:1px solid var(--border)}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.2rem;transition:color 0.3s}
+.modal-close:hover{color:var(--text)}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-    /* ===== STAT CARD ===== */
-    .stat-card{
-      background:#0f1119;border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;
-      position:relative;overflow:hidden;transition:border-color 0.2s;
-    }
-    .stat-card:hover{border-color:var(--border2)}
-    .stat-card::after{content:'';position:absolute;right:-10px;bottom:-10px;width:70px;height:70px;background:radial-gradient(circle,rgba(201,163,72,0.07),transparent 70%);border-radius:50%;pointer-events:none}
-    .stat-n{font-family:var(--f-serif);font-size:2.25rem;font-weight:600;color:var(--gold2);line-height:1}
-    .stat-l{font-family:var(--f-mono);font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--t3);margin-top:5px}
+/* CHAT */
+.chat-layout{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 130px);min-height:400px;border:1px solid var(--border);overflow:hidden}
+.chat-sidebar{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.chat-sidebar-hd{padding:1rem;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;justify-content:space-between}
+.chat-list{flex:1;overflow-y:auto}
+.chat-item{padding:0.9rem 1rem;cursor:pointer;transition:background 0.2s;border-bottom:1px solid rgba(106,171,58,0.08);position:relative}
+.chat-item:hover{background:rgba(106,171,58,0.05)}
+.chat-item.active{background:rgba(106,171,58,0.1);border-left:2px solid var(--green2)}
+.chat-item-name{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-item-preview{font-size:0.8rem;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0.2rem}
+.chat-item-time{position:absolute;top:0.9rem;right:0.8rem;font-family:'DM Mono',monospace;font-size:0.55rem;color:var(--text3)}
+.chat-unread{position:absolute;bottom:0.8rem;right:0.8rem;background:var(--green3);color:var(--green2);font-family:'DM Mono',monospace;font-size:0.55rem;padding:0.1rem 0.35rem;border-radius:10px;border:1px solid var(--border)}
+.chat-main{display:flex;flex-direction:column;overflow:hidden}
+.chat-hd{padding:0.9rem 1.2rem;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.chat-hd-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;font-style:italic;color:var(--text)}
+.chat-hd-sub{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3)}
+.chat-msgs{flex:1;overflow-y:auto;padding:1.2rem;display:flex;flex-direction:column;gap:0.8rem}
+.msg-wrap{display:flex;flex-direction:column;max-width:70%;gap:0.2rem}
+.msg-wrap.me{align-self:flex-end;align-items:flex-end}
+.msg-wrap.them{align-self:flex-start;align-items:flex-start}
+.msg-bubble{padding:0.6rem 0.9rem;border-radius:2px;font-size:0.95rem;line-height:1.6;word-break:break-word}
+.msg-wrap.me .msg-bubble{background:var(--green3);color:var(--text);border:1px solid var(--border)}
+.msg-wrap.them .msg-bubble{background:var(--surface2);color:var(--text2);border:1px solid rgba(106,171,58,0.12)}
+.msg-meta{font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--text3);display:flex;align-items:center;gap:0.4rem}
+.msg-sender{color:var(--green2);font-weight:500}
+.msg-status{font-size:0.6rem}
+.msg-mention{color:var(--gold);font-weight:600}
+.chat-input-area{padding:0.8rem 1rem;border-top:1px solid var(--border);display:flex;gap:0.6rem;align-items:flex-end;background:var(--bg2)}
+.chat-input{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:0.7rem 1rem;font-family:'Cormorant Garamond',serif;font-size:0.95rem;outline:none;resize:none;min-height:42px;max-height:120px;transition:border-color 0.3s;border-radius:0}
+.chat-input:focus{border-color:var(--green2)}
+.send-btn{background:var(--green3);border:1px solid var(--green2);color:var(--green2);padding:0.6rem 1.1rem;cursor:pointer;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;transition:all 0.3s;white-space:nowrap;align-self:flex-end}
+.send-btn:hover{background:var(--green2);color:var(--bg)}
+.chat-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;color:var(--text3)}
+.chat-empty span{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase}
+.no-chat{text-align:center;padding:3rem;color:var(--text3);font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase}
 
-    /* ===== TABLE ===== */
-    .tbl-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border)}
-    .tbl-wrap table{width:100%;border-collapse:collapse;font-size:0.83rem}
-    .tbl-wrap th{
-      font-family:var(--f-mono);font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;
-      color:var(--gold);font-weight:400;padding:0.75rem 1rem;text-align:left;
-      background:#0c0e16;border-bottom:1px solid var(--border);white-space:nowrap;
-    }
-    .tbl-wrap td{padding:0.75rem 1rem;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--t2);vertical-align:middle}
-    .tbl-wrap tbody tr:hover{background:rgba(255,255,255,0.015)}
-    .tbl-wrap tbody tr:last-child td{border-bottom:none}
+/* ANNOUNCEMENTS */
+.announce-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green2);padding:1.2rem 1.5rem;margin-bottom:0.8rem}
+.announce-card.urgent{border-left-color:var(--gold)}
+.ann-meta{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.5rem;flex-wrap:wrap}
+.ann-tag{font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.15rem 0.5rem;border-radius:2px;border:1px solid}
+.ann-tag.gen{color:var(--green2);border-color:var(--border);background:rgba(106,171,58,0.07)}
+.ann-tag.urg{color:var(--gold);border-color:var(--border2);background:rgba(201,168,76,0.07)}
+.ann-date{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text3)}
+.ann-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:0.3rem}
+.ann-body{font-size:0.9rem;color:var(--text2);line-height:1.7}
+.ann-author{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text3);margin-top:0.5rem}
+.ann-actions{display:flex;gap:0.4rem;margin-top:0.8rem}
 
-    /* ===== BADGE ===== */
-    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-family:var(--f-mono);font-size:0.58rem;letter-spacing:0.07em;font-weight:400}
-    .badge-pending{background:rgba(201,163,72,0.1);color:var(--gold);border:1px solid rgba(201,163,72,0.2)}
-    .badge-selected{background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.2)}
-    .badge-waitlisted{background:rgba(251,146,60,0.1);color:#fb923c;border:1px solid rgba(251,146,60,0.2)}
-    .badge-published{background:rgba(96,165,250,0.1);color:#60a5fa;border:1px solid rgba(96,165,250,0.2)}
-    .badge-draft{background:rgba(100,116,139,0.12);color:#94a3b8;border:1px solid rgba(100,116,139,0.2)}
-    .badge-student{background:rgba(74,222,128,0.08);color:#86efac;border:1px solid rgba(74,222,128,0.15)}
-    .badge-event_head{background:rgba(201,163,72,0.1);color:var(--gold);border:1px solid rgba(201,163,72,0.2)}
-    .badge-core_team{background:rgba(96,165,250,0.1);color:#7dd3fc;border:1px solid rgba(96,165,250,0.2)}
-    .badge-teacher{background:rgba(168,85,247,0.1);color:#c4b5fd;border:1px solid rgba(168,85,247,0.2)}
-    .badge-admin{background:rgba(248,113,113,0.1);color:#fca5a5;border:1px solid rgba(248,113,113,0.2)}
+/* PENDING/EMPTY */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text3)}
+.empty-state .es-icon{font-size:2rem;margin-bottom:0.8rem;opacity:0.4}
+.empty-state p{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase}
 
-    /* ===== FORM ===== */
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-    .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:1rem}
-    .form-label{font-family:var(--f-mono);font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);opacity:0.8}
-    .form-input{
-      width:100%;padding:0.65rem 0.875rem;border-radius:var(--r-sm);
-      background:rgba(255,255,255,0.04);border:1px solid var(--border);
-      color:var(--t1);font-family:var(--f-sans);font-size:0.85rem;
-      transition:border-color 0.2s,box-shadow 0.2s;outline:none;
-    }
-    .form-input:focus{border-color:rgba(201,163,72,0.45);box-shadow:0 0 0 3px rgba(201,163,72,0.07)}
-    .form-input::placeholder{color:var(--t3)}
-    .form-input:disabled{opacity:0.45;cursor:not-allowed}
-    select.form-input{appearance:none;cursor:pointer}
-    textarea.form-input{resize:vertical;min-height:90px;line-height:1.6}
+/* ERROR MSG */
+.err-bar{background:var(--red-bg);border:1px solid rgba(192,57,43,0.3);color:#e07060;padding:0.7rem 1rem;font-family:'DM Mono',monospace;font-size:0.7rem;margin-bottom:1rem;display:none}
+.err-bar.show{display:block}
+.ok-bar{background:rgba(74,124,47,0.12);border:1px solid var(--border);color:var(--green2);padding:0.7rem 1rem;font-family:'DM Mono',monospace;font-size:0.7rem;margin-bottom:1rem;display:none}
+.ok-bar.show{display:block}
 
-    /* ===== BUTTONS ===== */
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:0.55rem 1.1rem;border-radius:var(--r-sm);font-size:0.8rem;font-weight:500;transition:all 0.2s;cursor:pointer;white-space:nowrap}
-    .btn-gold{background:var(--gold);color:#08090d;box-shadow:0 0 16px rgba(201,163,72,0.25)}
-    .btn-gold:hover{background:var(--gold2);transform:translateY(-1px)}
-    .btn-ghost{color:var(--t2);border:1px solid var(--border)}
-    .btn-ghost:hover{border-color:var(--border2);color:var(--t1);background:var(--surface2)}
-    .btn-danger{background:rgba(248,113,113,0.1);color:#fca5a5;border:1px solid rgba(248,113,113,0.2)}
-    .btn-danger:hover{background:rgba(248,113,113,0.18)}
-    .btn-sm{padding:0.35rem 0.75rem;font-size:0.72rem}
-    .btn:disabled{opacity:0.45;cursor:not-allowed;transform:none!important}
+/* PENDING ACCESS */
+.pending-screen{padding:3rem 2rem;text-align:center;max-width:480px;margin:4rem auto}
+.pending-icon{font-size:3rem;margin-bottom:1rem;opacity:0.5}
+.pending-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;font-style:italic;color:var(--text);margin-bottom:0.7rem}
+.pending-text{font-size:1rem;color:var(--text3);line-height:1.8}
 
-    /* ===== DIVIDER ===== */
-    .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(201,163,72,0.2),transparent);border:none;margin:1.25rem 0}
-
-    /* ===== SPINNER ===== */
-    .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.08);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    /* ===== SECTION HEADER ===== */
-    .ph{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem}
-    .ph-title{font-family:var(--f-serif);font-size:1.6rem;font-weight:600;color:var(--ivory);line-height:1.1}
-    .ph-sub{font-family:var(--f-mono);font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--t3);margin-top:3px}
-    .ph-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-
-    /* ===== MODAL ===== */
-    .modal-overlay{
-      position:fixed;inset:0;z-index:200;
-      background:rgba(4,5,8,0.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-      display:flex;align-items:center;justify-content:center;padding:1.5rem;
-      opacity:0;pointer-events:none;transition:opacity 0.25s;
-    }
-    .modal-overlay.open{opacity:1;pointer-events:all}
-    .modal-box{
-      width:100%;max-width:580px;max-height:88vh;overflow-y:auto;
-      border-radius:var(--r);background:#0f1119;border:1px solid var(--border2);
-      box-shadow:0 32px 80px rgba(0,0,0,0.8);
-      transform:translateY(16px) scale(0.98);transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);
-    }
-    .modal-overlay.open .modal-box{transform:translateY(0) scale(1)}
-    .modal-box::-webkit-scrollbar{width:4px}
-    .modal-box::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
-    .modal-head{padding:1.5rem 1.5rem 0;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
-    .modal-body{padding:1.25rem 1.5rem 1.5rem}
-    .modal-title{font-family:var(--f-serif);font-size:1.4rem;font-weight:600;color:var(--ivory)}
-    .modal-close{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);color:var(--t2);font-size:0.9rem;transition:all 0.15s;flex-shrink:0}
-    .modal-close:hover{background:var(--surface2);color:var(--t1)}
-
-    /* ===== TOAST ===== */
-    #toast-root{position:fixed;bottom:1.25rem;right:1.25rem;z-index:999;display:flex;flex-direction:column;gap:7px;pointer-events:none}
-    .toast{display:flex;align-items:center;gap:9px;padding:0.75rem 1.1rem;border-radius:var(--r-sm);font-size:0.8rem;background:#181b26;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.5);transform:translateX(110%);transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);pointer-events:all;min-width:240px}
-    .toast.show{transform:translateX(0)}
-    .toast.success{border-left:3px solid #4ade80}
-    .toast.error{border-left:3px solid #f87171}
-    .toast.info{border-left:3px solid var(--gold)}
-
-    /* ===== NOTICE/MSG CARDS ===== */
-    .notice-card{background:#0f1119;border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:0.75rem;transition:border-color 0.2s}
-    .notice-card:hover{border-color:var(--border2)}
-    .nc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:0.5rem}
-    .nc-title{font-family:var(--f-serif);font-size:1rem;font-weight:600;color:var(--ivory);line-height:1.2}
-    .nc-meta{font-family:var(--f-mono);font-size:0.58rem;color:var(--t3);margin-top:4px;letter-spacing:0.05em}
-    .nc-body{font-size:0.82rem;color:var(--t2);line-height:1.65;margin-top:0.5rem}
-
-    /* ===== MSG THREAD ===== */
-    .msg-thread{display:flex;flex-direction:column;gap:10px;padding:1rem;min-height:250px;max-height:350px;overflow-y:auto}
-    .msg-bubble{max-width:72%;padding:0.65rem 0.875rem;border-radius:10px;font-size:0.83rem;line-height:1.5}
-    .msg-sent{background:rgba(201,163,72,0.12);border:1px solid rgba(201,163,72,0.18);border-bottom-right-radius:3px;align-self:flex-end}
-    .msg-recv{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:3px;align-self:flex-start}
-    .msg-ts{font-family:var(--f-mono);font-size:0.55rem;color:var(--t3);margin-top:3px}
-    .msg-input-row{display:flex;gap:8px;padding:0.875rem;border-top:1px solid var(--border)}
-
-    /* ===== ACTIVITY FEED ===== */
-    .af-item{display:flex;align-items:flex-start;gap:12px;padding:0.875rem 0;border-bottom:1px solid rgba(255,255,255,0.04)}
-    .af-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:5px;box-shadow:0 0 0 3px rgba(201,163,72,0.1)}
-    .af-text{font-size:0.82rem;color:var(--t2);line-height:1.5}
-    .af-ts{font-family:var(--f-mono);font-size:0.58rem;color:var(--t3);margin-top:3px}
-
-    /* ===== TOGGLE ===== */
-    .toggle-wrap{display:flex;align-items:center;gap:8px;cursor:pointer}
-    .toggle-track{width:38px;height:21px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid var(--border);position:relative;transition:background 0.2s;flex-shrink:0}
-    .toggle-track.on{background:linear-gradient(90deg,var(--gold),#b8860b)}
-    .toggle-thumb{position:absolute;top:2px;left:2px;width:15px;height:15px;background:rgba(255,255,255,0.9);border-radius:50%;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.4)}
-    .toggle-track.on .toggle-thumb{transform:translateX(17px)}
-
-    /* ===== PERMISSION GRID ===== */
-    .perm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
-    .perm-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border)}
-    .perm-label{font-size:0.78rem;color:var(--t2)}
-
-    /* ===== EMPTY STATE ===== */
-    .empty{text-align:center;padding:4rem 2rem;color:var(--t3)}
-    .empty-icon{font-size:2.5rem;margin-bottom:0.75rem;opacity:0.4}
-    .empty-msg{font-family:var(--f-serif);font-style:italic;font-size:1.1rem;color:var(--t3)}
-
-    /* ===== MOBILE ===== */
-    @media(max-width:768px){
-      #sidebar{transform:translateX(-100%)}
-      #sidebar.open{transform:translateX(0);box-shadow:4px 0 40px rgba(0,0,0,0.6)}
-      #main{margin-left:0!important}
-      #mb-toggle{display:flex}
-      #page{padding:1rem}
-      .form-row{grid-template-columns:1fr}
-    }
-    #overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:55;display:none}
-    #overlay.open{display:block}
-
-    /* ===== SEARCH ===== */
-    .search-box{position:relative}
-    .search-box input{padding-left:2.25rem}
-    .search-icon{position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);font-size:0.8rem;color:var(--t3);pointer-events:none}
-
-    /* ===== LOADING ===== */
-    #loading-screen{
-      position:fixed;inset:0;z-index:300;background:var(--bg);
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;
-    }
-    #loading-screen p{font-family:var(--f-mono);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--t3)}
-
-    /* ===== ROLE COLOR ===== */
-    .role-label{
-      font-family:var(--f-mono);font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;
-      padding:3px 8px;border-radius:999px;display:inline-block;
-    }
-  </style>
+/* MOBILE */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .hamburger-main{display:flex}
+  .chat-layout{grid-template-columns:1fr;height:auto}
+  .chat-sidebar{height:250px}
+  .chat-main{height:400px}
+  .stat-row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:500px){
+  .content{padding:1rem}
+  .topbar{padding:0.8rem 1rem}
+  .form-row{flex-direction:column}
+  .stat-row{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
 
-<!-- Loading -->
-<div id="loading-screen">
-  <div class="spinner" style="width:28px;height:28px"></div>
-  <p>Authenticating…</p>
+<div id="loadingScreen">
+  <div class="load-logo">CY</div>
+  <div class="load-sub">Critically Yours Portal</div>
+  <div class="load-bar-wrap"><div class="load-bar"></div></div>
 </div>
 
-<!-- Mobile overlay -->
-<div id="overlay" onclick="closeSidebar()"></div>
-
-<div id="app" style="display:none">
-  <!-- ===== SIDEBAR ===== -->
-  <aside id="sidebar">
-    <div class="sb-brand">
-      <div class="sb-logo">
-        <img src="cys_logo.png" alt="CYS" onerror="this.outerHTML='<span style=\'font-family:var(--f-serif);font-size:0.9rem;color:var(--gold);font-style:italic\'>CY</span>'"/>
-      </div>
-      <div>
-        <div class="sb-brand-name">Critically <em style="font-style:italic;color:var(--gold)">Yours</em></div>
-        <span class="sb-brand-sub">DPS Megacity</span>
+<div id="appShell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">
+        <img src="cys_logo.png" alt="CY" onerror="this.style.display='none'"/>
+        <div>
+          <div class="sidebar-logo-text">Critically Yours</div>
+          <span class="sidebar-logo-sub">DPS Megacity, Kolkata</span>
+        </div>
       </div>
     </div>
-    <div class="sb-user" id="sb-user">
-      <img class="sb-avatar" id="sb-avatar" src="" alt=""/>
-      <div class="sb-user-info">
-        <div class="sb-user-name" id="sb-name">Loading…</div>
-        <div class="sb-user-role" id="sb-role">—</div>
-      </div>
+    <div class="sidebar-user">
+      <img class="user-avatar" id="sideAvatar" src="" alt=""/>
+      <div class="user-name" id="sideName">Loading...</div>
+      <span class="user-role-badge" id="sideRole">—</span>
     </div>
-    <nav class="sb-nav" id="sb-nav"></nav>
-    <div class="sb-bottom">
-      <button class="sb-signout" onclick="doSignOut()">
-        <span style="font-size:0.85rem">🚪</span> Sign Out
-      </button>
+    <nav class="sidebar-nav" id="sideNav"></nav>
+    <div class="sidebar-bottom">
+      <button class="sign-out-btn" onclick="doSignOut()">Sign Out</button>
     </div>
   </aside>
 
-  <!-- ===== MAIN ===== -->
-  <div id="main">
-    <header id="topbar">
-      <div style="display:flex;align-items:center;gap:12px">
-        <button id="mb-toggle" onclick="toggleSidebar()">☰</button>
-        <div class="topbar-title">
-          <div class="topbar-h" id="tb-title">Dashboard</div>
-          <div class="topbar-sub" id="tb-sub">critically yours</div>
-        </div>
-      </div>
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <button class="hamburger-main" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
       <div class="topbar-right">
-        <a href="index.html" class="btn btn-ghost btn-sm">← Homepage</a>
+        <button class="notif-btn" onclick="showPanel('announcements')" title="Announcements">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="notif-dot" id="notifDot"></div>
+        </button>
+        <img class="user-avatar" id="topAvatar" src="" alt="" style="margin:0;cursor:pointer" onclick="showPanel('profile')"/>
       </div>
-    </header>
-    <main id="page">
-      <div class="empty"><div class="spinner" style="margin:0 auto 1rem;width:24px;height:24px"></div></div>
-    </main>
-  </div>
-</div>
-
-<!-- ===== MODALS ===== -->
-<!-- Add Event -->
-<div class="modal-overlay" id="m-addevent">
-  <div class="modal-box">
-    <div class="modal-head">
-      <div class="modal-title">Add Event</div>
-      <button class="modal-close" onclick="closeModal('m-addevent')">✕</button>
     </div>
-    <hr style="border:none;border-top:1px solid var(--border);margin:1rem 1.5rem 0"/>
-    <div class="modal-body" id="m-addevent-body"></div>
-  </div>
-</div>
 
-<!-- Add/Edit Notice -->
-<div class="modal-overlay" id="m-notice">
-  <div class="modal-box">
-    <div class="modal-head">
-      <div class="modal-title" id="m-notice-title">New Notice</div>
-      <button class="modal-close" onclick="closeModal('m-notice')">✕</button>
+    <div class="content">
+      <!-- PANELS -->
+      <div id="panel-home" class="panel active"></div>
+      <div id="panel-events" class="panel"></div>
+      <div id="panel-participants" class="panel"></div>
+      <div id="panel-announcements" class="panel"></div>
+      <div id="panel-chat" class="panel"></div>
+      <div id="panel-dates" class="panel"></div>
+      <div id="panel-users" class="panel"></div>
+      <div id="panel-roles" class="panel"></div>
+      <div id="panel-groups" class="panel"></div>
+      <div id="panel-tasks" class="panel"></div>
+      <div id="panel-profile" class="panel"></div>
+      <div id="panel-permissions" class="panel"></div>
     </div>
-    <hr style="border:none;border-top:1px solid var(--border);margin:1rem 1.5rem 0"/>
-    <div class="modal-body" id="m-notice-body"></div>
-  </div>
+  </main>
 </div>
 
-<!-- Role Management -->
-<div class="modal-overlay" id="m-role">
-  <div class="modal-box" style="max-width:680px">
-    <div class="modal-head">
-      <div class="modal-title" id="m-role-title">Manage Role</div>
-      <button class="modal-close" onclick="closeModal('m-role')">✕</button>
-    </div>
-    <hr style="border:none;border-top:1px solid var(--border);margin:1rem 1.5rem 0"/>
-    <div class="modal-body" id="m-role-body"></div>
+<!-- GENERIC MODAL -->
+<div class="modal-overlay" id="globalModal">
+  <div class="modal">
+    <div class="modal-top"></div>
+    <div class="modal-hd" id="modalTitle">—</div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-bd" id="modalBody"></div>
+    <div class="modal-ft" id="modalFt"></div>
   </div>
 </div>
-
-<!-- Sub-role modal -->
-<div class="modal-overlay" id="m-subrole">
-  <div class="modal-box" style="max-width:680px">
-    <div class="modal-head">
-      <div class="modal-title" id="m-subrole-title">Sub-Roles</div>
-      <button class="modal-close" onclick="closeModal('m-subrole')">✕</button>
-    </div>
-    <hr style="border:none;border-top:1px solid var(--border);margin:1rem 1.5rem 0"/>
-    <div class="modal-body" id="m-subrole-body"></div>
-  </div>
-</div>
-
-<div id="toast-root"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getAuth, onAuthStateChanged, signOut, GoogleAuthProvider
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {
-  getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
-  query, where, orderBy, onSnapshot, serverTimestamp, increment
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getFirestore,collection,doc,getDoc,getDocs,addDoc,setDoc,updateDoc,deleteDoc,onSnapshot,query,orderBy,where,serverTimestamp,arrayUnion,Timestamp,limit}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey:"AIzaSyCw-1ZShAXu8c5ZqnFXvS5S-YRqHReMydk",
-  authDomain:"critically-yours.firebaseapp.com",
-  projectId:"critically-yours",
-  storageBucket:"critically-yours.firebasestorage.app",
-  messagingSenderId:"861621080895",
-  appId:"1:861621080895:web:14f06cbf7d98402dc8398a"
-};
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
+const app=initializeApp({apiKey:"AIzaSyCw-1ZShAXu8c5ZqnFXvS5S-YRqHReMydk",authDomain:"critically-yours.firebaseapp.com",projectId:"critically-yours",storageBucket:"critically-yours.firebasestorage.app",messagingSenderId:"861621080895",appId:"1:861621080895:web:14f06cbf7d98402dc8398a",measurementId:"G-RWFZRJ0673"});
+const db=getFirestore(app);
+const auth=getAuth(app);
 
-/* ── State ── */
-let CU = null, UD = null;
-let allEvents=[], allUsers=[], allRegs=[], allNotices=[], allMsgs=[];
-let currentView = "";
-const unsubs = [];
-const ADMIN = "aaravhfs@gmail.com";
+let ME=null; // current user data
+let chatUnsub=null;
 
-/* ── Toast ── */
-function toast(msg, type="info", dur=3200){
-  const root=document.getElementById("toast-root");
-  const icons={success:"✓",error:"✕",info:"◆"};
-  const t=document.createElement("div");
-  t.className=`toast ${type}`;
-  t.innerHTML=`<span style="flex-shrink:0">${icons[type]||"◆"}</span><span style="flex:1">${msg}</span>`;
-  root.appendChild(t);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add("show")));
-  setTimeout(()=>{t.classList.remove("show");setTimeout(()=>t.remove(),350)},dur);
-}
-window.toast = toast;
-
-/* ── All permissions master list ── */
-const ALL_PERMS = {
-  "Events": {
-    viewEvents:        "View Events",
-    manageEvents:      "Add / Edit / Delete Events",
-    viewAllEvents:     "View All Events (cross-event)",
-  },
-  "Registrations": {
-    viewRegistrations: "View Registrations",
-    manageRegistrations:"Edit / Delete Registrations",
-    selectParticipants:"Select / Waitlist Participants",
-    viewParticipants:  "View Participant Details",
-  },
-  "Notices & Tasks": {
-    viewNotices:       "View Notices & Tasks",
-    manageNotices:     "Create / Edit / Delete Notices",
-    viewTasks:         "View Tasks",
-    manageTasks:       "Create / Edit Tasks",
-  },
-  "Communications": {
-    viewMessages:      "View Messages",
-    sendMessages:      "Send Messages",
-  },
-  "Analytics & Logs": {
-    viewAnalytics:     "View Analytics & Stats",
-    viewActivityLog:   "View Activity Log",
-  },
-  "Administration": {
-    manageUsers:       "View & Edit Users",
-    manageRoles:       "Assign Roles to Users",
-    manageSubRoles:    "Create & Manage Sub-Roles",
-    assignRoles:       "Assign Sub-Roles",
-    systemSettings:    "System Settings",
-  }
-};
-
-function getAllPermKeys(){ return Object.values(ALL_PERMS).flatMap(g=>Object.keys(g)); }
-function permObj(keys){ const p={}; getAllPermKeys().forEach(k=>p[k]=keys.includes(k)); return p; }
-function allPermsTrue(){ const p={}; getAllPermKeys().forEach(k=>p[k]=true); return p; }
-
-function can(perm){ return UD?.permissions?.[perm]===true || UD?.role==="admin" }
-
-/* ── Auth ── */
-onAuthStateChanged(auth, async user=>{
-  if(!user){ window.location.href="login.html"; return; }
-  CU = user;
-  const snap = await getDoc(doc(db,"users",user.uid));
-  if(!snap.exists()){ window.location.href="login.html"; return; }
-  UD = snap.data();
-  if(user.email===ADMIN && UD.role!=="admin"){
-    await updateDoc(doc(db,"users",user.uid),{role:"admin",permissions:allPermsTrue()});
-    UD.role="admin"; UD.permissions=allPermsTrue();
-  }
-  document.getElementById("loading-screen").style.display="none";
-  document.getElementById("app").style.display="flex";
-
-  // Sidebar user info
-  const av = document.getElementById("sb-avatar");
-  if(user.photoURL) av.src=user.photoURL; else av.style.display="none";
-  document.getElementById("sb-name").textContent = user.displayName||user.email;
-  const roleEl = document.getElementById("sb-role");
-  roleEl.textContent = (UD.subRole ? UD.subRole+" · " : "") + (UD.role||"student");
-
-  buildSidebar();
-  loadGlobalData();
-  navigate("overview");
-});
-
-/* ── Sign out ── */
-window.doSignOut = async()=>{ await signOut(auth); window.location.href="login.html"; };
-
-/* ── Sidebar ── */
-function buildSidebar(){
-  const nav = document.getElementById("sb-nav");
-  const items = getSidebarItems();
-  nav.innerHTML = items.map(s=>{
-    if(s.type==="section") return `<span class="sb-section">${s.label}</span>`;
-    return `<button class="sb-item" data-view="${s.view}" onclick="navigate('${s.view}')">
-      <span class="sb-icon">${s.icon}</span>
-      <span class="sb-label">${s.label}</span>
-    </button>`;
-  }).join("");
-}
-
-function getSidebarItems(){
-  const items = [{type:"section",label:"General"}];
-  items.push({view:"overview", icon:"⬡", label:"Overview"});
-
-  if(can("viewEvents")||can("viewAllEvents")){
-    items.push({type:"section",label:"Events"});
-    items.push({view:"events", icon:"📋", label:"Events"});
-  }
-  if(can("viewRegistrations")||can("viewParticipants")){
-    items.push({view:"participants", icon:"👥", label:"Participants"});
-  }
-  if(can("viewNotices")||can("manageNotices")){
-    items.push({type:"section",label:"Content"});
-    items.push({view:"notices", icon:"📌", label:"Notices"});
-  }
-  if(can("viewTasks")||can("manageTasks")){
-    items.push({view:"tasks", icon:"✅", label:"Tasks"});
-  }
-  if(can("viewMessages")||can("sendMessages")){
-    items.push({type:"section",label:"Comms"});
-    items.push({view:"messages", icon:"💬", label:"Messages"});
-  }
-  if(can("viewAnalytics")){
-    items.push({type:"section",label:"Reporting"});
-    items.push({view:"analytics", icon:"📊", label:"Analytics"});
-  }
-  if(can("viewActivityLog")){
-    items.push({view:"activity", icon:"⚡", label:"Activity"});
-  }
-  if(can("manageUsers")||can("manageRoles")||can("manageSubRoles")){
-    items.push({type:"section",label:"Admin"});
-    items.push({view:"users", icon:"👤", label:"Users"});
-  }
-  if(UD.role==="admin"||can("systemSettings")){
-    items.push({view:"settings", icon:"⚙", label:"Settings"});
-  }
-  return items;
-}
-
-/* ── Global data listeners ── */
-function loadGlobalData(){
-  // Events
-  const eu = onSnapshot(query(collection(db,"events"),orderBy("createdAt","desc")),s=>{
-    allEvents=s.docs.map(d=>({id:d.id,...d.data()}));
-    if(currentView==="events"||currentView==="overview"||currentView==="analytics") renderCurrentView();
-  }); unsubs.push(eu);
-
-  // Users (admin/teacher only)
-  if(can("manageUsers")){
-    const uu = onSnapshot(collection(db,"users"),s=>{
-      allUsers=s.docs.map(d=>({id:d.id,...d.data()}));
-      if(currentView==="users") renderCurrentView();
-    }); unsubs.push(uu);
-  }
-
-  // Registrations
-  if(can("viewRegistrations")){
-    let q2;
-    if(UD.role==="event_head"&&UD.assignedEvent){
-      q2=query(collection(db,"registrations"),where("eventId","==",UD.assignedEvent));
-    } else {
-      q2=query(collection(db,"registrations"),orderBy("registeredAt","desc"));
-    }
-    const ru=onSnapshot(q2,s=>{
-      allRegs=s.docs.map(d=>({id:d.id,...d.data()}));
-      if(currentView==="participants"||currentView==="overview") renderCurrentView();
-    }); unsubs.push(ru);
-  }
-
-  // Notices
-  if(can("viewNotices")){
-    let nq;
-    if(UD.role==="event_head"&&UD.assignedEvent){
-      nq=query(collection(db,"notices_tasks"),where("eventId","==",UD.assignedEvent),where("type","==","notice"),orderBy("timestamp","desc"));
-    } else {
-      nq=query(collection(db,"notices_tasks"),where("type","==","notice"),orderBy("timestamp","desc"));
-    }
-    const nu=onSnapshot(nq,s=>{
-      allNotices=s.docs.map(d=>({id:d.id,...d.data()}));
-      if(currentView==="notices") renderCurrentView();
-    }); unsubs.push(nu);
-  }
-}
-
-function renderCurrentView(){ if(currentView) navigate(currentView,true); }
-
-/* ── Navigate ── */
-window.navigate = function(view, silent=false){
-  currentView=view;
-  if(!silent){
-    document.querySelectorAll(".sb-item").forEach(el=>el.classList.toggle("active",el.dataset.view===view));
-    closeSidebar();
-  }
-  const page = document.getElementById("page");
-  const titles = {
-    overview:"Overview",participants:"Participants",events:"Events",
-    notices:"Notices",tasks:"Tasks",messages:"Messages",analytics:"Analytics",
-    activity:"Activity Log",users:"User Management",settings:"Settings"
-  };
-  document.getElementById("tb-title").textContent = titles[view]||"Dashboard";
-
-  const views = {
-    overview:  viewOverview,
-    events:    viewEvents,
-    participants: viewParticipants,
-    notices:   viewNotices,
-    tasks:     viewTasks,
-    messages:  viewMessages,
-    analytics: viewAnalytics,
-    activity:  viewActivity,
-    users:     viewUsers,
-    settings:  viewSettings
-  };
-  (views[view]||viewOverview)(page);
+// ── NAV CONFIG ──
+const NAV={
+  admin:[
+    {id:'home',label:'Home',icon:'grid'},
+    {section:'Management'},
+    {id:'users',label:'All Users',icon:'users'},
+    {id:'roles',label:'Roles & Permissions',icon:'shield'},
+    {id:'permissions',label:'Chat Permissions',icon:'lock'},
+    {id:'events',label:'Events',icon:'calendar'},
+    {id:'dates',label:'Important Dates',icon:'clock'},
+    {section:'Communication'},
+    {id:'announcements',label:'Announcements',icon:'bell'},
+    {id:'chat',label:'Messages',icon:'message'},
+    {id:'groups',label:'Groups',icon:'users-g'},
+    {section:'Account'},
+    {id:'profile',label:'My Profile',icon:'user'},
+  ],
+  core:[
+    {id:'home',label:'Home',icon:'grid'},
+    {section:'Management'},
+    {id:'events',label:'Events',icon:'calendar'},
+    {id:'participants',label:'Participants',icon:'users'},
+    {id:'dates',label:'Important Dates',icon:'clock'},
+    {section:'Communication'},
+    {id:'announcements',label:'Announcements',icon:'bell'},
+    {id:'chat',label:'Messages',icon:'message'},
+    {id:'groups',label:'Groups',icon:'users-g'},
+    {section:'Account'},
+    {id:'profile',label:'My Profile',icon:'user'},
+  ],
+  teacher:[
+    {id:'home',label:'Home',icon:'grid'},
+    {section:'Oversight'},
+    {id:'users',label:'All Members',icon:'users'},
+    {id:'events',label:'Events',icon:'calendar'},
+    {id:'participants',label:'Participants',icon:'users'},
+    {id:'tasks',label:'Tasks',icon:'check'},
+    {section:'Communication'},
+    {id:'announcements',label:'Announcements',icon:'bell'},
+    {id:'chat',label:'Messages',icon:'message'},
+    {id:'groups',label:'Groups',icon:'users-g'},
+    {section:'Account'},
+    {id:'profile',label:'My Profile',icon:'user'},
+  ],
+  event_head:[
+    {id:'home',label:'Home',icon:'grid'},
+    {section:'My Event'},
+    {id:'participants',label:'My Participants',icon:'users'},
+    {id:'tasks',label:'Tasks',icon:'check'},
+    {section:'Communication'},
+    {id:'announcements',label:'Announcements',icon:'bell'},
+    {id:'chat',label:'Messages',icon:'message'},
+    {id:'groups',label:'Groups',icon:'users-g'},
+    {section:'Account'},
+    {id:'profile',label:'My Profile',icon:'user'},
+  ],
+  volunteer_head:[
+    {id:'home',label:'Home',icon:'grid'},
+    {section:'Volunteers'},
+    {id:'participants',label:'My Volunteers',icon:'users'},
+    {id:'tasks',label:'Tasks',icon:'check'},
+    {section:'Communication'},
+    {id:'announcements',label:'Announcements',icon:'bell'},
+    {id:'chat',label:'Messages',icon:'message'},
+    {id:'groups',label:'Groups',icon:'users-g'},
+    {section:'Account'},
+    {id:'profile',label:'My Profile',icon:'user'},
+  ],
+  management:[
+    {id:'home',label:'Home',icon:'grid'},
+    {section:'Access'},
+    {id:'participants',label:'Participants',icon:'users'},
+    {section:'Communication'},
+    {id:'chat',label:'Messages',icon:'message'},
+    {section:'Account'},
+    {id:'profile',label:'My Profile',icon:'user'},
+  ],
+  participant:[
+    {id:'home',label:'Home',icon:'grid'},
+    {section:'Communication'},
+    {id:'announcements',label:'Announcements',icon:'bell'},
+    {id:'chat',label:'Messages',icon:'message'},
+    {section:'Account'},
+    {id:'profile',label:'My Profile',icon:'user'},
+  ],
+  volunteer:[
+    {id:'home',label:'Home',icon:'grid'},
+    {id:'tasks',label:'My Tasks',icon:'check'},
+    {section:'Communication'},
+    {id:'announcements',label:'Announcements',icon:'bell'},
+    {id:'chat',label:'Messages',icon:'message'},
+    {section:'Account'},
+    {id:'profile',label:'My Profile',icon:'user'},
+  ],
+  pending:[
+    {id:'home',label:'Home',icon:'grid'},
+    {id:'profile',label:'My Profile',icon:'user'},
+  ]
 };
 
-/* ── Helpers ── */
-const fmt = ts=>{
-  if(!ts) return "—";
+const ICONS={
+  grid:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>',
+  users:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  'users-g':'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  shield:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  lock:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+  calendar:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  clock:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  bell:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+  message:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>',
+  user:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+};
+
+const ROLE_LABELS={admin:'Admin',core:'Core Team',teacher:'Teacher',event_head:'Event Head',volunteer_head:'Volunteer Head',management:'Management',participant:'Participant',volunteer:'Volunteer',pending:'Pending Approval'};
+
+function roleBadgeClass(r){return'role-'+(r||'pending');}
+
+function fmt(ts){
+  if(!ts)return'';
   const d=ts.toDate?ts.toDate():new Date(ts);
-  return d.toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+  const now=new Date();
+  const diff=now-d;
+  if(diff<60000)return'just now';
+  if(diff<3600000)return Math.floor(diff/60000)+'m ago';
+  if(diff<86400000)return Math.floor(diff/3600000)+'h ago';
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+}
+
+// ── BUILD SIDEBAR NAV ──
+function buildNav(role){
+  const items=NAV[role]||NAV.pending;
+  const nav=document.getElementById('sideNav');
+  nav.innerHTML='';
+  items.forEach(item=>{
+    if(item.section){
+      const lbl=document.createElement('div');lbl.className='nav-section-label';lbl.textContent=item.section;nav.appendChild(lbl);
+    } else {
+      const a=document.createElement('a');a.className='nav-item';a.dataset.panel=item.id;a.href='#';
+      a.innerHTML=(ICONS[item.icon]||'')+`<span>${item.label}</span>`;
+      a.onclick=(e)=>{e.preventDefault();showPanel(item.id);closeSidebar();};
+      nav.appendChild(a);
+    }
+  });
+}
+
+// ── SHOW PANEL ──
+window.showPanel=function(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(a=>a.classList.remove('active'));
+  const panel=document.getElementById('panel-'+id);
+  if(panel)panel.classList.add('active');
+  const navItem=document.querySelector('[data-panel="'+id+'"]');
+  if(navItem)navItem.classList.add('active');
+  const titles={home:'Dashboard',events:'Events',participants:'Participants',announcements:'Announcements',chat:'Messages',dates:'Important Dates',users:'All Users',roles:'Roles & Permissions',groups:'Groups',tasks:'Tasks',profile:'My Profile',permissions:'Chat Permissions'};
+  document.getElementById('topbarTitle').textContent=titles[id]||'Dashboard';
+  if(id==='chat')renderChat();
+  if(id==='announcements')renderAnnouncements();
+  if(id==='events')renderEvents();
+  if(id==='participants')renderParticipants();
+  if(id==='users')renderUsers();
+  if(id==='dates')renderDates();
+  if(id==='roles')renderRoles();
+  if(id==='groups')renderGroups();
+  if(id==='tasks')renderTasks();
+  if(id==='profile')renderProfile();
+  if(id==='permissions')renderPermissions();
 };
-const fmtShort = ts=>{
-  if(!ts) return "—";
-  const d=ts.toDate?ts.toDate():new Date(ts);
-  return d.toLocaleString("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+
+window.toggleSidebar=function(){document.getElementById('sidebar').classList.toggle('open');}
+window.closeSidebar=function(){if(window.innerWidth<=900)document.getElementById('sidebar').classList.remove('open');}
+
+window.closeModal=function(){document.getElementById('globalModal').classList.remove('open');}
+function openModal(title,body,footer=''){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').innerHTML=body;
+  document.getElementById('modalFt').innerHTML=footer;
+  document.getElementById('globalModal').classList.add('open');
+}
+
+window.doSignOut=async function(){
+  try{await signOut(auth);}catch(e){}
+  window.location.href='login.html';
 };
 
-/* ─────────────────────────────────────────────
-   VIEW: OVERVIEW
-───────────────────────────────────────────── */
-function viewOverview(pg){
-  const role = UD.role||"student";
-  const myRegs = allRegs.filter(r=>r.studentUid===CU.uid);
-  const totalRegs = allRegs.length;
-  const selected  = allRegs.filter(r=>r.selectionStatus==="selected").length;
-  const eventCount = allEvents.length;
-
-  let statsHtml = "";
-  if(role==="student"){
-    statsHtml=`
-      <div class="grid-3" style="margin-bottom:1.5rem">
-        <div class="stat-card"><div class="stat-n">${eventCount}</div><div class="stat-l">Total Events</div></div>
-        <div class="stat-card"><div class="stat-n">${myRegs.length}</div><div class="stat-l">My Enrolments</div></div>
-        <div class="stat-card"><div class="stat-n">${myRegs.filter(r=>r.selectionStatus==="selected").length}</div><div class="stat-l">Selected</div></div>
-      </div>`;
-  } else {
-    statsHtml=`
-      <div class="grid-4" style="margin-bottom:1.5rem">
-        <div class="stat-card"><div class="stat-n">${eventCount}</div><div class="stat-l">Events</div></div>
-        <div class="stat-card"><div class="stat-n">${totalRegs}</div><div class="stat-l">Registrations</div></div>
-        <div class="stat-card"><div class="stat-n">${selected}</div><div class="stat-l">Selected</div></div>
-        <div class="stat-card"><div class="stat-n">${totalRegs-selected}</div><div class="stat-l">Pending Review</div></div>
-      </div>`;
+// ── HOME PANEL ──
+function renderHome(){
+  const r=ME?.role||'pending';
+  let cards='';
+  if(r==='pending'){
+    document.getElementById('panel-home').innerHTML=`
+    <div class="pending-screen">
+      <div class="pending-icon">⏳</div>
+      <div class="pending-title">Awaiting Approval</div>
+      <p class="pending-text">Your registration has been received. The Admin will assign your role shortly. You'll have access to the portal once your role is approved.<br/><br/>Please check back soon.</p>
+    </div>`;
+    return;
   }
-
-  let myRegTable = "";
-  if(role==="student"&&myRegs.length){
-    myRegTable=`
-      <div class="card" style="margin-top:1.5rem">
-        <div class="ph" style="margin-bottom:1rem"><div class="ph-title" style="font-size:1.1rem">My Enrolments</div></div>
-        <div class="tbl-wrap">
-          <table><thead><tr><th>Event</th><th>Enrolled</th><th>Status</th></tr></thead>
-          <tbody>${myRegs.map(r=>{
-            const ev=allEvents.find(e=>e.id===r.eventId);
-            return `<tr><td style="color:var(--t1);font-weight:500">${ev?.title||r.eventId}</td>
-              <td>${fmtShort(r.registeredAt)}</td>
-              <td><span class="badge badge-${r.selectionStatus||'pending'}">${r.selectionStatus||"pending"}</span></td>
-            </tr>`;
-          }).join("")}</tbody></table>
-        </div>
-      </div>`;
-  }
-
-  pg.innerHTML=`
-    <div class="ph">
-      <div>
-        <div class="ph-title">Welcome back, ${CU.displayName?.split(" ")[0]||"User"}</div>
-        <div class="ph-sub">${UD.subRole?UD.subRole+" · ":""} ${role}</div>
-      </div>
+  document.getElementById('panel-home').innerHTML=`
+  <div style="margin-bottom:1.5rem">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;font-style:italic;color:var(--text)">Welcome, <span style="color:var(--gold)">${ME?.fullName||ME?.displayName||'User'}</span></h2>
+    <p style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-top:0.3rem">${ROLE_LABELS[r]||r} · Critically Yours · DPS Megacity, Kolkata</p>
+  </div>
+  <div class="stat-row" id="homeStats"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-top:0.5rem" id="homeCards">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:1.5rem">
+      <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem">Recent Announcements</div>
+      <div id="homeAnnounce">Loading...</div>
     </div>
-    ${statsHtml}
-    ${allEvents.length?`
-    <div class="card">
-      <div class="ph" style="margin-bottom:1rem"><div class="ph-title" style="font-size:1.1rem">Events at a Glance</div></div>
-      <div class="tbl-wrap">
-        <table><thead><tr><th>Event</th><th>Category</th><th>Venue</th><th>Registrations</th></tr></thead>
-        <tbody>${allEvents.map(ev=>`
+    <div style="background:var(--surface);border:1px solid var(--border);padding:1.5rem">
+      <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem">Upcoming Dates</div>
+      <div id="homeDates">Loading...</div>
+    </div>
+  </div>`;
+  loadHomeStats();
+  loadHomeAnnounce();
+  loadHomeDates();
+}
+
+async function loadHomeStats(){
+  const el=document.getElementById('homeStats');if(!el)return;
+  const r=ME?.role;
+  try{
+    const evSnap=await getDocs(collection(db,'events'));
+    const pSnap=await getDocs(query(collection(db,'users'),where('role','==','participant')));
+    const aSnap=await getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc'),limit(1)));
+    const unread=aSnap.size>0?1:0;
+    el.innerHTML=`
+    <div class="stat-card green"><div class="sc-num">${evSnap.size}</div><div class="sc-label">Events</div></div>
+    <div class="stat-card gold"><div class="sc-num">${pSnap.size}</div><div class="sc-label">Participants</div></div>`;
+    if(['admin','core','teacher'].includes(r)){
+      const uSnap=await getDocs(collection(db,'users'));
+      el.innerHTML+=`<div class="stat-card"><div class="sc-num">${uSnap.size}</div><div class="sc-label">Total Members</div></div>`;
+    }
+    if(unread>0)document.getElementById('notifDot').classList.add('show');
+  }catch(e){if(el)el.innerHTML='<div style="color:var(--text3);font-family:DM Mono,monospace;font-size:0.7rem">Stats unavailable</div>';}
+}
+
+
+async function loadHomeAnnounce(){
+  const el=document.getElementById('homeAnnounce');if(!el)return;
+  try{
+    const snap=await getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc'),limit(3)));
+    if(snap.empty){el.innerHTML='<div style="color:var(--text3);font-size:0.85rem">No announcements yet.</div>';return;}
+    el.innerHTML=snap.docs.map(d=>{const a=d.data();return`<div style="border-bottom:1px solid var(--border);padding:0.6rem 0;last:border:none"><div style="font-family:Playfair Display,serif;font-size:0.95rem;font-weight:700;color:var(--text)">${a.title||''}</div><div style="font-family:DM Mono,monospace;font-size:0.6rem;color:var(--text3);margin-top:0.2rem">${fmt(a.createdAt)}</div></div>`}).join('');
+  }catch(e){if(el)el.innerHTML='<div style="color:var(--text3);font-size:0.85rem">—</div>';}
+}
+
+async function loadHomeDates(){
+  const el=document.getElementById('homeDates');if(!el)return;
+  try{
+    const snap=await getDocs(query(collection(db,'importantDates'),orderBy('date','asc'),limit(4)));
+    if(snap.empty){el.innerHTML='<div style="color:var(--text3);font-size:0.85rem">No dates added yet.</div>';return;}
+    el.innerHTML=snap.docs.map(d=>{
+      const dt=d.data();
+      const ds=dt.date?.toDate?dt.date.toDate().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):dt.dateStr||'TBA';
+      return`<div style="border-bottom:1px solid var(--border);padding:0.6rem 0;display:flex;justify-content:space-between;align-items:start;gap:0.5rem"><span style="font-size:0.92rem;color:var(--text)">${dt.title||''}</span><span style="font-family:DM Mono,monospace;font-size:0.6rem;color:var(--gold);white-space:nowrap">${ds}</span></div>`;
+    }).join('');
+  }catch(e){if(el)el.innerHTML='<div style="color:var(--text3);font-size:0.85rem">—</div>';}
+}
+
+// ── EVENTS ──
+async function renderEvents(){
+  const p=document.getElementById('panel-events');
+  const r=ME?.role;
+  const canEdit=['admin','core','teacher'].includes(r);
+  p.innerHTML=`
+  <div class="section-head">
+    <h2>Events</h2>
+    ${canEdit?`<button class="btn-sm btn-sm-gold" onclick="openAddEvent()">+ Add Event</button>`:''}
+  </div>
+  <div class="err-bar" id="evErr"></div>
+  <div id="evList">Loading...</div>`;
+  await loadEventsList();
+}
+
+async function loadEventsList(){
+  const el=document.getElementById('evList');if(!el)return;
+  try{
+    const snap=await getDocs(query(collection(db,'events'),orderBy('order','asc')));
+    if(snap.empty){el.innerHTML='<div class="empty-state"><div class="es-icon">📋</div><p>No events added yet.</p></div>';return;}
+    const canEdit=['admin','core','teacher'].includes(ME?.role);
+    let html='<div class="table-wrap"><table><thead><tr><th>#</th><th>Event Name</th><th>Category</th><th>Description</th><th>Event Head</th>';
+    if(canEdit)html+='<th>Actions</th>';
+    html+='</tr></thead><tbody>';
+    let i=1;
+    for(const d of snap.docs){
+      const ev=d.data();
+      let headName='—';
+      if(ev.headUid){
+        try{const hs=await getDoc(doc(db,'users',ev.headUid));if(hs.exists())headName=hs.data().fullName||'—';}catch(e){}
+      }
+      html+=`<tr><td class="td-mono">${String(i++).padStart(2,'0')}</td><td class="td-name">${ev.name||''}</td><td><span class="badge badge-green">${ev.category||'—'}</span></td><td style="max-width:240px;white-space:normal;font-size:0.88rem">${ev.description||'—'}</td><td class="td-mono">${headName}</td>`;
+      if(canEdit)html+=`<td><button class="btn-icon" onclick="openEditEvent('${d.id}')">✏️</button> <button class="btn-icon del" onclick="deleteEvent('${d.id}')">🗑️</button></td>`;
+      html+='</tr>';
+    }
+    html+='</tbody></table></div>';
+    el.innerHTML=html;
+  }catch(e){if(document.getElementById('evErr'))document.getElementById('evErr').textContent=e.message,document.getElementById('evErr').classList.add('show');}
+}
+
+window.openAddEvent=async function(){
+  const uSnap=await getDocs(query(collection(db,'users'),where('role','==','event_head')));
+  let headOpts='<option value="">— None —</option>';
+  uSnap.forEach(d=>{const u=d.data();headOpts+=`<option value="${u.uid}">${u.fullName||u.email}</option>`;});
+  openModal('Add Event',`
+  <div class="fi" style="margin-bottom:0.8rem"><label>Event Name *</label><input id="ev_name" class="form-input" placeholder="e.g. Mock Parliament"/></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Category *</label><input id="ev_cat" class="form-input" placeholder="e.g. Debate"/></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Description</label><textarea id="ev_desc" class="form-input" rows="3" placeholder="Brief description..."></textarea></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Sort Order</label><input id="ev_order" type="number" class="form-input" placeholder="1" value="1"/></div>
+  <div class="fi"><label>Assign Event Head</label><select id="ev_head" class="form-input" style="-webkit-appearance:auto">${headOpts}</select></div>
+  <div class="err-bar" id="evModalErr"></div>`,
+  `<button class="btn-sm btn-sm-gold" onclick="saveEvent()">Save Event</button><button class="btn-sm" onclick="closeModal()">Cancel</button>`);
+};
+
+window.saveEvent=async function(){
+  const name=document.getElementById('ev_name').value.trim();
+  const cat=document.getElementById('ev_cat').value.trim();
+  const desc=document.getElementById('ev_desc').value.trim();
+  const order=parseInt(document.getElementById('ev_order').value)||1;
+  const head=document.getElementById('ev_head').value;
+  if(!name||!cat){document.getElementById('evModalErr').textContent='Name and Category required.';document.getElementById('evModalErr').classList.add('show');return;}
+  try{
+    await addDoc(collection(db,'events'),{name,category:cat,description:desc,order,headUid:head||null,createdBy:ME.uid,createdAt:serverTimestamp()});
+    closeModal();loadEventsList();
+  }catch(e){document.getElementById('evModalErr').textContent=e.message;document.getElementById('evModalErr').classList.add('show');}
+};
+
+window.openEditEvent=async function(id){
+  const snap=await getDoc(doc(db,'events',id));
+  if(!snap.exists())return;
+  const ev=snap.data();
+  const uSnap=await getDocs(query(collection(db,'users'),where('role','==','event_head')));
+  let headOpts='<option value="">— None —</option>';
+  uSnap.forEach(d=>{const u=d.data();headOpts+=`<option value="${u.uid}"${u.uid===ev.headUid?' selected':''}>${u.fullName||u.email}</option>`;});
+  openModal('Edit Event',`
+  <div class="fi" style="margin-bottom:0.8rem"><label>Event Name *</label><input id="ev_name" class="form-input" value="${ev.name||''}"/></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Category *</label><input id="ev_cat" class="form-input" value="${ev.category||''}"/></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Description</label><textarea id="ev_desc" class="form-input" rows="3">${ev.description||''}</textarea></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Sort Order</label><input id="ev_order" type="number" class="form-input" value="${ev.order||1}"/></div>
+  <div class="fi"><label>Assign Event Head</label><select id="ev_head" class="form-input" style="-webkit-appearance:auto">${headOpts}</select></div>
+  <div class="err-bar" id="evModalErr"></div>`,
+  `<button class="btn-sm btn-sm-gold" onclick="updateEvent('${id}')">Update</button><button class="btn-sm" onclick="closeModal()">Cancel</button>`);
+};
+
+window.updateEvent=async function(id){
+  const name=document.getElementById('ev_name').value.trim();
+  const cat=document.getElementById('ev_cat').value.trim();
+  const desc=document.getElementById('ev_desc').value.trim();
+  const order=parseInt(document.getElementById('ev_order').value)||1;
+  const head=document.getElementById('ev_head').value;
+  if(!name||!cat){document.getElementById('evModalErr').textContent='Required.';document.getElementById('evModalErr').classList.add('show');return;}
+  try{
+    await updateDoc(doc(db,'events',id),{name,category:cat,description:desc,order,headUid:head||null,updatedAt:serverTimestamp()});
+    closeModal();loadEventsList();
+  }catch(e){document.getElementById('evModalErr').textContent=e.message;document.getElementById('evModalErr').classList.add('show');}
+};
+
+window.deleteEvent=async function(id){
+  if(!confirm('Delete this event?'))return;
+  try{await deleteDoc(doc(db,'events',id));loadEventsList();}catch(e){alert(e.message);}
+};
+
+// ── PARTICIPANTS ──
+async function renderParticipants(){
+  const p=document.getElementById('panel-participants');
+  const r=ME?.role;
+  const canAssign=['admin','core','teacher','event_head'].includes(r);
+  p.innerHTML=`
+  <div class="section-head">
+    <h2>${r==='volunteer_head'?'Volunteers':'Participants'}</h2>
+  </div>
+  <div id="partFilters" style="display:flex;gap:0.8rem;margin-bottom:1rem;flex-wrap:wrap">
+    <div class="fi"><label>Filter by Event</label><select id="partEventFilter" class="form-input" onchange="loadParticipants()" style="-webkit-appearance:auto"><option value="">All Events</option></select></div>
+  </div>
+  <div id="partList">Loading...</div>`;
+  // Load events into filter
+  try{
+    const es=await getDocs(query(collection(db,'events'),orderBy('order','asc')));
+    const sel=document.getElementById('partEventFilter');
+    es.forEach(d=>{const op=document.createElement('option');op.value=d.id;op.textContent=d.data().name;sel.appendChild(op);});
+    // If event_head, auto-filter to their event
+    if(r==='event_head'&&ME?.eventId){sel.value=ME.eventId;sel.disabled=true;}
+    if(r==='volunteer_head'){sel.innerHTML='<option value="">All</option>';} // show volunteers
+  }catch(e){}
+  loadParticipants();
+}
+
+window.loadParticipants=async function(){
+  const el=document.getElementById('partList');if(!el)return;
+  const eventId=document.getElementById('partEventFilter')?.value;
+  const r=ME?.role;
+  try{
+    let q;
+    if(r==='volunteer_head'){
+      q=query(collection(db,'users'),where('role','==','volunteer'));
+    } else if(eventId){
+      q=query(collection(db,'users'),where('role','==','participant'),where('eventId','==',eventId));
+    } else {
+      q=query(collection(db,'users'),where('role','==','participant'));
+    }
+    const snap=await getDocs(q);
+    if(snap.empty){el.innerHTML='<div class="empty-state"><div class="es-icon">👤</div><p>No participants found.</p></div>';return;}
+    let evMap={};
+    const es=await getDocs(collection(db,'events'));es.forEach(d=>evMap[d.id]=d.data().name);
+    let html='<div class="table-wrap"><table><thead><tr><th>Name</th><th>Class</th><th>Roll No.</th><th>Event</th><th>Email</th></tr></thead><tbody>';
+    snap.forEach(d=>{
+      const u=d.data();
+      html+=`<tr><td class="td-name">${u.fullName||'—'}</td><td class="td-mono">${u.class||''} ${u.section||''}</td><td class="td-mono">${u.rollNumber||'—'}</td><td><span class="badge badge-green">${evMap[u.eventId]||'—'}</span></td><td class="td-mono" style="font-size:0.72rem">${u.email||''}</td></tr>`;
+    });
+    html+='</tbody></table></div>';
+    el.innerHTML=html;
+  }catch(e){if(el)el.innerHTML=`<div class="err-bar show">${e.message}</div>`;}
+};
+
+// ── ANNOUNCEMENTS ──
+async function renderAnnouncements(){
+  const p=document.getElementById('panel-announcements');
+  const r=ME?.role;
+  const canPost=['admin','core','teacher','event_head','volunteer_head'].includes(r);
+  p.innerHTML=`
+  <div class="section-head">
+    <h2>Announcements</h2>
+    ${canPost?`<button class="btn-sm btn-sm-gold" onclick="openPostAnnounce()">+ Post Announcement</button>`:''}
+  </div>
+  <div id="annList">Loading...</div>`;
+  await loadAnnouncements();
+}
+
+async function loadAnnouncements(){
+  const el=document.getElementById('annList');if(!el)return;
+  const r=ME?.role;
+  try{
+    // Participants see only public & their event announcements
+    let snap;
+    if(['admin','core','teacher'].includes(r)){
+      snap=await getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc')));
+    } else if(['event_head','volunteer_head'].includes(r)){
+      snap=await getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc')));
+    } else {
+      snap=await getDocs(query(collection(db,'announcements'),where('public','==',true),orderBy('createdAt','desc')));
+    }
+    if(snap.empty){el.innerHTML='<div class="empty-state"><div class="es-icon">📢</div><p>No announcements yet.</p></div>';return;}
+    const canEdit=['admin','core','teacher'].includes(r)||r==='event_head'||r==='volunteer_head';
+    el.innerHTML=snap.docs.map(d=>{
+      const a=d.data();
+      const ts=a.createdAt?fmt(a.createdAt):'';
+      const isOwn=a.authorUid===ME?.uid||['admin','core','teacher'].includes(r);
+      return`<div class="announce-card${a.urgent?' urgent':''}">
+        <div class="ann-meta"><span class="ann-tag ${a.urgent?'urg':'gen'}">${a.urgent?'Urgent':'General'}</span><span class="ann-tag gen">${a.audience||'All'}</span><span class="ann-date">${ts}</span></div>
+        <div class="ann-title">${a.title||''}</div>
+        <div class="ann-body">${a.body||''}</div>
+        <div class="ann-author">— ${a.authorName||'Team'}</div>
+        ${isOwn&&canEdit?`<div class="ann-actions"><button class="btn-sm btn-sm-red" onclick="deleteAnnounce('${d.id}')">Delete</button></div>`:''}
+      </div>`;
+    }).join('');
+  }catch(e){if(el)el.innerHTML=`<div class="err-bar show">${e.message}</div>`;}
+}
+
+window.openPostAnnounce=function(){
+  const r=ME?.role;
+  let audienceOpts='<option value="all">All Members</option><option value="participants">Participants Only</option><option value="team">Team Only</option>';
+  if(r==='event_head')audienceOpts='<option value="my_event">My Event Participants</option><option value="team">Team</option>';
+  if(r==='volunteer_head')audienceOpts='<option value="volunteers">Volunteers</option><option value="team">Team</option>';
+  openModal('Post Announcement',`
+  <div class="fi" style="margin-bottom:0.8rem"><label>Title *</label><input id="ann_title" class="form-input" placeholder="Announcement title"/></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Body *</label><textarea id="ann_body" class="form-input" rows="4" placeholder="Message..."></textarea></div>
+  <div style="display:flex;gap:0.8rem;flex-wrap:wrap">
+  <div class="fi" style="margin-bottom:0.8rem"><label>Audience</label><select id="ann_aud" class="form-input" style="-webkit-appearance:auto">${audienceOpts}</select></div>
+  <div class="fi"><label>Mark as Urgent</label><select id="ann_urgent" class="form-input" style="-webkit-appearance:auto"><option value="no">No</option><option value="yes">Yes</option></select></div>
+  <div class="fi"><label>Public (show on website)</label><select id="ann_pub" class="form-input" style="-webkit-appearance:auto"><option value="no">No</option><option value="yes">Yes</option></select></div>
+  </div>
+  <div class="err-bar" id="annErr"></div>`,
+  `<button class="btn-sm btn-sm-gold" onclick="postAnnounce()">Post</button><button class="btn-sm" onclick="closeModal()">Cancel</button>`);
+};
+
+window.postAnnounce=async function(){
+  const title=document.getElementById('ann_title').value.trim();
+  const body=document.getElementById('ann_body').value.trim();
+  const audience=document.getElementById('ann_aud').value;
+  const urgent=document.getElementById('ann_urgent').value==='yes';
+  const pub=document.getElementById('ann_pub').value==='yes';
+  if(!title||!body){document.getElementById('annErr').textContent='Title and body required.';document.getElementById('annErr').classList.add('show');return;}
+  try{
+    await addDoc(collection(db,'announcements'),{title,body,audience,urgent,public:pub,authorUid:ME.uid,authorName:ME.fullName||ME.displayName,authorRole:ME.role,createdAt:serverTimestamp()});
+    closeModal();loadAnnouncements();
+  }catch(e){document.getElementById('annErr').textContent=e.message;document.getElementById('annErr').classList.add('show');}
+};
+
+window.deleteAnnounce=async function(id){
+  if(!confirm('Delete this announcement?'))return;
+  try{await deleteDoc(doc(db,'announcements',id));loadAnnouncements();}catch(e){alert(e.message);}
+};
+
+// ── IMPORTANT DATES ──
+async function renderDates(){
+  const p=document.getElementById('panel-dates');
+  const canEdit=['admin','core','teacher'].includes(ME?.role);
+  p.innerHTML=`
+  <div class="section-head">
+    <h2>Important Dates</h2>
+    ${canEdit?`<button class="btn-sm btn-sm-gold" onclick="openAddDate()">+ Add Date</button>`:''}
+  </div>
+  <div id="dateList">Loading...</div>`;
+  await loadDates();
+}
+
+async function loadDates(){
+  const el=document.getElementById('dateList');if(!el)return;
+  try{
+    const snap=await getDocs(query(collection(db,'importantDates'),orderBy('date','asc')));
+    const canEdit=['admin','core','teacher'].includes(ME?.role);
+    if(snap.empty){el.innerHTML='<div class="empty-state"><div class="es-icon">📅</div><p>No dates added yet.</p></div>';return;}
+    let html='<div class="table-wrap"><table><thead><tr><th>Date</th><th>Title</th><th>Description</th>';
+    if(canEdit)html+='<th>Actions</th>';
+    html+='</tr></thead><tbody>';
+    snap.forEach(d=>{
+      const dt=d.data();
+      const ds=dt.date?.toDate?dt.date.toDate().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}):dt.dateStr||'TBA';
+      html+=`<tr><td class="td-mono" style="color:var(--gold)">${ds}</td><td class="td-name">${dt.title||''}</td><td style="font-size:0.88rem;color:var(--text2)">${dt.description||'—'}</td>`;
+      if(canEdit)html+=`<td><button class="btn-icon del" onclick="deleteDate('${d.id}')">🗑️</button></td>`;
+      html+='</tr>';
+    });
+    html+='</tbody></table></div>';
+    el.innerHTML=html;
+  }catch(e){if(el)el.innerHTML=`<div class="err-bar show">${e.message}</div>`;}
+}
+
+window.openAddDate=function(){
+  openModal('Add Important Date',`
+  <div class="fi" style="margin-bottom:0.8rem"><label>Date *</label><input id="dt_date" type="date" class="form-input"/></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Title *</label><input id="dt_title" class="form-input" placeholder="e.g. Registration Deadline"/></div>
+  <div class="fi"><label>Description</label><textarea id="dt_desc" class="form-input" rows="2" placeholder="Optional details..."></textarea></div>
+  <div class="err-bar" id="dtErr"></div>`,
+  `<button class="btn-sm btn-sm-gold" onclick="saveDate()">Save</button><button class="btn-sm" onclick="closeModal()">Cancel</button>`);
+};
+
+window.saveDate=async function(){
+  const d=document.getElementById('dt_date').value;
+  const t=document.getElementById('dt_title').value.trim();
+  const desc=document.getElementById('dt_desc').value.trim();
+  if(!d||!t){document.getElementById('dtErr').textContent='Date and title required.';document.getElementById('dtErr').classList.add('show');return;}
+  try{
+    await addDoc(collection(db,'importantDates'),{date:Timestamp.fromDate(new Date(d)),dateStr:new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}),title:t,description:desc,createdBy:ME.uid,createdAt:serverTimestamp()});
+    closeModal();loadDates();
+  }catch(e){document.getElementById('dtErr').textContent=e.message;document.getElementById('dtErr').classList.add('show');}
+};
+
+window.deleteDate=async function(id){
+  if(!confirm('Delete this date?'))return;
+  try{await deleteDoc(doc(db,'importantDates',id));loadDates();}catch(e){alert(e.message);}
+};
+
+// ── USERS (Admin/Teacher) ──
+// ── RENDER USERS PANEL ──
+async function renderUsers() {
+  const panel = document.getElementById('panel-users');
+  panel.innerHTML = `
+    <div class="section-head">
+      <h2>All Registered Users</h2>
+      <div class="ok-bar" id="users-ok"></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
           <tr>
-            <td style="color:var(--t1);font-weight:500">${ev.title}</td>
-            <td><span class="badge badge-pending">${ev.category||"—"}</span></td>
-            <td style="font-size:0.78rem">${ev.venue||"—"}</td>
-            <td style="font-family:var(--f-mono);color:var(--gold)">${allRegs.filter(r=>r.eventId===ev.id).length}</td>
-          </tr>`).join("")}
-        </tbody></table>
-      </div>
-    </div>`:""}
-    ${myRegTable}
-  `;
-}
-
-/* ─────────────────────────────────────────────
-   VIEW: EVENTS
-───────────────────────────────────────────── */
-function viewEvents(pg){
-  const canManage = can("manageEvents");
-  pg.innerHTML=`
-    <div class="ph">
-      <div class="ph-title">Events</div>
-      ${canManage?`<div class="ph-actions"><button class="btn btn-gold" onclick="openAddEvent()">+ Add Event</button></div>`:""}
-    </div>
-    <div id="events-list">
-      ${allEvents.length?allEvents.map(ev=>eventCard(ev,canManage)).join(""):`<div class="empty"><div class="empty-icon">📋</div><div class="empty-msg">No events yet.</div></div>`}
+            <th>User</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users-table-body">
+          <tr><td colspan="4" class="td-mono" style="text-align:center;">Fetching users...</td></tr>
+        </tbody>
+      </table>
     </div>
   `;
+
+  try {
+    const q = query(collection(db, "users"), orderBy("name", "asc"));
+    const querySnapshot = await getDocs(q);
+    const tbody = document.getElementById('users-table-body');
+    tbody.innerHTML = '';
+
+    if (querySnapshot.empty) {
+      tbody.innerHTML = `<tr><td colspan="4" class="no-chat">No users found.</td></tr>`;
+      return;
+    }
+
+    querySnapshot.forEach((docSnap) => {
+      const u = docSnap.data();
+      const uid = docSnap.id;
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <img src="${u.avatarUrl || 'https://via.placeholder.com/150'}" class="user-avatar" style="margin:0; width:28px; height:28px;" />
+            <span class="td-name">${u.name || 'Unknown'}</span>
+          </div>
+        </td>
+        <td class="td-mono">${u.email || '—'}</td>
+        <td><span class="user-role-badge ${roleBadgeClass(u.role)}">${ROLE_LABELS[u.role] || u.role || 'Pending'}</span></td>
+        <td>
+          <button class="btn-sm btn-sm-gold" onclick="openUserEditModal('${uid}', '${u.name?.replace(/'/g, "\\'")}', '${u.role}')">
+            Settings
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (error) {
+    console.error("Error loading users: ", error);
+    document.getElementById('users-table-body').innerHTML = `<tr><td colspan="4" class="badge-red" style="text-align:center; padding: 1rem;">Failed to load users. Permissions denied.</td></tr>`;
+  }
 }
 
-function eventCard(ev, canManage){
-  const regCount = allRegs.filter(r=>r.eventId===ev.id).length;
-  return `<div class="notice-card">
-    <div class="nc-head">
-      <div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-          <span class="badge badge-pending">${ev.category||"General"}</span>
-        </div>
-        <div class="nc-title">${ev.title}</div>
-        <div class="nc-meta">
-          ${ev.venue?`📍 ${ev.venue} &nbsp;·&nbsp; `:""}${ev.time?`🕐 ${ev.time} &nbsp;·&nbsp; `:""}
-          <span style="color:var(--gold)">${regCount} registered</span>
-        </div>
+// Attach to window scope so the inline onclick triggers can find it
+window.openUserEditModal = function(uid, name, currentRole) {
+  let roleOptions = '';
+  Object.keys(ROLE_LABELS).forEach(roleKey => {
+    const selected = roleKey === currentRole ? 'selected' : '';
+    roleOptions += `<option value="${roleKey}" ${selected}>${ROLE_LABELS[roleKey]}</option>`;
+  });
+
+  const bodyHtml = `
+    <div style="display:flex; flex-direction:column; gap:1rem;">
+      <p style="font-size:0.95rem; color:var(--text2)">Modify system role updates for <strong>${name}</strong>.</p>
+      <div class="fi">
+        <label>System Role Mapping</label>
+        <select id="editUserRole">${roleOptions}</select>
       </div>
-      ${canManage?`<div style="display:flex;gap:6px">
-        <button class="btn btn-ghost btn-sm" onclick="openEditEvent('${ev.id}')">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteEvent('${ev.id}')">Delete</button>
-      </div>`:""}
     </div>
-    <div class="nc-body">${ev.description||""}</div>
-    ${ev.rules?.length?`<div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:4px">
-      ${ev.rules.map((r,i)=>`<div style="display:flex;gap:8px;font-size:0.78rem;color:var(--t3)"><span style="color:var(--gold);font-family:var(--f-mono);font-size:0.65rem">${String(i+1).padStart(2,"0")}.</span><span>${r}</span></div>`).join("")}
-    </div>`:""}
-  </div>`;
-}
+  `;
 
-/* ── Add / Edit Event Modal ── */
-window.openAddEvent = ()=>{
-  document.getElementById("m-addevent-body").innerHTML = eventForm();
-  openModal("m-addevent");
-};
-window.openEditEvent = (id)=>{
-  const ev=allEvents.find(e=>e.id===id);
-  if(!ev) return;
-  document.getElementById("m-addevent-body").innerHTML = eventForm(ev);
-  openModal("m-addevent");
+  const footerHtml = `
+    <button class="btn-sm" onclick="saveUserRole('${uid}')">Save Changes</button>
+    <button class="btn-sm btn-sm-red" onclick="closeModal()">Cancel</button>
+  `;
+
+  openModal(`Manage Permissions: ${name}`, bodyHtml, footerHtml);
 };
 
-function eventForm(ev=null){
-  const rules = (ev?.rules||[]).join("\n");
-  return `
-    <form id="f-event" onsubmit="saveEvent(event,'${ev?.id||''}')">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Title *</label>
-          <input class="form-input" id="ef-title" value="${ev?.title||''}" required placeholder="Event title"/></div>
-        <div class="form-group"><label class="form-label">Category</label>
-          <select class="form-input" id="ef-cat">
-            ${["debate","writing","quiz","drama","art","media","poetry","music","general"].map(c=>`<option value="${c}" ${ev?.category===c?"selected":""}>${c.charAt(0).toUpperCase()+c.slice(1)}</option>`).join("")}
-          </select></div>
-      </div>
-      <div class="form-group"><label class="form-label">Description</label>
-        <textarea class="form-input" id="ef-desc" rows="3" placeholder="Short description…">${ev?.description||''}</textarea></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Venue</label>
-          <input class="form-input" id="ef-venue" value="${ev?.venue||''}" placeholder="Room / Hall"/></div>
-        <div class="form-group"><label class="form-label">Time / Schedule</label>
-          <input class="form-input" id="ef-time" value="${ev?.time||''}" placeholder="e.g. 10:00 AM – 12:00 PM"/></div>
-      </div>
-      <div class="form-group"><label class="form-label">Max Team Size</label>
-        <input class="form-input" id="ef-team" type="number" min="1" value="${ev?.maxTeamSize||''}" placeholder="Leave blank for individual"/></div>
-      <div class="form-group"><label class="form-label">Rules (one per line)</label>
-        <textarea class="form-input" id="ef-rules" rows="4" placeholder="Each rule on a new line…">${rules}</textarea></div>
-      <div style="display:flex;gap:8px;margin-top:0.5rem">
-        <button type="submit" class="btn btn-gold" id="ef-btn">${ev?"Save Changes":"Add Event"}</button>
-        <button type="button" class="btn btn-ghost" onclick="closeModal('m-addevent')">Cancel</button>
-      </div>
-    </form>`;
-}
+window.saveUserRole = async function(uid) {
+  const newRole = document.getElementById('editUserRole').value;
+  try {
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, { role: newRole });
+    
+    closeModal();
+    renderUsers(); // Refresh structural components
+    
+    // Optional status confirmation banner toast
+    const okBar = document.getElementById('users-ok');
+    if(okBar) {
+      okBar.textContent = "User permissions modified successfully.";
+      okBar.classList.add('show');
+      setTimeout(() => okBar.classList.remove('show'), 3000);
+    }
+  } catch (e) {
+    alert("Execution error while updating database permissions mapping config.");
+  }
+};
 
-window.saveEvent = async(e, editId)=>{
-  e.preventDefault();
-  const btn=document.getElementById("ef-btn");
-  btn.disabled=true; btn.innerHTML='<div class="spinner"></div>';
+let allUsers=[];
+async function loadUsers(){
+  const el=document.getElementById('userList');if(!el)return;
   try{
-    const data={
-      title:document.getElementById("ef-title").value.trim(),
-      category:document.getElementById("ef-cat").value,
-      description:document.getElementById("ef-desc").value.trim(),
-      venue:document.getElementById("ef-venue").value.trim(),
-      time:document.getElementById("ef-time").value.trim(),
-      maxTeamSize:document.getElementById("ef-team").value?parseInt(document.getElementById("ef-team").value):null,
-      rules:document.getElementById("ef-rules").value.split("\n").map(r=>r.trim()).filter(Boolean),
-      updatedAt:serverTimestamp()
-    };
-    if(editId){
-      await updateDoc(doc(db,"events",editId),data);
-      toast("Event updated.","success");
+    const snap=await getDocs(query(collection(db,'users'),orderBy('fullName','asc')));
+    allUsers=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderUserTable(allUsers);
+  }catch(e){if(el)el.innerHTML=`<div class="err-bar show">${e.message}</div>`;}
+}
+
+function renderUserTable(users){
+  const el=document.getElementById('userList');if(!el)return;
+  const isAdmin=ME?.role==='admin';
+  const isTeacher=ME?.role==='teacher';
+  if(!users.length){el.innerHTML='<div class="empty-state"><div class="es-icon">👤</div><p>No users found.</p></div>';return;}
+  let html='<div class="table-wrap"><table><thead><tr><th>Name</th><th>Class</th><th>Email</th><th>Role</th><th>Registered</th>';
+  if(isAdmin)html+='<th>Actions</th>';
+  html+='</tr></thead><tbody>';
+  users.forEach(u=>{
+    const badge=`<span class="badge ${u.role==='pending'?'badge-red':u.role==='admin'?'badge-gold':u.role==='teacher'?'badge-purple':'badge-green'}">${ROLE_LABELS[u.role]||u.role}</span>`;
+    const ts=u.createdAt?u.createdAt.toDate().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'—';
+    html+=`<tr><td class="td-name">${u.fullName||'—'}</td><td class="td-mono">${u.class||''} ${u.section||''}</td><td class="td-mono" style="font-size:0.7rem">${u.email||''}</td><td>${badge}</td><td class="td-mono">${ts}</td>`;
+    if(isAdmin)html+=`<td><button class="btn-icon" onclick="openAssignRole('${u.uid||u.id}','${u.fullName||''}','${u.role||'pending'}')">⚙️</button></td>`;
+    html+='</tr>';
+  });
+  html+='</tbody></table></div>';
+  el.innerHTML=html;
+}
+
+window.filterUsers=function(q){
+  const filtered=allUsers.filter(u=>(u.fullName||'').toLowerCase().includes(q.toLowerCase())||(u.email||'').toLowerCase().includes(q.toLowerCase()));
+  renderUserTable(filtered);
+};
+
+window.openAssignRole=async function(uid,name,currentRole){
+  const evSnap=await getDocs(query(collection(db,'events'),orderBy('order','asc')));
+  let evOpts='<option value="">— None —</option>';
+  evSnap.forEach(d=>evOpts+=`<option value="${d.id}">${d.data().name}</option>`);
+  // Get custom roles
+  const crSnap=await getDocs(collection(db,'customRoles'));
+  let customOpts='';
+  crSnap.forEach(d=>customOpts+=`<option value="${d.id}">${d.data().name}</option>`);
+  openModal(`Assign Role — ${name}`,`
+  <div class="fi" style="margin-bottom:0.8rem"><label>Role *</label>
+  <select id="ar_role" class="form-input" style="-webkit-appearance:auto">
+    <option value="pending"${currentRole==='pending'?' selected':''}>Pending</option>
+    <option value="admin"${currentRole==='admin'?' selected':''}>Admin</option>
+    <option value="core"${currentRole==='core'?' selected':''}>Core Team</option>
+    <option value="teacher"${currentRole==='teacher'?' selected':''}>Teacher</option>
+    <option value="event_head"${currentRole==='event_head'?' selected':''}>Event Head</option>
+    <option value="volunteer_head"${currentRole==='volunteer_head'?' selected':''}>Volunteer Head</option>
+    <option value="management"${currentRole==='management'?' selected':''}>Management</option>
+    <option value="participant"${currentRole==='participant'?' selected':''}>Participant</option>
+    <option value="volunteer"${currentRole==='volunteer'?' selected':''}>Volunteer</option>
+    ${customOpts}
+  </select></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Assign to Event (for participant/event_head)</label><select id="ar_event" class="form-input" style="-webkit-appearance:auto">${evOpts}</select></div>
+  <div class="err-bar" id="arErr"></div>`,
+  `<button class="btn-sm btn-sm-gold" onclick="saveRole('${uid}')">Save Role</button><button class="btn-sm" onclick="closeModal()">Cancel</button>`);
+};
+
+window.saveRole=async function(uid){
+  const role=document.getElementById('ar_role').value;
+  const eventId=document.getElementById('ar_event').value;
+  try{
+    await updateDoc(doc(db,'users',uid),{role,eventId:eventId||null,roleUpdatedAt:serverTimestamp(),roleUpdatedBy:ME.uid});
+    closeModal();loadUsers();
+  }catch(e){document.getElementById('arErr').textContent=e.message;document.getElementById('arErr').classList.add('show');}
+};
+
+// ── ROLES (Admin) ──
+async function renderRoles(){
+  const p=document.getElementById('panel-roles');
+  p.innerHTML=`
+  <div class="section-head">
+    <h2>Roles & Custom Roles</h2>
+    <button class="btn-sm btn-sm-gold" onclick="openAddRole()">+ Add Custom Role</button>
+  </div>
+  <div style="margin-bottom:2rem">
+    <div style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:0.8rem">Built-in Roles</div>
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
+      ${Object.entries(ROLE_LABELS).map(([k,v])=>`<span class="badge ${k==='admin'?'badge-gold':k==='teacher'?'badge-purple':k==='pending'?'badge-red':'badge-green'}">${v}</span>`).join('')}
+    </div>
+  </div>
+  <div class="section-head"><h2 style="font-size:1rem">Custom Roles</h2></div>
+  <div id="customRoleList">Loading...</div>`;
+  await loadCustomRoles();
+}
+
+async function loadCustomRoles(){
+  const el=document.getElementById('customRoleList');if(!el)return;
+  try{
+    const snap=await getDocs(collection(db,'customRoles'));
+    if(snap.empty){el.innerHTML='<div class="empty-state"><div class="es-icon">🔧</div><p>No custom roles yet.</p></div>';return;}
+    let html='<div class="table-wrap"><table><thead><tr><th>Role Name</th><th>Description</th><th>Created</th><th>Actions</th></tr></thead><tbody>';
+    snap.forEach(d=>{
+      const r=d.data();
+      html+=`<tr><td class="td-name">${r.name||''}</td><td style="font-size:0.88rem;color:var(--text2)">${r.description||'—'}</td><td class="td-mono">${r.createdAt?fmt(r.createdAt):'—'}</td><td><button class="btn-icon del" onclick="deleteCustomRole('${d.id}')">🗑️</button></td></tr>`;
+    });
+    html+='</tbody></table></div>';
+    el.innerHTML=html;
+  }catch(e){if(el)el.innerHTML=`<div class="err-bar show">${e.message}</div>`;}
+}
+
+window.openAddRole=function(){
+  openModal('Add Custom Role',`
+  <div class="fi" style="margin-bottom:0.8rem"><label>Role Name *</label><input id="cr_name" class="form-input" placeholder="e.g. Stage Manager"/></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Description</label><input id="cr_desc" class="form-input" placeholder="Brief description of this role"/></div>
+  <div class="err-bar" id="crErr"></div>`,
+  `<button class="btn-sm btn-sm-gold" onclick="saveCustomRole()">Add Role</button><button class="btn-sm" onclick="closeModal()">Cancel</button>`);
+};
+
+window.saveCustomRole=async function(){
+  const name=document.getElementById('cr_name').value.trim();
+  const desc=document.getElementById('cr_desc').value.trim();
+  if(!name){document.getElementById('crErr').textContent='Role name required.';document.getElementById('crErr').classList.add('show');return;}
+  try{
+    await addDoc(collection(db,'customRoles'),{name,description:desc,createdBy:ME.uid,createdAt:serverTimestamp()});
+    closeModal();loadCustomRoles();
+  }catch(e){document.getElementById('crErr').textContent=e.message;document.getElementById('crErr').classList.add('show');}
+};
+
+window.deleteCustomRole=async function(id){
+  if(!confirm('Delete this role?'))return;
+  try{await deleteDoc(doc(db,'customRoles',id));loadCustomRoles();}catch(e){alert(e.message);}
+};
+
+// ── CHAT PERMISSIONS (Admin) ──
+async function renderPermissions(){
+  const p=document.getElementById('panel-permissions');
+  p.innerHTML=`
+  <div class="section-head"><h2>Chat Permissions</h2><button class="btn-sm btn-sm-gold" onclick="openAddPerm()">+ Add Rule</button></div>
+  <p style="font-size:0.9rem;color:var(--text3);margin-bottom:1.5rem;line-height:1.7">Configure which roles can message which roles. These rules apply to direct messages.</p>
+  <div id="permList">Loading...</div>`;
+  await loadPerms();
+}
+
+async function loadPerms(){
+  const el=document.getElementById('permList');if(!el)return;
+  try{
+    const snap=await getDocs(collection(db,'chatPermissions'));
+    if(snap.empty){el.innerHTML='<div class="empty-state"><div class="es-icon">🔒</div><p>No custom rules. Default: All roles can message Core, Teacher, and Admin.</p></div>';return;}
+    let html='<div class="table-wrap"><table><thead><tr><th>From Role</th><th>Can Message</th><th>Actions</th></tr></thead><tbody>';
+    snap.forEach(d=>{
+      const r=d.data();
+      html+=`<tr><td><span class="badge badge-green">${ROLE_LABELS[r.fromRole]||r.fromRole}</span></td><td>${(r.toRoles||[]).map(x=>`<span class="badge badge-grey" style="margin-right:4px">${ROLE_LABELS[x]||x}</span>`).join('')}</td><td><button class="btn-icon del" onclick="deletePerm('${d.id}')">🗑️</button></td></tr>`;
+    });
+    html+='</tbody></table></div>';
+    el.innerHTML=html;
+  }catch(e){if(el)el.innerHTML=`<div class="err-bar show">${e.message}</div>`;}
+}
+
+window.openAddPerm=function(){
+  const roles=Object.entries(ROLE_LABELS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  openModal('Add Chat Permission Rule',`
+  <div class="fi" style="margin-bottom:0.8rem"><label>From Role</label><select id="p_from" class="form-input" style="-webkit-appearance:auto">${roles}</select></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Can Message (select multiple)</label><select id="p_to" class="form-input" multiple style="height:160px">${roles}</select></div>
+  <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text3);margin-top:0.3rem">Hold Ctrl/Cmd to select multiple</div>
+  <div class="err-bar" id="pErr"></div>`,
+  `<button class="btn-sm btn-sm-gold" onclick="savePerm()">Save Rule</button><button class="btn-sm" onclick="closeModal()">Cancel</button>`);
+};
+
+window.savePerm=async function(){
+  const from=document.getElementById('p_from').value;
+  const toSel=document.getElementById('p_to');
+  const toRoles=Array.from(toSel.selectedOptions).map(o=>o.value);
+  if(!from||!toRoles.length){document.getElementById('pErr').textContent='Select from-role and at least one to-role.';document.getElementById('pErr').classList.add('show');return;}
+  try{
+    await addDoc(collection(db,'chatPermissions'),{fromRole:from,toRoles,createdAt:serverTimestamp()});
+    closeModal();loadPerms();
+  }catch(e){document.getElementById('pErr').textContent=e.message;document.getElementById('pErr').classList.add('show');}
+};
+
+window.deletePerm=async function(id){
+  if(!confirm('Delete this rule?'))return;
+  try{await deleteDoc(doc(db,'chatPermissions',id));loadPerms();}catch(e){alert(e.message);}
+};
+
+// ── GROUPS ──
+async function renderGroups(){
+  const p=document.getElementById('panel-groups');
+  const r=ME?.role;
+  const canCreate=['admin','core','teacher','event_head','volunteer_head'].includes(r);
+  p.innerHTML=`
+  <div class="section-head">
+    <h2>Groups</h2>
+    ${canCreate?`<button class="btn-sm btn-sm-gold" onclick="openCreateGroup()">+ Create Group</button>`:''}
+  </div>
+  <p style="font-size:0.88rem;color:var(--text3);margin-bottom:1.2rem">Groups work like WhatsApp groups — messages, @mentions, and seen/delivered status.</p>
+  <div id="groupList">Loading...</div>`;
+  await loadGroups();
+}
+
+async function loadGroups(){
+  const el=document.getElementById('groupList');if(!el)return;
+  try{
+    const snap=await getDocs(query(collection(db,'groups'),orderBy('createdAt','desc')));
+    if(snap.empty){el.innerHTML='<div class="empty-state"><div class="es-icon">💬</div><p>No groups yet.</p></div>';return;}
+    let html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem">';
+    snap.forEach(d=>{
+      const g=d.data();
+      const isMember=g.members&&g.members.includes(ME?.uid);
+      html+=`<div style="background:var(--surface);border:1px solid var(--border);padding:1.2rem;cursor:pointer;transition:background 0.3s" onclick="openGroupChat('${d.id}','${(g.name||'').replace(/'/g,"\\'")}')">
+        <div style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;font-style:italic;color:var(--text);margin-bottom:0.3rem">${g.name||'Group'}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text3);margin-bottom:0.5rem">${(g.members||[]).length} members</div>
+        <div style="font-size:0.82rem;color:var(--text3)">${g.description||''}</div>
+        ${isMember?'<div style="font-family:DM Mono,monospace;font-size:0.58rem;color:var(--green2);margin-top:0.5rem;text-transform:uppercase;letter-spacing:0.12em">Member</div>':''}
+      </div>`;
+    });
+    html+='</div>';
+    el.innerHTML=html;
+  }catch(e){if(el)el.innerHTML=`<div class="err-bar show">${e.message}</div>`;}
+}
+
+window.openCreateGroup=async function(){
+  const uSnap=await getDocs(collection(db,'users'));
+  let memOpts='';
+  uSnap.forEach(d=>{const u=d.data();if(u.uid!==ME?.uid)memOpts+=`<option value="${u.uid}">${u.fullName||u.email} (${ROLE_LABELS[u.role]||u.role})</option>`;});
+  openModal('Create Group',`
+  <div class="fi" style="margin-bottom:0.8rem"><label>Group Name *</label><input id="grp_name" class="form-input" placeholder="e.g. Mock Parliament Team"/></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Description</label><input id="grp_desc" class="form-input" placeholder="Optional"/></div>
+  <div class="fi"><label>Add Members (hold Ctrl/Cmd for multiple)</label><select id="grp_mem" multiple class="form-input" style="height:180px">${memOpts}</select></div>
+  <div class="err-bar" id="grpErr"></div>`,
+  `<button class="btn-sm btn-sm-gold" onclick="saveGroup()">Create</button><button class="btn-sm" onclick="closeModal()">Cancel</button>`);
+};
+
+window.saveGroup=async function(){
+  const name=document.getElementById('grp_name').value.trim();
+  const desc=document.getElementById('grp_desc').value.trim();
+  const sel=document.getElementById('grp_mem');
+  const members=[ME?.uid,...Array.from(sel.selectedOptions).map(o=>o.value)];
+  if(!name){document.getElementById('grpErr').textContent='Group name required.';document.getElementById('grpErr').classList.add('show');return;}
+  try{
+    const ref=await addDoc(collection(db,'groups'),{name,description:desc,members,createdBy:ME.uid,createdByName:ME.fullName||ME.displayName,createdAt:serverTimestamp()});
+    closeModal();await loadGroups();openGroupChat(ref.id,name);
+  }catch(e){document.getElementById('grpErr').textContent=e.message;document.getElementById('grpErr').classList.add('show');}
+};
+
+window.openGroupChat=function(gid,gname){
+  showPanel('chat');
+  setTimeout(()=>openGroupChatView(gid,gname),100);
+};
+
+// ── TASKS ──
+async function renderTasks(){
+  const p=document.getElementById('panel-tasks');
+  const r=ME?.role;
+  const canAssign=['admin','core','teacher','event_head','volunteer_head'].includes(r);
+  p.innerHTML=`
+  <div class="section-head">
+    <h2>Tasks</h2>
+    ${canAssign?`<button class="btn-sm btn-sm-gold" onclick="openAddTask()">+ Assign Task</button>`:''}
+  </div>
+  <div id="taskList">Loading...</div>`;
+  await loadTasks();
+}
+
+async function loadTasks(){
+  const el=document.getElementById('taskList');if(!el)return;
+  const r=ME?.role;
+  try{
+    let q;
+    if(['admin','core','teacher'].includes(r)){
+      q=query(collection(db,'tasks'),orderBy('createdAt','desc'));
+    } else if(['event_head','volunteer_head'].includes(r)){
+      q=query(collection(db,'tasks'),where('assignedBy','==',ME?.uid),orderBy('createdAt','desc'));
     } else {
-      data.createdAt=serverTimestamp();
-      data.registrationCount=0;
-      await addDoc(collection(db,"events"),data);
-      toast("Event added.","success");
+      q=query(collection(db,'tasks'),where('assignedTo','==',ME?.uid),orderBy('createdAt','desc'));
     }
-    closeModal("m-addevent");
-  }catch(err){toast("Error: "+err.message,"error");}
-  btn.disabled=false; btn.textContent=editId?"Save Changes":"Add Event";
-};
-
-window.deleteEvent = async(id)=>{
-  if(!confirm("Delete this event? All registrations will remain.")) return;
-  try{ await deleteDoc(doc(db,"events",id)); toast("Event deleted.","info"); }
-  catch(err){toast("Error: "+err.message,"error");}
-};
-
-/* ─────────────────────────────────────────────
-   VIEW: PARTICIPANTS
-───────────────────────────────────────────── */
-function viewParticipants(pg){
-  const canSelect = can("selectParticipants");
-  const canManage = can("manageRegistrations");
-  const eventId   = UD.assignedEvent;
-  let regs = allRegs;
-  let filterEventId = eventId||"all";
-
-  const evSelect = (can("viewAllEvents")||UD.role==="admin"||UD.role==="teacher")
-    ? `<select class="form-input" style="width:220px" id="ev-filter" onchange="filterEvChange()">
-        <option value="all">All Events</option>
-        ${allEvents.map(e=>`<option value="${e.id}">${e.title}</option>`).join("")}
-       </select>` : "";
-
-  pg.innerHTML=`
-    <div class="ph">
-      <div class="ph-title">Participants</div>
-      <div class="ph-actions">
-        ${evSelect}
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input class="form-input" id="p-search" placeholder="Search name, class…" style="padding-left:2.25rem" oninput="renderParticipantTable()"/>
-        </div>
-      </div>
-    </div>
-    <div class="tbl-wrap">
-      <table>
-        <thead><tr><th>#</th><th>Name</th><th>Class</th><th>Email</th><th>Event</th><th>Enrolled</th><th>Status</th>${canSelect?"<th>Selection</th>":""}${canManage?"<th>Action</th>":""}</tr></thead>
-        <tbody id="p-tbody"></tbody>
-      </table>
-    </div>`;
-
-  window._pFilterEvent = eventId||"all";
-
-  window.filterEvChange = ()=>{
-    window._pFilterEvent = document.getElementById("ev-filter").value;
-    renderParticipantTable();
-  };
-
-  window.renderParticipantTable = ()=>{
-    const search=(document.getElementById("p-search")?.value||"").toLowerCase();
-    const fev=window._pFilterEvent||"all";
-    const rows = allRegs
-      .filter(r=>fev==="all"||r.eventId===fev)
-      .filter(r=>!search||(r.studentName||"").toLowerCase().includes(search)||(r.classSection||"").toLowerCase().includes(search));
-    const tbody=document.getElementById("p-tbody");
-    if(!rows.length){tbody.innerHTML=`<tr><td colspan="10" style="text-align:center;padding:2.5rem;color:var(--t3)">No participants found.</td></tr>`;return;}
-    tbody.innerHTML=rows.map((r,i)=>{
-      const ev=allEvents.find(e=>e.id===r.eventId);
-      return `<tr>
-        <td style="font-family:var(--f-mono);font-size:0.7rem;color:var(--t3)">${String(i+1).padStart(2,"0")}</td>
-        <td style="color:var(--t1);font-weight:500">${r.studentName||"—"}</td>
-        <td style="font-family:var(--f-mono);font-size:0.75rem">${r.classSection||"—"}</td>
-        <td style="font-size:0.78rem;color:var(--t3)">${r.email||"—"}</td>
-        <td style="font-size:0.78rem">${ev?.title||r.eventId}</td>
-        <td style="font-size:0.72rem;font-family:var(--f-mono)">${fmtShort(r.registeredAt)}</td>
-        <td><span class="badge badge-${r.selectionStatus||'pending'}">${r.selectionStatus||"pending"}</span></td>
-        ${canSelect?`<td>
-          <select class="form-input" style="font-size:0.75rem;padding:4px 8px;width:120px" onchange="setStatus('${r.id}',this.value)">
-            <option value="pending" ${r.selectionStatus==="pending"?"selected":""}>Pending</option>
-            <option value="selected" ${r.selectionStatus==="selected"?"selected":""}>Selected</option>
-            <option value="waitlisted" ${r.selectionStatus==="waitlisted"?"selected":""}>Waitlisted</option>
-          </select></td>`:""} 
-        ${canManage?`<td><button class="btn btn-danger btn-sm" onclick="deleteReg('${r.id}')">✕</button></td>`:""}
-      </tr>`;
-    }).join("");
-  };
-  renderParticipantTable();
+    const snap=await getDocs(q);
+    if(snap.empty){el.innerHTML='<div class="empty-state"><div class="es-icon">✅</div><p>No tasks.</p></div>';return;}
+    let html='<div class="table-wrap"><table><thead><tr><th>Task</th><th>Assigned To</th><th>Assigned By</th><th>Due</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+    for(const d of snap.docs){
+      const t=d.data();
+      let toName='—',byName='—';
+      try{const ts=await getDoc(doc(db,'users',t.assignedTo));if(ts.exists())toName=ts.data().fullName||'—';}catch(e){}
+      try{const bs=await getDoc(doc(db,'users',t.assignedBy));if(bs.exists())byName=bs.data().fullName||'—';}catch(e){}
+      const statusColors={pending:'badge-grey',in_progress:'badge-green',done:'badge-gold',overdue:'badge-red'};
+      const canMark=t.assignedTo===ME?.uid||['admin','core','teacher'].includes(r);
+      html+=`<tr><td class="td-name">${t.title||''}</td><td>${toName}</td><td class="td-mono">${byName}</td><td class="td-mono">${t.dueDate||'—'}</td><td><span class="badge ${statusColors[t.status]||'badge-grey'}">${t.status||'pending'}</span></td>
+      <td>${canMark?`<select onchange="updateTaskStatus('${d.id}',this.value)" class="form-input" style="-webkit-appearance:auto;padding:0.3rem;font-size:0.75rem;min-width:100px"><option value="pending"${t.status==='pending'?' selected':''}>Pending</option><option value="in_progress"${t.status==='in_progress'?' selected':''}>In Progress</option><option value="done"${t.status==='done'?' selected':''}>Done</option></select>`:'—'}
+      ${['admin','core','teacher'].includes(r)?`<button class="btn-icon del" onclick="deleteTask('${d.id}')">🗑️</button>`:''}
+      </td></tr>`;
+    }
+    html+='</tbody></table></div>';
+    el.innerHTML=html;
+  }catch(e){if(el)el.innerHTML=`<div class="err-bar show">${e.message}</div>`;}
 }
 
-window.setStatus = async(id, status)=>{
-  try{await updateDoc(doc(db,"registrations",id),{selectionStatus:status}); toast("Status updated.","success");}
-  catch(e){toast("Error: "+e.message,"error");}
-};
-window.deleteReg = async(id)=>{
-  if(!confirm("Remove this registration?")) return;
-  try{await deleteDoc(doc(db,"registrations",id)); toast("Removed.","info");}
-  catch(e){toast("Error: "+e.message,"error");}
+window.openAddTask=async function(){
+  const uSnap=await getDocs(collection(db,'users'));
+  let uOpts='';
+  uSnap.forEach(d=>{const u=d.data();uOpts+=`<option value="${u.uid}">${u.fullName||u.email} (${ROLE_LABELS[u.role]||u.role})</option>`;});
+  openModal('Assign Task',`
+  <div class="fi" style="margin-bottom:0.8rem"><label>Task Title *</label><input id="tk_title" class="form-input" placeholder="Task description"/></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Details</label><textarea id="tk_desc" class="form-input" rows="2" placeholder="Additional details..."></textarea></div>
+  <div class="fi" style="margin-bottom:0.8rem"><label>Assign To *</label><select id="tk_to" class="form-input" style="-webkit-appearance:auto">${uOpts}</select></div>
+  <div class="fi"><label>Due Date</label><input id="tk_due" type="date" class="form-input"/></div>
+  <div class="err-bar" id="tkErr"></div>`,
+  `<button class="btn-sm btn-sm-gold" onclick="saveTask()">Assign</button><button class="btn-sm" onclick="closeModal()">Cancel</button>`);
 };
 
-/* ─────────────────────────────────────────────
-   VIEW: NOTICES
-───────────────────────────────────────────── */
-function viewNotices(pg){
-  const canManage = can("manageNotices");
-  pg.innerHTML=`
-    <div class="ph">
-      <div class="ph-title">Notices</div>
-      ${canManage?`<div class="ph-actions">
-        <button class="btn btn-gold" onclick="openNoticeModal()">+ New Notice</button>
-      </div>`:""}
+window.saveTask=async function(){
+  const title=document.getElementById('tk_title').value.trim();
+  const desc=document.getElementById('tk_desc').value.trim();
+  const to=document.getElementById('tk_to').value;
+  const due=document.getElementById('tk_due').value;
+  if(!title||!to){document.getElementById('tkErr').textContent='Title and assignee required.';document.getElementById('tkErr').classList.add('show');return;}
+  try{
+    await addDoc(collection(db,'tasks'),{title,description:desc,assignedTo:to,assignedBy:ME.uid,dueDate:due||null,status:'pending',createdAt:serverTimestamp()});
+    closeModal();loadTasks();
+  }catch(e){document.getElementById('tkErr').textContent=e.message;document.getElementById('tkErr').classList.add('show');}
+};
+
+window.updateTaskStatus=async function(id,status){
+  try{await updateDoc(doc(db,'tasks',id),{status,updatedAt:serverTimestamp()});}catch(e){alert(e.message);}
+};
+window.deleteTask=async function(id){
+  if(!confirm('Delete task?'))return;
+  try{await deleteDoc(doc(db,'tasks',id));loadTasks();}catch(e){alert(e.message);}
+};
+
+// ── CHAT (DMs + Groups) ──
+let activeConvId=null;let activeConvType=null;
+async function renderChat(){
+  const p=document.getElementById('panel-chat');
+  p.innerHTML=`<div class="chat-layout">
+    <div class="chat-sidebar">
+      <div class="chat-sidebar-hd"><span>Conversations</span><button class="btn-sm" style="padding:0.3rem 0.6rem;font-size:0.6rem" onclick="openNewDM()">+ DM</button></div>
+      <div class="chat-list" id="chatList"><div style="padding:1rem;font-family:DM Mono,monospace;font-size:0.68rem;color:var(--text3)">Loading...</div></div>
     </div>
-    <div id="notices-list">
-      ${allNotices.length
-        ? allNotices.map(n=>noticeCard(n,canManage)).join("")
-        : `<div class="empty"><div class="empty-icon">📌</div><div class="empty-msg">No notices yet.</div></div>`}
-    </div>`;
+    <div class="chat-main" id="chatMain">
+      <div class="chat-empty"><div style="font-size:2rem;opacity:0.3">💬</div><span>Select a conversation</span></div>
+    </div>
+  </div>`;
+  await loadChatList();
 }
 
-function noticeCard(n, canManage){
-  return `<div class="notice-card">
-    <div class="nc-head">
+async function loadChatList(){
+  const el=document.getElementById('chatList');if(!el)return;
+  try{
+    // Load DMs where user is participant
+    const dmSnap=await getDocs(query(collection(db,'directMessages'),where('participants','array-contains',ME?.uid),orderBy('lastMessageAt','desc')));
+    // Load groups where user is member
+    const grpSnap=await getDocs(query(collection(db,'groups'),orderBy('createdAt','desc')));
+    let html='';
+    // DMs
+    const dmDocs=dmSnap.docs;
+    for(const d of dmDocs){
+      const dm=d.data();
+      const otherId=dm.participants.find(x=>x!==ME?.uid);
+      let otherName='Unknown';
+      try{const os=await getDoc(doc(db,'users',otherId));if(os.exists())otherName=os.data().fullName||os.data().email;}catch(e){}
+      const unread=(dm.unread||{})[ME?.uid]||0;
+      html+=`<div class="chat-item${activeConvId===d.id?' active':''}" onclick="openDMChat('${d.id}','${otherName.replace(/'/g,"\\'")}')">
+        <div class="chat-item-name">${otherName}</div>
+        <div class="chat-item-preview">${dm.lastMessage||'...'}</div>
+        <div class="chat-item-time">${dm.lastMessageAt?fmt(dm.lastMessageAt):''}</div>
+        ${unread>0?`<div class="chat-unread">${unread}</div>`:''}
+      </div>`;
+    }
+    // Groups
+    grpSnap.docs.forEach(d=>{
+      const g=d.data();
+      if(!g.members||!g.members.includes(ME?.uid))return;
+      html+=`<div class="chat-item${activeConvId===d.id?' active':''}" onclick="openGroupChatView('${d.id}','${(g.name||'').replace(/'/g,"\\'")}')">
+        <div class="chat-item-name">👥 ${g.name||'Group'}</div>
+        <div class="chat-item-preview">${g.lastMessage||'...'}</div>
+        <div class="chat-item-time">${g.lastMessageAt?fmt(g.lastMessageAt):''}</div>
+      </div>`;
+    });
+    if(!html)html='<div class="no-chat">No conversations yet. Start a DM!</div>';
+    el.innerHTML=html;
+  }catch(e){if(el)el.innerHTML=`<div style="padding:1rem;font-family:DM Mono,monospace;font-size:0.68rem;color:var(--red)">${e.message}</div>`;}
+}
+
+window.openNewDM=async function(){
+  // Check chat permissions
+  let allowedRoles=[];
+  try{
+    const permSnap=await getDocs(query(collection(db,'chatPermissions'),where('fromRole','==',ME?.role)));
+    if(permSnap.empty){
+      // Default: can message core, teacher, admin
+      allowedRoles=['core','teacher','admin'];
+    } else {
+      permSnap.forEach(d=>{allowedRoles=[...allowedRoles,...(d.data().toRoles||[])];});
+    }
+    // Admin, core, teacher can always message anyone
+    if(['admin','core','teacher'].includes(ME?.role))allowedRoles=null;
+  }catch(e){}
+
+  const uSnap=await getDocs(collection(db,'users'));
+  let uOpts='';
+  uSnap.forEach(d=>{
+    const u=d.data();
+    if(u.uid===ME?.uid)return;
+    if(allowedRoles&&!allowedRoles.includes(u.role))return;
+    uOpts+=`<option value="${u.uid}">${u.fullName||u.email} — ${ROLE_LABELS[u.role]||u.role}</option>`;
+  });
+  if(!uOpts){openModal('Start DM','<div style="color:var(--text3);font-size:0.9rem">No users available to message based on current permissions.</div>','<button class="btn-sm" onclick="closeModal()">Close</button>');return;}
+  openModal('Start Direct Message',`
+  <div class="fi"><label>Select User</label><select id="dm_to" class="form-input" style="-webkit-appearance:auto">${uOpts}</select></div>
+  <div class="err-bar" id="dmErr"></div>`,
+  `<button class="btn-sm btn-sm-gold" onclick="startDM()">Start Chat</button><button class="btn-sm" onclick="closeModal()">Cancel</button>`);
+};
+
+window.startDM=async function(){
+  const toUid=document.getElementById('dm_to').value;
+  if(!toUid)return;
+  try{
+    // Check if DM already exists
+    const existing=await getDocs(query(collection(db,'directMessages'),where('participants','array-contains',ME?.uid)));
+    let existingId=null;
+    existing.forEach(d=>{if((d.data().participants||[]).includes(toUid))existingId=d.id;});
+    if(existingId){closeModal();const os=await getDoc(doc(db,'users',toUid));const name=os.exists()?os.data().fullName||'User':'User';openDMChat(existingId,name);return;}
+    // Create new
+    const toSnap=await getDoc(doc(db,'users',toUid));
+    const toName=toSnap.exists()?toSnap.data().fullName||'User':'User';
+    const ref=await addDoc(collection(db,'directMessages'),{participants:[ME?.uid,toUid],participantNames:{[ME?.uid]:ME?.fullName||ME?.displayName,[toUid]:toName},createdAt:serverTimestamp(),lastMessageAt:serverTimestamp(),lastMessage:'',unread:{}});
+    closeModal();openDMChat(ref.id,toName);
+  }catch(e){document.getElementById('dmErr').textContent=e.message;document.getElementById('dmErr').classList.add('show');}
+};
+
+window.openDMChat=function(dmId,otherName){
+  activeConvId=dmId;activeConvType='dm';
+  if(chatUnsub)chatUnsub();
+  loadChatList();
+  const main=document.getElementById('chatMain');if(!main)return;
+  main.innerHTML=`
+  <div class="chat-hd"><div><div class="chat-hd-name">${otherName}</div><div class="chat-hd-sub">Direct Message</div></div></div>
+  <div class="chat-msgs" id="chatMsgs"></div>
+  <div class="chat-input-area">
+    <textarea class="chat-input" id="chatInput" placeholder="Message ${otherName}... (@ to mention)" rows="1" onkeydown="chatKeydown(event,'${dmId}','dm')"></textarea>
+    <button class="send-btn" onclick="sendMsg('${dmId}','dm')">Send</button>
+  </div>`;
+  chatUnsub=onSnapshot(query(collection(db,'directMessages',dmId,'messages'),orderBy('sentAt','asc')),snap=>{
+    const el=document.getElementById('chatMsgs');if(!el)return;
+    el.innerHTML='';
+    snap.forEach(d=>{renderMsgBubble(el,d.data(),d.id);});
+    el.scrollTop=el.scrollHeight;
+    // Mark delivered
+    updateDoc(doc(db,'directMessages',dmId),{[`unread.${ME?.uid}`]:0}).catch(()=>{});
+  });
+};
+
+window.openGroupChatView=function(gid,gname){
+  activeConvId=gid;activeConvType='group';
+  if(chatUnsub)chatUnsub();
+  loadChatList();
+  const main=document.getElementById('chatMain');if(!main)return;
+  main.innerHTML=`
+  <div class="chat-hd"><div><div class="chat-hd-name">👥 ${gname}</div><div class="chat-hd-sub">Group Chat</div></div></div>
+  <div class="chat-msgs" id="chatMsgs"></div>
+  <div class="chat-input-area">
+    <textarea class="chat-input" id="chatInput" placeholder="Message group... (@ to mention)" rows="1" onkeydown="chatKeydown(event,'${gid}','group')"></textarea>
+    <button class="send-btn" onclick="sendMsg('${gid}','group')">Send</button>
+  </div>`;
+  chatUnsub=onSnapshot(query(collection(db,'groups',gid,'messages'),orderBy('sentAt','asc')),snap=>{
+    const el=document.getElementById('chatMsgs');if(!el)return;
+    el.innerHTML='';
+    snap.forEach(d=>{renderMsgBubble(el,d.data(),d.id,true);});
+    el.scrollTop=el.scrollHeight;
+    // Mark as seen
+    snap.docs.forEach(d=>{
+      const msg=d.data();
+      if(msg.senderUid!==ME?.uid&&!(msg.seenBy||[]).includes(ME?.uid)){
+        updateDoc(doc(db,'groups',gid,'messages',d.id),{seenBy:arrayUnion(ME?.uid)}).catch(()=>{});
+      }
+    });
+  });
+};
+
+function renderMsgBubble(container,msg,id,isGroup=false){
+  const isMe=msg.senderUid===ME?.uid;
+  const wrap=document.createElement('div');wrap.className='msg-wrap '+(isMe?'me':'them');
+  let seenStatus='';
+  if(isMe&&isGroup&&msg.seenBy&&msg.seenBy.length>1)seenStatus=`<span class="msg-status" title="Seen by ${msg.seenBy.length-1}">✓✓ ${msg.seenBy.length-1}</span>`;
+  else if(isMe&&!isGroup&&msg.deliveredAt)seenStatus='<span class="msg-status">✓✓</span>';
+  let text=escHtml(msg.text||'').replace(/@(\w[\w\s]*)/g,'<span class="msg-mention">@$1</span>');
+  wrap.innerHTML=`${isGroup&&!isMe?`<div class="msg-meta"><span class="msg-sender">${escHtml(msg.senderName||'')}</span></div>`:''}
+  <div class="msg-bubble">${text}</div>
+  <div class="msg-meta"><span>${fmt(msg.sentAt)}</span>${seenStatus}</div>`;
+  container.appendChild(wrap);
+}
+
+window.chatKeydown=function(e,convId,type){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg(convId,type);}};
+
+window.sendMsg=async function(convId,type){
+  const input=document.getElementById('chatInput');
+  const text=input?.value.trim();
+  if(!text)return;
+  input.value='';
+  try{
+    const colRef=collection(db,type==='dm'?'directMessages':'groups',convId,'messages');
+    await addDoc(colRef,{text,senderUid:ME?.uid,senderName:ME?.fullName||ME?.displayName,senderRole:ME?.role||'',sentAt:serverTimestamp(),deliveredAt:serverTimestamp(),seenBy:[ME?.uid]});
+    // Update last message on parent doc
+    const parentRef=doc(db,type==='dm'?'directMessages':'groups',convId);
+    await updateDoc(parentRef,{lastMessage:text,lastMessageAt:serverTimestamp()});
+  }catch(e){console.error(e);}
+};
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── PROFILE ──
+async function renderProfile(){
+  const p=document.getElementById('panel-profile');
+  if(!ME){p.innerHTML='<div class="empty-state"><p>Not signed in.</p></div>';return;}
+  p.innerHTML=`
+  <div style="max-width:560px">
+    <div style="display:flex;align-items:center;gap:1.2rem;margin-bottom:2rem">
+      <img src="${ME.photoURL||''}" onerror="this.src=''" style="width:64px;height:64px;border-radius:50%;border:2px solid var(--border2);object-fit:cover"/>
       <div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-          <span class="badge badge-${n.status==="published"?"published":"draft"}">${n.status||"draft"}</span>
-          ${n.eventId?`<span class="badge badge-pending" style="font-size:0.55rem">${allEvents.find(e=>e.id===n.eventId)?.title||n.eventId}</span>`:""}
-        </div>
-        <div class="nc-title">${n.title||"Untitled"}</div>
-        <div class="nc-meta">${fmt(n.timestamp)}</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;font-style:italic;color:var(--text)">${ME.fullName||ME.displayName||'—'}</div>
+        <span class="user-role-badge ${roleBadgeClass(ME.role)}">${ROLE_LABELS[ME.role]||ME.role}</span>
       </div>
-      ${canManage?`<div style="display:flex;gap:6px;flex-shrink:0">
-        ${n.status==="draft"?`<button class="btn btn-ghost btn-sm" onclick="publishNotice('${n.id}')">Publish</button>`:""}
-        <button class="btn btn-danger btn-sm" onclick="deleteNotice('${n.id}')">✕</button>
-      </div>`:""}
     </div>
-    <div class="nc-body">${n.content||""}</div>
+    <div style="background:var(--surface);border:1px solid var(--border)">
+      ${profileRow('Email',ME.email)}
+      ${profileRow('Class',`${ME.class||'—'} — Section ${ME.section||'—'}`)}
+      ${profileRow('Roll No.',ME.rollNumber||'—')}
+      ${profileRow('Registration No.',ME.registrationNumber||'—')}
+      ${profileRow('Class Teacher',ME.classTeacher||'—')}
+      ${profileRow('Date of Birth',ME.dob||'—')}
+      ${profileRow('Age',ME.age?ME.age+' years':'—')}
+      ${profileRow('Gender',ME.gender||'—')}
+    </div>
   </div>`;
 }
+function profileRow(label,val){return`<div style="display:flex;padding:0.8rem 1.2rem;border-bottom:1px solid rgba(106,171,58,0.1)"><div style="font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);width:160px;flex-shrink:0">${label}</div><div style="font-size:0.95rem;color:var(--text2)">${val}</div></div>`;}
 
-window.openNoticeModal = (noticeId=null)=>{
-  const n = noticeId ? allNotices.find(x=>x.id===noticeId) : null;
-  document.getElementById("m-notice-title").textContent = n ? "Edit Notice" : "New Notice";
-  document.getElementById("m-notice-body").innerHTML=`
-    <form id="f-notice" onsubmit="saveNotice(event,'${noticeId||''}')">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Title *</label>
-          <input class="form-input" id="nf-title" value="${n?.title||''}" required placeholder="Notice title"/></div>
-        <div class="form-group"><label class="form-label">Event</label>
-          <select class="form-input" id="nf-event">
-            <option value="">— General (no event) —</option>
-            ${allEvents.map(e=>`<option value="${e.id}" ${n?.eventId===e.id?"selected":""}>${e.title}</option>`).join("")}
-          </select></div>
-      </div>
-      <div class="form-group"><label class="form-label">Content</label>
-        <textarea class="form-input" id="nf-content" rows="5" placeholder="Notice content…">${n?.content||''}</textarea></div>
-      <div class="form-group"><label class="form-label">Status</label>
-        <select class="form-input" id="nf-status">
-          <option value="draft" ${n?.status==="draft"||!n?"selected":""}>Save as Draft</option>
-          <option value="published" ${n?.status==="published"?"selected":""}>Publish Now</option>
-        </select></div>
-      <div style="display:flex;gap:8px">
-        <button type="submit" class="btn btn-gold" id="nf-btn">${n?"Save":"Create"}</button>
-        <button type="button" class="btn btn-ghost" onclick="closeModal('m-notice')">Cancel</button>
-      </div>
-    </form>`;
-  openModal("m-notice");
-};
-
-window.saveNotice = async(e, editId)=>{
-  e.preventDefault();
-  const btn=document.getElementById("nf-btn");
-  btn.disabled=true; btn.innerHTML='<div class="spinner"></div>';
+// ── INIT ──
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.href='login.html';return;}
   try{
-    const data={
-      title:document.getElementById("nf-title").value.trim(),
-      eventId:document.getElementById("nf-event").value||null,
-      content:document.getElementById("nf-content").value.trim(),
-      status:document.getElementById("nf-status").value,
-      type:"notice", authorUid:CU.uid
-    };
-    if(editId){ await updateDoc(doc(db,"notices_tasks",editId),{...data,updatedAt:serverTimestamp()}); toast("Updated.","success"); }
-    else { data.timestamp=serverTimestamp(); await addDoc(collection(db,"notices_tasks"),data); toast("Notice created.","success"); }
-    closeModal("m-notice");
-  }catch(err){toast("Error: "+err.message,"error");}
-  btn.disabled=false; btn.textContent=editId?"Save":"Create";
-};
-
-window.publishNotice = async(id)=>{
-  try{ await updateDoc(doc(db,"notices_tasks",id),{status:"published",publishedAt:serverTimestamp()}); toast("Published.","success"); }
-  catch(e){toast("Error: "+e.message,"error");}
-};
-window.deleteNotice = async(id)=>{
-  if(!confirm("Delete this notice?")) return;
-  try{ await deleteDoc(doc(db,"notices_tasks",id)); toast("Deleted.","info"); }
-  catch(e){toast("Error: "+e.message,"error");}
-};
-
-/* ─────────────────────────────────────────────
-   VIEW: TASKS
-───────────────────────────────────────────── */
-function viewTasks(pg){
-  const canManage = can("manageTasks");
-  pg.innerHTML=`
-    <div class="ph">
-      <div class="ph-title">Tasks</div>
-      ${canManage?`<div class="ph-actions"><button class="btn btn-gold" onclick="openTaskModal()">+ New Task</button></div>`:""}
-    </div>
-    <div id="tasks-list">
-      <div class="spinner" style="margin:2rem auto;width:24px;height:24px"></div>
-    </div>`;
-
-  let tq;
-  if(UD.role==="event_head"&&UD.assignedEvent){
-    tq=query(collection(db,"notices_tasks"),where("eventId","==",UD.assignedEvent),where("type","==","task"),orderBy("timestamp","desc"));
-  } else {
-    tq=query(collection(db,"notices_tasks"),where("type","==","task"),orderBy("timestamp","desc"));
+    const uSnap=await getDoc(doc(db,'users',user.uid));
+    if(!uSnap.exists()||!uSnap.data().onboarded){window.location.href='login.html';return;}
+    ME={...uSnap.data(),uid:user.uid};
+    // Update avatar & name
+    document.getElementById('sideAvatar').src=ME.photoURL||'';
+    document.getElementById('topAvatar').src=ME.photoURL||'';
+    document.getElementById('sideAvatar').onerror=()=>{document.getElementById('sideAvatar').style.display='none';};
+    document.getElementById('sideName').textContent=ME.fullName||ME.displayName||'User';
+    const rb=document.getElementById('sideRole');
+    rb.textContent=ROLE_LABELS[ME.role]||ME.role||'—';
+    rb.className='user-role-badge '+roleBadgeClass(ME.role);
+    buildNav(ME.role||'pending');
+    document.getElementById('loadingScreen').style.display='none';
+    document.getElementById('appShell').style.display='flex';
+    renderHome();
+    showPanel('home');
+  }catch(e){
+    document.getElementById('loadingScreen').innerHTML=`<div style="color:var(--red);font-family:DM Mono,monospace;font-size:0.8rem">Error: ${e.message}</div>`;
   }
-  onSnapshot(tq, s=>{
-    const tasks=s.docs.map(d=>({id:d.id,...d.data()}));
-    const list=document.getElementById("tasks-list");
-    if(!list) return;
-    if(!tasks.length){list.innerHTML=`<div class="empty"><div class="empty-icon">✅</div><div class="empty-msg">No tasks yet.</div></div>`;return;}
-    list.innerHTML=tasks.map(t=>`<div class="notice-card">
-      <div class="nc-head">
-        <div>
-          <div style="display:flex;gap:8px;margin-bottom:4px">
-            <span class="badge badge-${t.status==="published"?"published":"draft"}">${t.status}</span>
-            ${t.eventId?`<span class="badge badge-pending" style="font-size:0.55rem">${allEvents.find(e=>e.id===t.eventId)?.title||t.eventId}</span>`:""}
-          </div>
-          <div class="nc-title">${t.title}</div>
-          <div class="nc-meta">${fmt(t.timestamp)}</div>
-        </div>
-        ${canManage?`<div style="display:flex;gap:6px">
-          ${t.status==="draft"?`<button class="btn btn-ghost btn-sm" onclick="publishTask('${t.id}')">Publish</button>`:""}
-          <button class="btn btn-danger btn-sm" onclick="deleteTask('${t.id}')">✕</button>
-        </div>`:""}
-      </div>
-      <div class="nc-body">${t.content||""}</div>
-    </div>`).join("");
-  });
-}
-
-window.openTaskModal = ()=>{
-  openModal("m-notice");
-  document.getElementById("m-notice-title").textContent="New Task";
-  document.getElementById("m-notice-body").innerHTML=`
-    <form id="f-task" onsubmit="saveTask(event)">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Title *</label>
-          <input class="form-input" id="tf-title" required placeholder="Task title"/></div>
-        <div class="form-group"><label class="form-label">Event</label>
-          <select class="form-input" id="tf-event">
-            <option value="">— General —</option>
-            ${allEvents.map(e=>`<option value="${e.id}">${e.title}</option>`).join("")}
-          </select></div>
-      </div>
-      <div class="form-group"><label class="form-label">Description</label>
-        <textarea class="form-input" id="tf-content" rows="4" placeholder="Task details…"></textarea></div>
-      <div class="form-group"><label class="form-label">Status</label>
-        <select class="form-input" id="tf-status">
-          <option value="draft">Save as Draft</option>
-          <option value="published">Publish Now</option>
-        </select></div>
-      <div style="display:flex;gap:8px">
-        <button type="submit" class="btn btn-gold" id="tf-btn">Create Task</button>
-        <button type="button" class="btn btn-ghost" onclick="closeModal('m-notice')">Cancel</button>
-      </div>
-    </form>`;
-};
-window.saveTask = async(e)=>{
-  e.preventDefault();
-  const btn=document.getElementById("tf-btn"); btn.disabled=true; btn.innerHTML='<div class="spinner"></div>';
-  try{
-    await addDoc(collection(db,"notices_tasks"),{
-      title:document.getElementById("tf-title").value.trim(),
-      eventId:document.getElementById("tf-event").value||null,
-      content:document.getElementById("tf-content").value.trim(),
-      status:document.getElementById("tf-status").value,
-      type:"task", authorUid:CU.uid, timestamp:serverTimestamp()
-    });
-    toast("Task created.","success"); closeModal("m-notice");
-  }catch(err){toast("Error: "+err.message,"error");}
-  btn.disabled=false; btn.textContent="Create Task";
-};
-window.publishTask=async(id)=>{try{await updateDoc(doc(db,"notices_tasks",id),{status:"published"});toast("Published.","success");}catch(e){toast("Error.","error");}};
-window.deleteTask=async(id)=>{if(!confirm("Delete task?"))return;try{await deleteDoc(doc(db,"notices_tasks",id));toast("Deleted.","info");}catch(e){toast("Error.","error");}};
-
-/* ─────────────────────────────────────────────
-   VIEW: MESSAGES
-───────────────────────────────────────────── */
-function viewMessages(pg){
-  pg.innerHTML=`
-    <div class="ph"><div class="ph-title">Messages</div></div>
-    <div style="display:grid;grid-template-columns:240px 1fr;gap:1rem;height:500px">
-      <div class="card" style="overflow-y:auto;padding:0.75rem">
-        <div style="font-family:var(--f-mono);font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--t3);padding:0.5rem 0.5rem 0.75rem">Conversations</div>
-        <div id="msg-contacts">
-          <div class="spinner" style="margin:1rem auto;width:18px;height:18px"></div>
-        </div>
-      </div>
-      <div class="card" style="display:flex;flex-direction:column;padding:0" id="msg-panel">
-        <div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--t3)">
-          <div style="text-align:center"><div style="font-size:2rem;margin-bottom:0.5rem;opacity:0.3">💬</div><p style="font-family:var(--f-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase">Select a conversation</p></div>
-        </div>
-      </div>
-    </div>`;
-
-  loadContacts();
-}
-
-async function loadContacts(){
-  const contactsEl = document.getElementById("msg-contacts");
-  if(!contactsEl) return;
-  try{
-    const sentQ = query(collection(db,"messages"),where("senderUid","==",CU.uid));
-    const recvQ = query(collection(db,"messages"),where("receiverUid","==",CU.uid));
-    const [sent,recv] = await Promise.all([getDocs(sentQ),getDocs(recvQ)]);
-    const allM = [...sent.docs.map(d=>d.data()),...recv.docs.map(d=>d.data())];
-    const uids = [...new Set(allM.flatMap(m=>[m.senderUid,m.receiverUid]).filter(u=>u!==CU.uid))];
-    if(!uids.length){contactsEl.innerHTML=`<p style="font-size:0.75rem;color:var(--t3);padding:0.5rem">No conversations yet.</p>`;return;}
-    const contacts = [];
-    for(const uid of uids){
-      const s=await getDoc(doc(db,"users",uid));
-      if(s.exists()) contacts.push({uid,...s.data()});
-    }
-    contactsEl.innerHTML=contacts.map(c=>`
-      <button style="display:flex;align-items:center;gap:8px;width:100%;padding:0.6rem;border-radius:var(--r-sm);text-align:left;color:var(--t2);transition:all 0.15s" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''" onclick="openConversation('${c.uid}','${c.name||c.email}')">
-        <div style="width:28px;height:28px;border-radius:50%;background:var(--gold3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.7rem;color:var(--gold);font-weight:600">${(c.name||c.email||"?")[0].toUpperCase()}</div>
-        <div style="flex:1;min-width:0"><div style="font-size:0.8rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name||c.email}</div>
-        <div style="font-family:var(--f-mono);font-size:0.56rem;color:var(--t3)">${c.role||"student"}</div></div>
-      </button>`).join("");
-  }catch(e){contactsEl.innerHTML=`<p style="font-size:0.75rem;color:var(--t3);padding:0.5rem">Error loading.</p>`;}
-}
-
-window.openConversation = async(uid, name)=>{
-  const panel = document.getElementById("msg-panel");
-  if(!panel) return;
-  panel.innerHTML=`
-    <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--gold3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:var(--gold);font-weight:600">${name[0].toUpperCase()}</div>
-      <div style="font-weight:500;font-size:0.88rem">${name}</div>
-    </div>
-    <div class="msg-thread" id="thread-${uid}"></div>
-    <div class="msg-input-row">
-      <input class="form-input" id="msg-input" placeholder="Type a message…" style="flex:1" onkeydown="if(event.key==='Enter')sendMsg('${uid}')"/>
-      <button class="btn btn-gold btn-sm" onclick="sendMsg('${uid}')">Send</button>
-    </div>`;
-
-  const q = query(collection(db,"messages"),
-    where("senderUid","in",[CU.uid,uid]),
-    where("receiverUid","in",[CU.uid,uid]),
-    orderBy("timestamp","asc"));
-  onSnapshot(q,s=>{
-    const thread=document.getElementById(`thread-${uid}`);
-    if(!thread) return;
-    const msgs=s.docs.map(d=>d.data()).filter(m=>(m.senderUid===CU.uid&&m.receiverUid===uid)||(m.senderUid===uid&&m.receiverUid===CU.uid));
-    thread.innerHTML=msgs.map(m=>`
-      <div style="display:flex;flex-direction:column;align-items:${m.senderUid===CU.uid?"flex-end":"flex-start"}">
-        <div class="msg-bubble ${m.senderUid===CU.uid?"msg-sent":"msg-recv"}">${m.messageBody}</div>
-        <div class="msg-ts">${fmtShort(m.timestamp)}</div>
-      </div>`).join("");
-    thread.scrollTop=thread.scrollHeight;
-  });
-};
-
-window.sendMsg = async(receiverUid)=>{
-  const input=document.getElementById("msg-input");
-  const body=input?.value.trim(); if(!body) return;
-  try{
-    await addDoc(collection(db,"messages"),{senderUid:CU.uid,receiverUid,messageBody:body,timestamp:serverTimestamp()});
-    input.value="";
-  }catch(e){toast("Failed to send.","error");}
-};
-
-/* ─────────────────────────────────────────────
-   VIEW: ANALYTICS
-───────────────────────────────────────────── */
-function viewAnalytics(pg){
-  const total=allRegs.length;
-  const sel=allRegs.filter(r=>r.selectionStatus==="selected").length;
-  const wait=allRegs.filter(r=>r.selectionStatus==="waitlisted").length;
-  const pend=allRegs.filter(r=>r.selectionStatus==="pending"||!r.selectionStatus).length;
-  pg.innerHTML=`
-    <div class="ph"><div class="ph-title">Analytics</div></div>
-    <div class="grid-4" style="margin-bottom:2rem">
-      <div class="stat-card"><div class="stat-n">${allEvents.length}</div><div class="stat-l">Events</div></div>
-      <div class="stat-card"><div class="stat-n">${total}</div><div class="stat-l">Total Registrations</div></div>
-      <div class="stat-card"><div class="stat-n">${sel}</div><div class="stat-l">Selected</div></div>
-      <div class="stat-card"><div class="stat-n">${pend}</div><div class="stat-l">Pending Review</div></div>
-    </div>
-    <div class="card">
-      <div style="font-family:var(--f-mono);font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem">Registrations per Event</div>
-      ${allEvents.map(ev=>{
-        const cnt=allRegs.filter(r=>r.eventId===ev.id).length;
-        const pct=total>0?Math.round(cnt/total*100):0;
-        return `<div style="margin-bottom:1rem">
-          <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:4px">
-            <span>${ev.title}</span>
-            <span style="font-family:var(--f-mono);color:var(--gold)">${cnt}</span>
-          </div>
-          <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden">
-            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:3px;transition:width 0.6s"></div>
-          </div>
-        </div>`;
-      }).join("")||`<p style="color:var(--t3);font-size:0.82rem">No data yet.</p>`}
-    </div>`;
-}
-
-/* ─────────────────────────────────────────────
-   VIEW: ACTIVITY
-───────────────────────────────────────────── */
-function viewActivity(pg){
-  pg.innerHTML=`
-    <div class="ph"><div class="ph-title">Activity Log</div></div>
-    <div class="card" id="activity-list">
-      <div class="spinner" style="margin:2rem auto;width:22px;height:22px"></div>
-    </div>`;
-
-  const q=query(collection(db,"notices_tasks"),orderBy("timestamp","desc"));
-  onSnapshot(q,s=>{
-    const list=document.getElementById("activity-list");
-    if(!list) return;
-    const docs=s.docs.map(d=>({id:d.id,...d.data()}));
-    if(!docs.length){list.innerHTML=`<div class="empty"><div class="empty-icon">⚡</div><div class="empty-msg">No activity yet.</div></div>`;return;}
-    list.innerHTML=docs.map(d=>`
-      <div class="af-item">
-        <div class="af-dot"></div>
-        <div>
-          <div class="af-text"><strong style="color:var(--t1)">${d.title}</strong> — <span style="color:var(--t3)">${d.type==="task"?"Task":"Notice"}</span> • <span class="badge badge-${d.status==="published"?"published":"draft"}" style="font-size:0.56rem">${d.status}</span></div>
-          <div class="af-ts">${fmt(d.timestamp)} · Event: ${allEvents.find(e=>e.id===d.eventId)?.title||d.eventId||"General"}</div>
-        </div>
-      </div>`).join("");
-  });
-}
-
-/* ─────────────────────────────────────────────
-   VIEW: USERS
-───────────────────────────────────────────── */
-function viewUsers(pg){
-  const canAssign = can("manageRoles")||can("assignRoles");
-  const canManageSub = can("manageSubRoles");
-  pg.innerHTML=`
-    <div class="ph">
-      <div class="ph-title">User Management</div>
-      <div class="ph-actions">
-        ${canManageSub?`<button class="btn btn-ghost" onclick="openSubRoleManager()">⊕ Sub-Roles</button>`:""}
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input class="form-input" id="u-search" placeholder="Search users…" style="padding-left:2.25rem" oninput="renderUsersTable()"/>
-        </div>
-      </div>
-    </div>
-    <div class="tbl-wrap">
-      <table>
-        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Sub-Role</th><th>Assigned Event</th>${canAssign?"<th>Actions</th>":""}</tr></thead>
-        <tbody id="u-tbody"></tbody>
-      </table>
-    </div>`;
-  window.renderUsersTable=renderUsersTable;
-  renderUsersTable();
-}
-
-function renderUsersTable(){
-  const search=(document.getElementById("u-search")?.value||"").toLowerCase();
-  const users=allUsers.filter(u=>!search||(u.name||"").toLowerCase().includes(search)||(u.email||"").toLowerCase().includes(search));
-  const tbody=document.getElementById("u-tbody");
-  if(!tbody) return;
-  if(!users.length){tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--t3)">No users found.</td></tr>`;return;}
-  const canAssign = can("manageRoles")||can("assignRoles");
-  tbody.innerHTML=users.map((u,i)=>`
-    <tr>
-      <td style="font-family:var(--f-mono);font-size:0.68rem;color:var(--t3)">${String(i+1).padStart(2,"0")}</td>
-      <td style="color:var(--t1);font-weight:500">${u.name||"—"}</td>
-      <td style="font-size:0.78rem;color:var(--t3)">${u.email}</td>
-      <td><span class="badge badge-${u.role||'student'}">${u.role||"student"}</span></td>
-      <td style="font-size:0.78rem;color:var(--t3)">${u.subRole||"—"}</td>
-      <td style="font-size:0.75rem">${allEvents.find(e=>e.id===u.assignedEvent)?.title||"—"}</td>
-      ${canAssign?`<td>
-        <button class="btn btn-ghost btn-sm" onclick="openRoleModal('${u.id}')">Manage Role</button>
-      </td>`:""}
-    </tr>`).join("");
-}
-
-/* ── Role Modal ── */
-window.openRoleModal = async(uid)=>{
-  const u=allUsers.find(x=>x.id===uid);
-  if(!u) return;
-
-  // Load existing sub-roles
-  const srSnap=await getDocs(collection(db,"sub_roles"));
-  const subRoles=srSnap.docs.map(d=>({id:d.id,...d.data()}));
-
-  document.getElementById("m-role-title").textContent=`Manage Role — ${u.name||u.email}`;
-  const currentPerms = u.permissions||{};
-  document.getElementById("m-role-body").innerHTML=`
-    <form id="f-role" onsubmit="saveRole(event,'${uid}')">
-      <div class="form-row" style="margin-bottom:1rem">
-        <div class="form-group"><label class="form-label">Base Role</label>
-          <select class="form-input" id="rl-role" onchange="onRoleChange()">
-            ${["student","event_head","core_team","teacher","admin"].map(r=>`<option value="${r}" ${u.role===r?"selected":""}>${r.replace("_"," ")}</option>`).join("")}
-          </select></div>
-        <div class="form-group"><label class="form-label">Sub-Role</label>
-          <select class="form-input" id="rl-subrole">
-            <option value="">— None —</option>
-            ${subRoles.map(sr=>`<option value="${sr.name}" ${u.subRole===sr.name?"selected":""}>${sr.name}</option>`).join("")}
-          </select></div>
-      </div>
-      <div class="form-group"><label class="form-label">Assigned Event</label>
-        <select class="form-input" id="rl-event">
-          <option value="">— No event assigned —</option>
-          ${allEvents.map(e=>`<option value="${e.id}" ${u.assignedEvent===e.id?"selected":""}>${e.title}</option>`).join("")}
-        </select></div>
-      <hr style="border:none;border-top:1px solid var(--border);margin:1rem 0"/>
-      <div style="font-family:var(--f-mono);font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:0.875rem">Access Permissions</div>
-      <div id="perm-grid">${buildPermGrid(currentPerms)}</div>
-      <div style="display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap">
-        <button type="submit" class="btn btn-gold" id="rl-btn">Save Changes</button>
-        <button type="button" class="btn btn-ghost" onclick="selectAllPerms(true)">Grant All</button>
-        <button type="button" class="btn btn-ghost" onclick="selectAllPerms(false)">Revoke All</button>
-        <button type="button" class="btn btn-ghost" onclick="closeModal('m-role')">Cancel</button>
-      </div>
-    </form>`;
-  openModal("m-role");
-};
-
-function buildPermGrid(currentPerms){
-  return Object.entries(ALL_PERMS).map(([group,perms])=>`
-    <div style="margin-bottom:1rem">
-      <div style="font-size:0.72rem;font-weight:600;color:var(--t2);margin-bottom:0.5rem;padding:0 2px">${group}</div>
-      <div class="perm-grid">
-        ${Object.entries(perms).map(([key,label])=>`
-          <div class="perm-item">
-            <span class="perm-label">${label}</span>
-            <div class="toggle-wrap" onclick="togglePerm('${key}',this)">
-              <div class="toggle-track ${currentPerms[key]?"on":""}" id="tp-${key}">
-                <div class="toggle-thumb"></div>
-              </div>
-            </div>
-          </div>`).join("")}
-      </div>
-    </div>`).join("");
-}
-
-window.togglePerm=(key,wrap)=>{
-  const track=document.getElementById(`tp-${key}`);
-  track.classList.toggle("on");
-};
-
-window.selectAllPerms=(val)=>{
-  getAllPermKeys().forEach(k=>{
-    const t=document.getElementById(`tp-${k}`);
-    if(t) val?t.classList.add("on"):t.classList.remove("on");
-  });
-};
-
-window.onRoleChange=()=>{
-  const role=document.getElementById("rl-role").value;
-  const defaultPerms=getDefaultPerms(role);
-  getAllPermKeys().forEach(k=>{
-    const t=document.getElementById(`tp-${k}`);
-    if(t) defaultPerms[k]?t.classList.add("on"):t.classList.remove("on");
-  });
-};
-
-function getDefaultPerms(role){
-  const base={};
-  getAllPermKeys().forEach(k=>base[k]=false);
-  if(role==="admin") getAllPermKeys().forEach(k=>base[k]=true);
-  else if(role==="teacher"){
-    ["viewEvents","viewAllEvents","viewRegistrations","viewParticipants","selectParticipants","manageRegistrations","viewNotices","manageNotices","viewTasks","manageTasks","viewMessages","sendMessages","viewAnalytics","viewActivityLog","assignRoles"].forEach(k=>base[k]=true);
-  } else if(role==="event_head"){
-    ["viewEvents","viewRegistrations","viewParticipants","viewNotices","manageNotices","viewTasks","manageTasks","viewMessages","sendMessages"].forEach(k=>base[k]=true);
-  } else if(role==="core_team"){
-    ["viewEvents","viewAllEvents","viewRegistrations","viewAnalytics","viewMessages","viewNotices","viewTasks"].forEach(k=>base[k]=true);
-  } else {
-    ["viewEvents","viewNotices","viewTasks"].forEach(k=>base[k]=true);
-  }
-  return base;
-}
-function getAllPermKeys(){ return Object.values(ALL_PERMS).flatMap(g=>Object.keys(g)); }
-
-window.saveRole=async(e, uid)=>{
-  e.preventDefault();
-  const btn=document.getElementById("rl-btn"); btn.disabled=true; btn.innerHTML='<div class="spinner"></div>';
-  try{
-    const perms={};
-    getAllPermKeys().forEach(k=>perms[k]=document.getElementById(`tp-${k}`)?.classList.contains("on")||false);
-    await updateDoc(doc(db,"users",uid),{
-      role:document.getElementById("rl-role").value,
-      subRole:document.getElementById("rl-subrole").value||null,
-      assignedEvent:document.getElementById("rl-event").value||null,
-      permissions:perms
-    });
-    toast("Role updated.","success"); closeModal("m-role");
-  }catch(err){toast("Error: "+err.message,"error");}
-  btn.disabled=false; btn.textContent="Save Changes";
-};
-
-/* ── Sub-Role Manager ── */
-window.openSubRoleManager=async()=>{
-  document.getElementById("m-subrole-title").textContent="Sub-Role Manager";
-  const srSnap=await getDocs(collection(db,"sub_roles"));
-  const subRoles=srSnap.docs.map(d=>({id:d.id,...d.data()}));
-  document.getElementById("m-subrole-body").innerHTML=`
-    <div id="sr-list" style="margin-bottom:1.25rem">
-      ${subRoles.length?subRoles.map(sr=>`
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.75rem;border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:6px">
-          <div>
-            <span style="font-size:0.85rem;font-weight:500;color:var(--t1)">${sr.name}</span>
-            <span style="font-size:0.72rem;color:var(--t3);margin-left:8px">${sr.parentRole||"any"}</span>
-          </div>
-          <button class="btn btn-danger btn-sm" onclick="deleteSubRole('${sr.id}')">✕</button>
-        </div>`).join(""):`<p style="color:var(--t3);font-size:0.82rem;margin-bottom:0.75rem">No sub-roles yet.</p>`}
-    </div>
-    <hr style="border:none;border-top:1px solid var(--border);margin-bottom:1.25rem"/>
-    <form id="f-sr" onsubmit="addSubRole(event)">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Sub-Role Name *</label>
-          <input class="form-input" id="sr-name" required placeholder="e.g. Design Head"/></div>
-        <div class="form-group"><label class="form-label">Parent Role</label>
-          <select class="form-input" id="sr-parent">
-            <option value="">Any</option>
-            ${["student","event_head","core_team","teacher"].map(r=>`<option value="${r}">${r.replace("_"," ")}</option>`).join("")}
-          </select></div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button type="submit" class="btn btn-gold" id="sr-btn">Add Sub-Role</button>
-        <button type="button" class="btn btn-ghost" onclick="closeModal('m-subrole')">Close</button>
-      </div>
-    </form>`;
-  openModal("m-subrole");
-};
-
-window.addSubRole=async(e)=>{
-  e.preventDefault();
-  const btn=document.getElementById("sr-btn"); btn.disabled=true;
-  try{
-    await addDoc(collection(db,"sub_roles"),{
-      name:document.getElementById("sr-name").value.trim(),
-      parentRole:document.getElementById("sr-parent").value||null,
-      createdAt:serverTimestamp()
-    });
-    toast("Sub-role added.","success");
-    openSubRoleManager();
-  }catch(err){toast("Error: "+err.message,"error"); btn.disabled=false;}
-};
-window.deleteSubRole=async(id)=>{
-  if(!confirm("Delete sub-role?")) return;
-  try{await deleteDoc(doc(db,"sub_roles",id)); toast("Deleted.","info"); openSubRoleManager();}
-  catch(e){toast("Error.","error");}
-};
-
-/* ─────────────────────────────────────────────
-   VIEW: SETTINGS
-───────────────────────────────────────────── */
-function viewSettings(pg){
-  pg.innerHTML=`
-    <div class="ph"><div class="ph-title">System Settings</div></div>
-    <div class="card" style="max-width:600px">
-      <div style="font-family:var(--f-mono);font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem">Fest Configuration</div>
-      <div class="form-group"><label class="form-label">Fest Date (for countdown)</label>
-        <input type="datetime-local" class="form-input" id="s-date" value="2025-11-15T09:00"/></div>
-      <div class="form-group"><label class="form-label">Fest Name</label>
-        <input class="form-input" id="s-name" placeholder="Critically Yours" value="Critically Yours"/></div>
-      <div class="form-group"><label class="form-label">Institution Name</label>
-        <input class="form-input" id="s-inst" placeholder="DPS Megacity, Kolkata" value="Delhi Public School Megacity, Kolkata"/></div>
-      <button class="btn btn-gold" onclick="toast('Settings saved (frontend only — wire to Firestore as needed).','success')">Save Settings</button>
-    </div>
-    <div class="card" style="max-width:600px;margin-top:1rem">
-      <div style="font-family:var(--f-mono);font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem">Admin Info</div>
-      <div style="font-size:0.82rem;color:var(--t2);line-height:1.8">
-        Admin UID: <code style="font-family:var(--f-mono);color:var(--gold)">${CU.uid}</code><br/>
-        Admin Email: <code style="font-family:var(--f-mono);color:var(--gold)">${CU.email}</code><br/>
-        Role: <code style="font-family:var(--f-mono);color:var(--gold)">${UD.role}</code>
-      </div>
-    </div>`;
-}
-
-/* ── Modal helpers ── */
-window.openModal=(id)=>{document.getElementById(id).classList.add("open");document.body.style.overflow="hidden"};
-window.closeModal=(id)=>{document.getElementById(id).classList.remove("open");document.body.style.overflow=""};
-
-// Close on overlay click
-document.querySelectorAll(".modal-overlay").forEach(el=>{
-  el.addEventListener("click",e=>{if(e.target===el){el.classList.remove("open");document.body.style.overflow=""}});
 });
-
-/* ── Sidebar mobile ── */
-window.toggleSidebar=()=>{
-  document.getElementById("sidebar").classList.toggle("open");
-  document.getElementById("overlay").classList.toggle("open");
-};
-window.closeSidebar=()=>{
-  document.getElementById("sidebar").classList.remove("open");
-  document.getElementById("overlay").classList.remove("open");
-};
 </script>
 </body>
 </html>
