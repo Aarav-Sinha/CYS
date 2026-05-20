@@ -477,8 +477,15 @@ window.submitEnrollment = async function() {
   const spinner = document.getElementById('btn-spinner');
   btn.disabled = true; btnText.style.display = 'none'; spinner.style.display = 'block';
   try {
-    const checked = Array.from(document.querySelectorAll('#event-select-grid input:checked'));
-    const selectedEvents = checked.map(inp => ({ id: inp.value, name: inp.dataset.name }));
+    // NEW SECURE CODE
+const checked = Array.from(document.querySelectorAll('#event-select-grid input:checked'));
+const selectedEvents = checked.map(inp => {
+  return { 
+    id: inp.value, 
+    // Explicitly fallback to a clean string if attribute reading fails
+    name: inp.getAttribute('data-name') || 'Unknown Event' 
+  };
+});
     const dob = document.getElementById('f-dob').value;
     const today = new Date();
     const birth = new Date(dob);
